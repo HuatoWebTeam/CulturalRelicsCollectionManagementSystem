@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   HashRouter as Router,
   Switch,
@@ -8,7 +8,6 @@ import {
 
 import App from './pages/App/App';
 import Login from './pages/Login/index';
-import Routes from './Router/index';
 
 
 export default () => (

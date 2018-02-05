@@ -8,10 +8,21 @@ const { Header, Content, Footer, Sider } = Layout;
 
 
 class App extends Component {
+
+  rootSubmenuKeys = [];
   state = {
     selectOpenKey: "",
     menuMode: "inline",
+    openKeys: []
   };
+  componentWillMount () {
+    for(let item of menus ) {
+      if(item.sub) {
+        this.rootSubmenuKeys.push(item.key);
+      }
+    }
+    console.log(this.rootSubmenuKeys)
+  }
   componentDidMount() {
     console.log(this.props);
     this.setMenuOpenKey(this.props);
@@ -25,8 +36,8 @@ class App extends Component {
   setMenuOpenKey = props => {
     let { pathname } = props.location;
     console.log(pathname);
-    if(pathname === '/') {
-      pathname = '/Home'
+    if (pathname === "/") {
+      pathname = "/App/Home";
     }
 
     this.setState({ selectOpenKey: pathname });
@@ -34,11 +45,24 @@ class App extends Component {
   openMenu = v => {
     console.log(v);
   };
-  menuClick = (item, key, path) => {
-    console.log(item);
+  menuClick = (item, key, selectdKeys) => {
+    // console.log(item, key, selectdKeys);
     this.setState({ selectOpenKey: item.key });
   };
-
+  onOpenChange = openKeys => {
+    // console.log(openKeys);
+    const latestOpenKey = openKeys.find(
+      key => this.state.openKeys.indexOf(key) === -1
+    );
+    // console.log(latestOpenKey);
+    if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+      this.setState({ openKeys });
+    } else {
+      this.setState({
+        openKeys: latestOpenKey ? [latestOpenKey] : []
+      });
+    }
+  };
   render() {
     console.log(this.props);
     return (
@@ -51,7 +75,9 @@ class App extends Component {
               theme="dark"
               mode={this.state.menuMode}
               selectedKeys={[this.state.selectOpenKey]}
+              openKeys={this.state.openKeys}
               onClick={this.menuClick}
+              onOpenChange={this.onOpenChange}
             />
           </Sider>
           <Content>
