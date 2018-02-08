@@ -37,10 +37,22 @@
     background-color: @menuBackColor;
     color: @menuTextColor;
 }
+.ant-menu-dark .ant-menu-item.ant-menu-item-active {
+    background-color: @menuBackColor;
+}
 .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
     color: #3065bf;
     background-color: @menuBackColor;
 }
 .ant-menu.ant-menu-dark .ant-menu-item-selected > a, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected > a {
     color: #3065bf;
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+    border-top: 1px solid #d3d5d9;
+}
+.ant-menu-item, .ant-menu-submenu-title {
+    transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background 0s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -webkit-transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background 0s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -o-transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background 0s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -moz-transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background 0s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.15s cubic-bezier(0.645, 0.045, 0.355, 1)
 }

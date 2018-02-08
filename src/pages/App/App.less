@@ -1,23 +1,120 @@
 
 @import '../style/resetAntd.less';
+@import '../style/index.less';
 
 .code-box-demo {
   text-align: center;
 }
-.ant-layout-header,
-.ant-layout-footer {
-  background: #7dbcea;
+.ant-layout-header {
+  height: 100px;
+  background: url('../../assets/img/headerBack.png') no-repeat;
+  // background-position: 
   color: #fff;
+  padding: 0;
+  .logoContainer {
+    width: 620px;
+    height: 100px;
+    padding-top: 40px;
+    display: inline-block;
+    div {
+      display: inline-block;
+    }
+    .logo {
+      width: 180px;
+      height: 40px;
+      margin: 0 20px;
+      background-position-y: -20px; 
+    }
+    .systemName {
+      width: 400px;
+      height: 40px;
+      background-position-y: -77px;
+
+    }
+  }
+  .systemDropdown {
+    width: 330px;
+    height: 100px;
+    // line-height: 100px;
+    padding-top: 30px;
+    float: right;
+    padding-right: 60px;
+    .content {
+      width: 100%;
+      height: 45px;
+      .noticeIcon {
+        width: 42px;
+        height: 100%;
+        display: inline-block;
+        vertical-align: top;
+        background-position-y: -210px;
+      }
+      .dropdownContainer {
+        display: inline-block;
+        height: 100%;
+        width: 210px;
+        .ant-dropdown-link {
+          display: block;
+          width: 100%;
+          height: 45px;
+          line-height: 45px;
+          color: #fff;
+          .userIcon {
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            vertical-align: top;
+            margin: 0 10px 0 30px;
+            background-position-y: -269px;
+          }
+          .userName {
+            width: 100px;
+            height: 45px;
+            display: inline-block;
+            span {
+              display: block;
+              height: 22px;
+              // line-height: 22px;
+            }
+          }
+          .dropdownIcon {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background-position-y: -334px;
+          }
+        }
+      }
+    }
+  }
 }
-.ant-layout-footer {
-  line-height: 1.5;
-}
+
 .ant-layout-sider {
     color: #333;
     background: @menuBackColor;
+    .ant-menu {
+      .ant-menu-item, .ant-menu-submenu {
+        // height: 50px;
+        // line-height: 50px;
+        margin: 0;
+        border-bottom: 1px solid #d3d5d9;
+      }
+
+    }
     
 }
 .ant-layout-content {
 //   background: rgba(16, 142, 233, 1);
   color: #333;
+  .localtion {
+    height: 40px;
+    line-height: 40px;
+    background-color: #e9edf2;
+    padding-left: 20px;
+  }
+  .main-container {
+    height: ~'calc(100% - 40px)';
+    background-color: #d7dbde;
+    padding: 20px;
+  }
 }

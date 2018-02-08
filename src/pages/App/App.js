@@ -1,30 +1,46 @@
 import React, { Component } from 'react';
-import { Layout } from "antd";
+import { Layout, Menu, Dropdown, Col } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus'
 import './App.less'
 const { Header, Content, Footer, Sider } = Layout;
 
+const menuName = ['退出'];
+
+const dropdownMenu = (
+  <Menu>
+    {
+      menuName.map((item, idx) => 
+        <Menu.Item key={idx} >
+          {item}
+        </Menu.Item>
+      )
+    }
+  </Menu>
+)
 
 class App extends Component {
 
   rootSubmenuKeys = [];
   state = {
+    localtionName: '',
     selectOpenKey: "",
     menuMode: "inline",
     openKeys: []
   };
   componentWillMount () {
+    this.getLocationName();
     for(let item of menus ) {
       if(item.sub) {
         this.rootSubmenuKeys.push(item.key);
       }
     }
-    console.log(this.rootSubmenuKeys)
+    
+    // console.log(this.rootSubmenuKeys)
   }
   componentDidMount() {
-    console.log(this.props);
+    // console.log(this.props);
     this.setMenuOpenKey(this.props);
     // window.addEventListener("scroll", this.handleScroll);
   }
@@ -32,10 +48,31 @@ class App extends Component {
   componentWillUnmount() {
     console.log("卸载");
   }
+
+  getLocationName (keys) {
+    console.log(this.props);
+    const pathname = keys || this.props.location.pathname;
+    for (let item of menus) {
+      if (item.key === pathname) {
+        this.setState({ localtionName: item.title });
+        break;
+      } else if (item.sub) {
+        for (let name of item.sub) {
+          if (name.key === pathname) {
+            this.setState({ 
+              localtionName: name.title,
+              openKeys: [item.key]
+            });
+            break;
+          }
+        }
+      }
+    }
+  }
   //
   setMenuOpenKey = props => {
     let { pathname } = props.location;
-    console.log(pathname);
+    // console.log(pathname);
     if (pathname === "/") {
       pathname = "/App/Home";
     }
@@ -45,16 +82,17 @@ class App extends Component {
   openMenu = v => {
     console.log(v);
   };
-  menuClick = (item, key, selectdKeys) => {
-    // console.log(item, key, selectdKeys);
+  menuClick = (item) => {
+    console.log(item);
+    this.getLocationName(item.key);
     this.setState({ selectOpenKey: item.key });
   };
   onOpenChange = openKeys => {
-    // console.log(openKeys);
+    console.log(openKeys);
     const latestOpenKey = openKeys.find(
       key => this.state.openKeys.indexOf(key) === -1
     );
-    // console.log(latestOpenKey);
+    console.log(latestOpenKey);
     if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
       this.setState({ openKeys });
     } else {
@@ -63,30 +101,50 @@ class App extends Component {
       });
     }
   };
+
+  
+
   render() {
-    console.log(this.props);
-    return (
-      <Layout style={{ minHeight: "100%" }}>
-        <Header>Header</Header>
+    // console.log(this.props);
+    return <Layout style={{ minHeight: "100%" }}>
+        <Header>
+          <div className="logoContainer">
+            <div className="logo iconBack" />
+            <div className="systemName iconBack" />
+          </div>
+          <div className="systemDropdown">
+            <div className="content">
+              <div className="noticeIcon iconBack" />
+              <div className="dropdownContainer">
+                <Dropdown overlay={dropdownMenu} trigger={["click"]}>
+                  <a className="ant-dropdown-link" href="#">
+                    <i className="iconBack userIcon" />
+                    <span className="userName">
+                      <span style={{ lineHeight: '20px' }}>欢迎登录，</span>
+                      <span style={{ lineHeight: '20px' }} >admin</span>
+                    </span>
+                    <i className="iconBack dropdownIcon" />
+                  </a>
+                </Dropdown>
+              </div>
+            </div>
+          </div>
+        </Header>
         <Layout>
           <Sider>
-            <MenuItem
-              menus={menus}
-              theme="dark"
-              mode={this.state.menuMode}
-              selectedKeys={[this.state.selectOpenKey]}
-              openKeys={this.state.openKeys}
-              onClick={this.menuClick}
-              onOpenChange={this.onOpenChange}
-            />
+            <MenuItem menus={menus} theme="dark" mode={this.state.menuMode} selectedKeys={[this.state.selectOpenKey]} openKeys={this.state.openKeys} onClick={this.menuClick} onOpenChange={this.onOpenChange} />
           </Sider>
           <Content>
-            <Routes />
+            <Col span={24} className="localtion">
+              当前位置：{ this.state.localtionName }
+            </Col>
+            <Col span={24} className="main-container">
+              <Routes />
+            </Col>
           </Content>
         </Layout>
-        <Footer>Footer</Footer>
-      </Layout>
-    );
+        {/* <Footer>Footer</Footer> */}
+      </Layout>;
   }
 }
 
