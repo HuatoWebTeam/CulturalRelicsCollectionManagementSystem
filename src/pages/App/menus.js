@@ -7,6 +7,7 @@ export  const menus = [
     { key: '/App/NewRepairList', title: '藏品修复 > 新建修复单', isHidden: true, fatherName: '/App/CollecRepair' },
     { key: 'CollectionManagement', title: '藏品管理', icon: 'iconBack collection', sub: [
         { key: '/App/Information', title: '信息登记', icon: 'nullIcon' },
+        { key: '/App/AddRelics', title: '藏品管理 > 信息登记 > 新增藏品', isHidden: true, fatherName: '/App/Information' },
         { key: '/App/Bill', title: '凭证制作', icon: 'nullIcon' },
         { key: '/App/PutInStorage', title: '藏品入库', icon: 'nullIcon' },
         { key: '/App/Outbound', title: '藏品出库', icon: 'nullIcon' }

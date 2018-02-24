@@ -79,8 +79,16 @@ class App extends Component {
         for (let name of item.sub) {
           console.log(name);
           console.log(pathname);
-          if (name.key === pathname) {
-            console.log('-------------')
+          if (name.key === pathname && name.isHidden) {
+            console.log("-------------");
+            console.log(name);
+            this.setState({
+              localtionName: name.title,
+              selectOpenKey: name.fatherName,
+              openKeys: [item.key]
+            })
+            break;
+          } else if (name.key === pathname ) {
             this.setState({ 
               localtionName: item.title + ' > ' + name.title,
               openKeys: [item.key]
