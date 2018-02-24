@@ -115,7 +115,7 @@ class ComplexGeneric extends Component {
                 </Col>
                 <Col span={24} className='' >
                     <Col span={24} style={{padding: '20px 40px 20px 20px'}} >
-                        <Button type='primary' icon='plus' >新增藏品</Button>
+                        <Button type='primary' icon='plus' onClick={() => { this.props.history.push('/App/AddRelics') }} >新增藏品</Button>
                         <Search 
                             enterButton
                             onSearch={ this.onSearchButton }
