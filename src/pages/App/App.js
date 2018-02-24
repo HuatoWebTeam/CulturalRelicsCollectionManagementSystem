@@ -4,7 +4,7 @@ import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus'
 import './App.less'
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const menuName = ['退出'];
 
@@ -30,6 +30,7 @@ class App extends Component {
     openKeys: []
   };
   componentWillMount () {
+    this.setMenuOpenKey(this.props);
     this.getLocationName();
     for(let item of menus ) {
       if(item.sub) {
@@ -41,7 +42,7 @@ class App extends Component {
   }
   componentDidMount() {
     // console.log(this.props);
-    this.setMenuOpenKey(this.props);
+    
     // window.addEventListener("scroll", this.handleScroll);
   }
 
@@ -53,20 +54,41 @@ class App extends Component {
     console.log(this.props);
     const pathname = keys || this.props.location.pathname;
     for (let item of menus) {
+      // console.log(item.key);
+      // console.log(pathname);
       if (item.key === pathname) {
+        // console.log('---1')
+        if(item.isHidden) {
+          this.setState({
+            localtionName: item.title,
+            selectOpenKey: item.fatherName
+          });
+          break;
+        } 
         this.setState({ localtionName: item.title });
         break;
+      } else if (pathname.indexOf(item.key) !== -1) {
+        // console.log(item);
+        this.setState({
+          localtionName: item.title,
+          selectOpenKey: item.fatherName
+        });
+        break;
       } else if (item.sub) {
+        console.log('----2');
         for (let name of item.sub) {
+          console.log(name);
+          console.log(pathname);
           if (name.key === pathname) {
+            console.log('-------------')
             this.setState({ 
-              localtionName: name.title,
+              localtionName: item.title + ' > ' + name.title,
               openKeys: [item.key]
             });
             break;
           }
         }
-      }
+      } 
     }
   }
   //
@@ -117,7 +139,7 @@ class App extends Component {
               <div className="noticeIcon iconBack" />
               <div className="dropdownContainer">
                 <Dropdown overlay={dropdownMenu} trigger={["click"]}>
-                  <a className="ant-dropdown-link" href="#">
+                  <a className="ant-dropdown-link" href="javascript:;">
                     <i className="iconBack userIcon" />
                     <span className="userName">
                       <span style={{ lineHeight: '20px' }}>欢迎登录，</span>
@@ -136,7 +158,7 @@ class App extends Component {
           </Sider>
           <Content>
             <Col span={24} className="localtion">
-              当前位置：{ this.state.localtionName }
+              <i className='iconBack localtion' />当前位置： <span className='localtionName' >{ this.state.localtionName }</span>
             </Col>
             <Col span={24} className="main-container">
               <Routes />

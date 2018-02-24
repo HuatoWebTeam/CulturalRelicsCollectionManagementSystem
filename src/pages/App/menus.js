@@ -1,29 +1,31 @@
 export  const menus = [
-    { key: '/App/Home', title: '首页', icon: '' },
-    { key: '/App/CollecExhibition', title: '藏品展览', icon: '' },
-    { key: '/App/CollecRepair', title: '藏品修复', icon: '' },
-    { key: 'CollectionManagement', title: '藏品管理', icon: '', sub: [
-        { key: '/App/Information', title: '信息登记', icon: '' },
-        { key: '/App/Bill', title: '凭证制作', icon: '' },
-        { key: '/App/PutInStorage', title: '藏品入库', icon: '' },
-        { key: '/App/Outbound', title: '藏品出库', icon: '' }
+    { key: '/App/Home', title: '首页', icon: 'iconBack home' },
+    { key: '/App/CollecExhibition', title: '藏品展览', icon: 'iconBack exhibition', data: { title: 'exhibition'} },
+    { key: '/App/ExhibitionDetails', title: '藏品展览 > 详情', isHidden: true, fatherName: '/App/CollecExhibition' },
+    { key: '/App/AddExhibition', title: '藏品展览 > 添加展览', isHidden: true, fatherName: '/App/CollecExhibition' },
+    { key: '/App/CollecRepair', title: '藏品修复', icon: 'iconBack repair' },
+    { key: 'CollectionManagement', title: '藏品管理', icon: 'iconBack collection', sub: [
+        { key: '/App/Information', title: '信息登记', icon: 'nullIcon' },
+        { key: '/App/Bill', title: '凭证制作', icon: 'nullIcon' },
+        { key: '/App/PutInStorage', title: '藏品入库', icon: 'nullIcon' },
+        { key: '/App/Outbound', title: '藏品出库', icon: 'nullIcon' }
     ]},
-    { key:'/App/Accounts', title: '藏品账目', icon: '' },
-    { key: '/App/Inventory', title: '藏品盘点', icon: '' },
-    { key: '/App/Solicition', title: '藏品征集', icon: '' },
-    { key: 'ComplexGeneric', title: '复仿制管理', icon: '', sub: [
-        { key: '/App/ComplexInfo', title: '信息登记', icon: '' },
-        { key: '/App/ComplexPutIn', title: '藏品入库', icon: '' },
-        { key: '/App/ComplexOutbound', title: '藏品出库', icon: '' }
+    { key:'/App/Accounts', title: '藏品账目', icon: 'iconBack accounts' },
+    { key: '/App/Inventory', title: '藏品盘点', icon: 'iconBack inventory' },
+    { key: '/App/Solicition', title: '藏品征集', icon: 'iconBack solicition' },
+    { key: 'ComplexGeneric', title: '复仿制管理', icon: 'iconBack complexgeneric', sub: [
+        { key: '/App/ComplexInfo', title: '信息登记', icon: 'nullIcon' },
+        { key: '/App/ComplexPutIn', title: '藏品入库', icon: 'nullIcon' },
+        { key: '/App/ComplexOutbound', title: '藏品出库', icon: 'nullIcon' }
     ]},
-    { key: '/App/ImageManagement', title: '影像管理', icon: '' },
-    { key: 'Warehouse', title: '库房管理', icon: '', sub: [
-        { key: '/App/WarehouseInfo', title: '库房信息维护', icon: '' },
-        { key: '/App/TankInfo', title: '存储柜信息维护', icon: '' }
+    { key: '/App/ImageManagement', title: '影像管理', icon: 'iconBack image' },
+    { key: 'WarehouseManagement', title: '库房管理', icon: 'iconBack warehouse', sub: [
+        { key: '/App/WarehouseInfo', title: '库房信息维护', icon: 'nullIcon' },
+        { key: '/App/TankInfo', title: '存储柜信息维护', icon: 'nullIcon' }
     ] },
-    { key: '/App/StatisicalAnalysis', title: '统计分析', icon: '' },
-    { key: 'UserManagement', title: '用户操作管理', icon: '', sub: [
-        { key: '/App/OperationLog', title: '操作日志', icon: '' }
+    { key: '/App/StatisicalAnalysis', title: '统计分析', icon: 'iconBack statisic' },
+    { key: 'UserManagement', title: '用户操作管理', icon: 'iconBack user', sub: [
+        { key: '/App/OperationLog', title: '操作日志', icon: 'nullIcon' }
     ]}
 
 ]
