@@ -14,7 +14,8 @@ const About = asyncComponent(() => import('../pages/About/About'));           //
 const CollecExhibition = asyncComponent(() => import('../pages/CollecExhibition'));                         // 藏品展览
 const ExhibitionDetails = asyncComponent(() => import('../pages/CollecExhibition/ExhibitionDetails'));     // 藏品展览详情
 const AddExhibition = asyncComponent(() => import('../pages/CollecExhibition/AddExhibition'));              // 添加展览    
-const CollecRepair = asyncComponent(() => import('../pages/CollecRepair'));                                 // 修复
+const CollecRepair = asyncComponent(() => import('../pages/CollecRepair'));                                 // 修复    
+const NewRepairList = asyncComponent(() => import('../pages/CollecRepair/NewRepairList'));                                 // 新建修复
 const Information = asyncComponent(() => import('../pages/CollecManagement/Information'));                  // 信息登记
 const Bill = asyncComponent(() => import('../pages/CollecManagement/Bill'));                                // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
@@ -42,6 +43,7 @@ class Routes extends Component {
             <Route exact path="/App/ExhibitionDetails/:id" component={ExhibitionDetails} />
             <Route exact path="/App/AddExhibition" component={AddExhibition} />
             <Route exact path="/App/CollecRepair" component={CollecRepair} />
+            <Route exact path="/App/NewRepairList" component={NewRepairList} />
             <Route exact path="/App/Information" component={Information} />
             <Route exact path="/App/Bill" component={Bill} />
             <Route exact path="/App/PutInStorage" component={PutInStroage} />

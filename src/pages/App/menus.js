@@ -4,6 +4,7 @@ export  const menus = [
     { key: '/App/ExhibitionDetails', title: '藏品展览 > 详情', isHidden: true, fatherName: '/App/CollecExhibition' },
     { key: '/App/AddExhibition', title: '藏品展览 > 添加展览', isHidden: true, fatherName: '/App/CollecExhibition' },
     { key: '/App/CollecRepair', title: '藏品修复', icon: 'iconBack repair' },
+    { key: '/App/NewRepairList', title: '藏品修复 > 新建修复单', isHidden: true, fatherName: '/App/CollecRepair' },
     { key: 'CollectionManagement', title: '藏品管理', icon: 'iconBack collection', sub: [
         { key: '/App/Information', title: '信息登记', icon: 'nullIcon' },
         { key: '/App/Bill', title: '凭证制作', icon: 'nullIcon' },
