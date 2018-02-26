@@ -86,7 +86,7 @@ class CollecExhibition extends Component {
           </Col>
           <Col span={24} className="search-content">
             <span>选择时间：</span>
-            <RangePicker placeholder={["开始日期", "结束日期"]} />
+            <RangePicker  />
             <Button type="primrary" className=" search-btn">
               搜索
             </Button>

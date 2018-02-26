@@ -169,7 +169,7 @@ class AddExhibitionForm extends Component {
                         message: "请选择起止时间"
                       }
                     ]
-                  })(<RangePicker placeholder={["开始日期", "结束日期"]} />)}
+                  })(<RangePicker  />)}
                 </FormItem>
                 <FormItem label="负责人:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                   {getFieldDecorator("head", {
