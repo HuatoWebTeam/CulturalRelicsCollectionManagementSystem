@@ -31,7 +31,8 @@ class AddExhibitionForm extends Component {
         material: '陶器',
         years: '唐',
         howComplete: '破损',
-        head: '李四'
+        head: '李四',
+        key: 0
       }
     ]
   };
@@ -43,7 +44,7 @@ class AddExhibitionForm extends Component {
     this.props.form.validateFields((err, value) => {
       if (!err) {
         console.log(value);
-        this.props.history.push("/App/Home");
+        // this.props.history.push("/App/Home");
       }
     });
   }
@@ -56,7 +57,7 @@ class AddExhibitionForm extends Component {
   render() {
     console.log(this.props);
     const { typeMenu, addExhibitionData } = this.state;
-    // const { getFieldDecorator  } = this.props.form;
+    const { getFieldDecorator  } = this.props.form;
     const chooseRelicsData = [
         {
           title: '展览主题',
@@ -138,22 +139,37 @@ class AddExhibitionForm extends Component {
             <Form onSubmit={this.handleSubmit.bind(this)} layout="inline" className="addexhibition-form">
               <Col span={24} style={{ width: "800px" }}>
                 <FormItem label="展览主题:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-                  <Input />
+                  {getFieldDecorator("exhibitionTheme", {
+                    rules: [{ required: true, message: "请输入展览主题" }]
+                  })(<Input placeholder="请输入展览主题" />)}
                 </FormItem>
                 <FormItem label="展览类型:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-                  <Select defaultValue={typeMenu[0].value}>
-                    {typeMenu.map((item, idx) => (
-                      <Option key={item.key} value={item.key}>
-                        {item.value}
-                      </Option>
-                    ))}
-                  </Select>
+                  {getFieldDecorator("exhibitionType", {
+                    initialValue: [typeMenu[0].value],
+                    rules: [{ required: true, message: "请输入展览主题" }]
+                  })(<Select>
+                      {typeMenu.map((item, idx) => (
+                        <Option key={item.key} value={item.key}>
+                          {item.value}
+                        </Option>
+                      ))}
+                    </Select>)}
                 </FormItem>
                 <FormItem label="起止时间:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-                  <RangePicker onChange={this.changeDate} />
+                  {getFieldDecorator("date", {
+                    rules: [
+                      {
+                        type: "array",
+                        required: true,
+                        message: "请选择起止时间"
+                      }
+                    ]
+                  })(<RangePicker onChange={this.changeDate} />)}
                 </FormItem>
                 <FormItem label="负责人:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-                  <Input />
+                  {getFieldDecorator("head", {
+                    rules: [{ required: true, message: "请输入负责人" }]
+                  })(<Input placeholder="请输入负责人" />)}
                 </FormItem>
               </Col>
               <Col span={24} style={{ padding: "20px 0 20px 95px" }}>
@@ -162,8 +178,12 @@ class AddExhibitionForm extends Component {
               <Col span={24}>
                 <Table pagination={false} bordered columns={chooseRelicsData} dataSource={addExhibitionData} />
               </Col>
-              <Col span={24} style={{padding: '30px 50px'}} >
-                <Button style={{float: 'right'}} type="primary">提交展览清单</Button>
+              <Col span={24} style={{ padding: "30px 50px" }}>
+                <FormItem style={{ float: "right" }} className='right-form-item' >
+                  <Button htmlType="submit" type="primary">
+                    提交展览清单
+                  </Button>
+                </FormItem>
               </Col>
             </Form>
           </Col>
