@@ -75,13 +75,13 @@ class App extends Component {
         });
         break;
       } else if (item.sub) {
-        console.log('----2');
+        // console.log('----2');
         for (let name of item.sub) {
-          console.log(name);
-          console.log(pathname);
+          // console.log(name);
+          // console.log(pathname);
           if (name.key === pathname && name.isHidden) {
-            console.log("-------------");
-            console.log(name);
+            // console.log("-------------");
+            // console.log(name);
             this.setState({
               localtionName: name.title,
               selectOpenKey: name.fatherName,
