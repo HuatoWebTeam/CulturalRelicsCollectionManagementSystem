@@ -19,7 +19,8 @@ class ComplexGeneric extends Component {
                 state: '代管文物',
                 category: '动物',
                 size: 140,
-                weight: '6Kg'
+                weight: '6Kg',
+                key: 0
             }
         ]
     }
