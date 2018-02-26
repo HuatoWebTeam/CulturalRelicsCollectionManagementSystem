@@ -41,21 +41,26 @@ class AddExhibitionForm extends Component {
   // 提交表单
   handleSubmit(e) {
     e.preventDefault();
-    this.props.form.validateFields((err, value) => {
+    this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
-        console.log(value);
+        const rangeValue = fieldsValue['date'];
+        const values = {
+          ...fieldsValue,
+          'date': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')]
+        }
+        console.log(values);
         // this.props.history.push("/App/Home");
       }
     });
   }
 
   // 选择时间
-  changeDate (dates, dateString) {
-    console.log(dates);
-    console.log(dateString);
-  }
+  // changeDate (dates, dateString) {
+  //   console.log(dates);
+  //   console.log(dateString);
+  // }
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     const { typeMenu, addExhibitionData } = this.state;
     const { getFieldDecorator  } = this.props.form;
     const chooseRelicsData = [
@@ -164,7 +169,7 @@ class AddExhibitionForm extends Component {
                         message: "请选择起止时间"
                       }
                     ]
-                  })(<RangePicker onChange={this.changeDate} />)}
+                  })(<RangePicker placeholder={["开始日期", "结束日期"]} />)}
                 </FormItem>
                 <FormItem label="负责人:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                   {getFieldDecorator("head", {
@@ -179,7 +184,7 @@ class AddExhibitionForm extends Component {
                 <Table pagination={false} bordered columns={chooseRelicsData} dataSource={addExhibitionData} />
               </Col>
               <Col span={24} style={{ padding: "30px 50px" }}>
-                <FormItem style={{ float: "right" }} className='right-form-item' >
+                <FormItem style={{ float: "right" }} className="right-form-item">
                   <Button htmlType="submit" type="primary">
                     提交展览清单
                   </Button>
