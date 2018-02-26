@@ -15,10 +15,11 @@ const CollecExhibition = asyncComponent(() => import('../pages/CollecExhibition'
 const ExhibitionDetails = asyncComponent(() => import('../pages/CollecExhibition/ExhibitionDetails'));     // 藏品展览详情
 const AddExhibition = asyncComponent(() => import('../pages/CollecExhibition/AddExhibition'));              // 添加展览    
 const CollecRepair = asyncComponent(() => import('../pages/CollecRepair'));                                 // 修复    
-const NewRepairList = asyncComponent(() => import('../pages/CollecRepair/NewRepairList'));                                 // 新建修复
+const NewRepairList = asyncComponent(() => import('../pages/CollecRepair/NewRepairList'));                  // 新建修复
 const Information = asyncComponent(() => import('../pages/CollecManagement/Information'));                  // 信息登记
-const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Information/addRelics'));                  // 新增藏品
-const Bill = asyncComponent(() => import('../pages/CollecManagement/Bill'));                                // 凭证制作
+const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Information/addRelics'));          // 新增藏品
+const Credentials = asyncComponent(() => import('../pages/CollecManagement/Credentials'));                  // 凭证信息列表
+const ProductionCertificate = asyncComponent(() => import('../pages/CollecManagement/Credentials/ProductionCertificate'));   // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
 const Outbount = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
 const Accounts = asyncComponent(() => import('../pages/CollecAccounts'));                                   // 藏品账目
@@ -47,7 +48,8 @@ class Routes extends Component {
             <Route exact path="/App/NewRepairList" component={NewRepairList} />
             <Route exact path="/App/Information" component={Information} />
             <Route exact path="/App/AddRelics" component={AddRelics} />
-            <Route exact path="/App/Bill" component={Bill} />
+            <Route exact path="/App/Credentials" component={Credentials} />
+            <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
             <Route exact path="/App/PutInStorage" component={PutInStroage} />
             <Route exact path="/App/Outbound" component={Outbount} />
             <Route exact path="/App/Accounts" component={Accounts} />
