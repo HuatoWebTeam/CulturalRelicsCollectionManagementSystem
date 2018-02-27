@@ -22,9 +22,10 @@ const Credentials = asyncComponent(() => import('../pages/CollecManagement/Crede
 const ProductionCertificate = asyncComponent(() => import('../pages/CollecManagement/Credentials/ProductionCertificate'));   // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
 const Outbound = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
-const NewOutbound = asyncComponent(() => import('../pages/CollecManagement/Outbound/newOutbound'));                        // 新建出库
+const NewOutbound = asyncComponent(() => import('../pages/CollecManagement/Outbound/newOutbound'));         // 新建出库
 const Accounts = asyncComponent(() => import('../pages/CollecAccounts'));                                   // 藏品账目
 const Inventory = asyncComponent(() => import('../pages/CollecInventory'));                                 // 藏品盘点
+const NewInventory = asyncComponent(() => import('../pages/CollecInventory/NewInventory'));                 // 新建盘点
 const Solicition = asyncComponent(() => import('../pages/CollecSolicition'));                               // 藏品征集
 const ComlexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo'));               // 复仿制---信息登记
 const ComlexPutIn = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexPutIn'));             // 入库
@@ -56,6 +57,7 @@ class Routes extends Component {
             <Route exact path="/App/NewOutbound" component={NewOutbound} />
             <Route exact path="/App/Accounts" component={Accounts} />
             <Route exact path="/App/Inventory" component={Inventory} />
+            <Route exact path="/App/NewInventory" component={NewInventory} />
             <Route exact path="/App/Solicition" component={Solicition} />
             <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
