@@ -21,7 +21,8 @@ const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Informa
 const Credentials = asyncComponent(() => import('../pages/CollecManagement/Credentials'));                  // 凭证信息列表
 const ProductionCertificate = asyncComponent(() => import('../pages/CollecManagement/Credentials/ProductionCertificate'));   // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
-const Outbount = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
+const Outbound = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
+const NewOutbound = asyncComponent(() => import('../pages/CollecManagement/Outbound/newOutbound'));                        // 新建出库
 const Accounts = asyncComponent(() => import('../pages/CollecAccounts'));                                   // 藏品账目
 const Inventory = asyncComponent(() => import('../pages/CollecInventory'));                                 // 藏品盘点
 const Solicition = asyncComponent(() => import('../pages/CollecSolicition'));                               // 藏品征集
@@ -51,7 +52,8 @@ class Routes extends Component {
             <Route exact path="/App/Credentials" component={Credentials} />
             <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
             <Route exact path="/App/PutInStorage" component={PutInStroage} />
-            <Route exact path="/App/Outbound" component={Outbount} />
+            <Route exact path="/App/Outbound" component={Outbound} />
+            <Route exact path="/App/NewOutbound" component={NewOutbound} />
             <Route exact path="/App/Accounts" component={Accounts} />
             <Route exact path="/App/Inventory" component={Inventory} />
             <Route exact path="/App/Solicition" component={Solicition} />

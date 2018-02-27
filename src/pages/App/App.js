@@ -57,7 +57,7 @@ class App extends Component {
       // console.log(item.key);
       // console.log(pathname);
       if (item.key === pathname) {
-        // console.log('---1')
+        console.log('---1')
         if(item.isHidden) {
           this.setState({
             localtionName: item.title,
@@ -150,8 +150,8 @@ class App extends Component {
                   <a className="ant-dropdown-link" href="javascript:;">
                     <i className="iconBack userIcon" />
                     <span className="userName">
-                      <span style={{ lineHeight: '20px' }}>欢迎登录，</span>
-                      <span style={{ lineHeight: '20px' }} >admin</span>
+                      <span style={{ lineHeight: "20px" }}>欢迎登录，</span>
+                      <span style={{ lineHeight: "20px" }}>admin</span>
                     </span>
                     <i className="iconBack dropdownIcon" />
                   </a>
@@ -166,10 +166,12 @@ class App extends Component {
           </Sider>
           <Content>
             <Col span={24} className="localtion">
-              <i className='iconBack localtion' />当前位置： <span className='localtionName' >{ this.state.localtionName }</span>
+              <i className="iconBack localtion" />当前位置： <span className="localtionName">
+                {this.state.localtionName}
+              </span>
             </Col>
             <Col span={24} className="main-container">
-              <Routes />
+              <Routes RouteChange={this.getLocationName} />
             </Col>
           </Content>
         </Layout>
