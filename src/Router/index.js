@@ -29,6 +29,7 @@ const NewInventory = asyncComponent(() => import('../pages/CollecInventory/NewIn
 const Solicition = asyncComponent(() => import('../pages/CollecSolicition'));                               // 藏品征集
 const AddSolicition = asyncComponent(() => import('../pages/CollecSolicition/AddSolicition'));                 // 藏品征集
 const ComlexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo'));               // 复仿制---信息登记
+const AddComplexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo/AddComplexInfo'));  // 复仿制---信息登记--添加信息
 const ComlexPutIn = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexPutIn'));             // 入库
 const ComlexOutbound = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexOutbound'));       // 出库
 const ImageManagement = asyncComponent(() => import('../pages/ImageManagement'));                           // 图像管理
@@ -62,6 +63,7 @@ class Routes extends Component {
             <Route exact path="/App/Solicition" component={Solicition} />
             <Route exact path="/App/AddSolicition" component={AddSolicition} />
             <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
+            <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
             <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
             <Route exact path="/App/ImageManagement" component={ImageManagement} />
