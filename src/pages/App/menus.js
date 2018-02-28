@@ -23,7 +23,8 @@ export  const menus = [
         { key: '/App/ComplexInfo', title: '信息登记', icon: 'nullIcon' },
         { key: '/App/AddComplexInfo', title: '复仿制管理 > 信息登记 > 添加信息', isHidden: true, fatherName: '/App/ComplexInfo' },
         { key: '/App/ComplexPutIn', title: '藏品入库', icon: 'nullIcon' },
-        { key: '/App/ComplexOutbound', title: '藏品出库', icon: 'nullIcon' }
+        { key: '/App/ComplexOutbound', title: '藏品出库', icon: 'nullIcon' },
+        { key: '/App/NewComplexOutbound', title: '复仿制管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/ComplexOutbound' }
     ]},
     { key: '/App/ImageManagement', title: '影像管理', icon: 'iconBack image' },
     { key: 'WarehouseManagement', title: '库房管理', icon: 'iconBack warehouse', sub: [

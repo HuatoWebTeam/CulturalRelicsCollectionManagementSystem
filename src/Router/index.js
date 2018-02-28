@@ -32,6 +32,7 @@ const ComlexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/Co
 const AddComplexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo/AddComplexInfo'));  // 复仿制---信息登记--添加信息
 const ComlexPutIn = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexPutIn'));             // 入库
 const ComlexOutbound = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexOutbound'));       // 出库
+const NewComplexOutbound = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexOutbound/NewComplexOutbound'));  // 新建出库
 const ImageManagement = asyncComponent(() => import('../pages/ImageManagement'));                           // 图像管理
 const WarehouseInfo = asyncComponent(() => import('../pages/WarehouseManagement/WarehouseInfo'));           // 库房信息维护
 const TankInfo = asyncComponent(() => import('../pages/WarehouseManagement/TankInfo'));                     // 存储柜信息维护
@@ -66,6 +67,7 @@ class Routes extends Component {
             <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
             <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
+            <Route exact parh="/App/NewComplexOutbound" component={NewComplexOutbound} />
             <Route exact path="/App/ImageManagement" component={ImageManagement} />
             <Route exact path="/App/WarehouseInfo" component={WarehouseInfo} />
             <Route exact path="/App/TankInfo" component={TankInfo} />
