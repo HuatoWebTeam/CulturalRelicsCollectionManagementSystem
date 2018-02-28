@@ -67,7 +67,7 @@ class Routes extends Component {
             <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
             <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
-            <Route exact parh="/App/NewComplexOutbound" component={NewComplexOutbound} />
+            <Route exact path="/App/NewComplexOutbound" component={NewComplexOutbound} />
             <Route exact path="/App/ImageManagement" component={ImageManagement} />
             <Route exact path="/App/WarehouseInfo" component={WarehouseInfo} />
             <Route exact path="/App/TankInfo" component={TankInfo} />
