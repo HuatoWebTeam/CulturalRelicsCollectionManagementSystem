@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button  } from 'antd';
 import axios from 'axios';
+import VerifyCode from "../Components/VerificationCode";
 
 const FormItem = Form.Item;
 
@@ -35,6 +36,9 @@ class LoginForm extends Component {
           {getFieldDecorator("password", {
             rules: [{ required: true, message: "请输入密码" }]
           })(<Input type="password" placeholder="密码" />)}
+        </FormItem>
+        <FormItem>
+          <VerifyCode/>
         </FormItem>
         <FormItem>
           <Button htmlType="submit" type="primary">
