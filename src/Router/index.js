@@ -27,6 +27,7 @@ const Accounts = asyncComponent(() => import('../pages/CollecAccounts'));       
 const Inventory = asyncComponent(() => import('../pages/CollecInventory'));                                 // 藏品盘点
 const NewInventory = asyncComponent(() => import('../pages/CollecInventory/NewInventory'));                 // 新建盘点
 const Solicition = asyncComponent(() => import('../pages/CollecSolicition'));                               // 藏品征集
+const AddSolicition = asyncComponent(() => import('../pages/CollecSolicition/AddSolicition'));                 // 藏品征集
 const ComlexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo'));               // 复仿制---信息登记
 const ComlexPutIn = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexPutIn'));             // 入库
 const ComlexOutbound = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexOutbound'));       // 出库
@@ -59,6 +60,7 @@ class Routes extends Component {
             <Route exact path="/App/Inventory" component={Inventory} />
             <Route exact path="/App/NewInventory" component={NewInventory} />
             <Route exact path="/App/Solicition" component={Solicition} />
+            <Route exact path="/App/AddSolicition" component={AddSolicition} />
             <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
             <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
