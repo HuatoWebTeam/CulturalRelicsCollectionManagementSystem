@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { Row, Col } from 'antd';
 
 class ImageManagement extends Component {
     state = {  }
     render() {
         return (
-            <div>影像管理</div>
+            <Row className='image-management-container main-content' >
+                
+            </Row>
         );
     }
 }
