@@ -12,7 +12,8 @@ class TankInfo extends Component {
         tankName: "秦朝书画",
         rfid: "DH1354654+645+",
         tankNum: "CG46843",
-        tankLocaltion: "10排3列"
+        tankLocaltion: "10排3列",
+        key: 0,
       }
     ],
     tanknModalTitle: "添加存储柜信息",
