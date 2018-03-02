@@ -7,6 +7,7 @@ import store from "./Redux";
 import registerServiceWorker from './registerServiceWorker';
 import { LocaleProvider } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import './axios/index';
 // import 'moment/local/zh-cn';
 
 ReactDOM.render(

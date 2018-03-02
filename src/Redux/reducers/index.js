@@ -5,8 +5,10 @@ import { combineReducers } from 'redux';
 import { CLICK_ME } from '../actions';
 
 export let initialState = {
+    
     main:{
-        buttonText: '默认'
+        buttonText: '默认',
+        
     }
 };
 
