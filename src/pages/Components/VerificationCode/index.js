@@ -100,7 +100,8 @@ export default class VerifyCode extends Component {
     state={
         code:''
     }
-    static PropTypes = {
+    
+    static propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
         type: PropTypes.oneOf(['blend', 'number','letter']),
@@ -121,21 +122,27 @@ export default class VerifyCode extends Component {
         onChange:()=>false
     }
     componentDidMount(){
+        
         this.draw()
     }
 
     render(){
+        console.log(this.props);
         const props = this.props;
         return(
-            <canvas ref={props.ref}
-                    onClick={this.draw.bind(this)}
-                    style={{
-                        userSelect:'none'
-                    }}
+            <div style={{display: 'inline-block'}} >
+                <canvas ref={props.ref}
+                        onClick={this.draw.bind(this)}
+                        style={{
+                            userSelect:'none',
+                            verticalAlign: 'top'
+                        }}
 
-                    height={props.height}
-                    width={props.width}>
-            </canvas>
+                        height={props.height}
+                        width={props.width}>
+                </canvas>
+                <span onClick={this.draw.bind(this)} style={{color: '#3065bf', display: 'inline-block', width:'60px', height: '30px', paddingLeft: '10px', cursor: 'pointer'}} >换一张</span>
+            </div>
         )
     }
 
