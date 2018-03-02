@@ -1,0 +1,38 @@
+
+
+.login-container {
+    position: relative;
+    height: 100%;
+    .login-background {
+        height: 45%;
+        background: url('../../assets/img/login_pic.png') no-repeat;
+    }
+    .login-form {
+        position: absolute;
+        width: 540px;
+        height: 420px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        padding: 40px 70px;
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 10px;
+        -moz-box-shadow:1px 1px 5px #ddd, -1px -1px 5px #ddd; 
+        -webkit-box-shadow:1px 1px 5px #ddd, -1px -1px 5px #ddd; 
+        box-shadow:1px 1px 5px #ddd, -1px -1px 5px #ddd;
+        .ant-form {
+            .ant-form-item {
+                .ant-input-affix-wrapper .ant-input:not(:first-child) {
+                    padding-left: 40px;
+                }
+                .ant-input {
+                    height: 40px;
+                }
+            }
+        }
+
+    }
+}
