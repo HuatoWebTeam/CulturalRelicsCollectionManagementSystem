@@ -5,6 +5,7 @@ import {
   Redirect,
   Route
 } from "react-router-dom";
+import Cookie from 'js-cookie';
 
 import App from './pages/App/App';
 import Login from './pages/Login/index';
@@ -12,7 +13,7 @@ import Login from './pages/Login/index';
 
 const fakeAuth = {
   isAuthenticated: () => {
-    let isUserLogin = sessionStorage.getItem('user');
+    let isUserLogin = Cookie.getJSON('UserInfo');
     if(!isUserLogin) {
       return false;
     }
