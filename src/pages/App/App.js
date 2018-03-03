@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Layout, Menu, Dropdown, Col } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
-import { menus } from './menus'
+import { menus } from './menus';
+import Cookie from 'js-cookie';
 import './App.less'
 const { Header, Content, Sider } = Layout;
 
@@ -27,13 +28,30 @@ class App extends Component {
     localtionName: '',
     selectOpenKey: "",
     menuMode: "inline",
-    openKeys: []
+    openKeys: [],
+    UserName: '',
+    UserMenu: []
   };
   componentWillMount () {
+    let UserInfo = Cookie.getJSON('UserInfo');
+    let menu = UserInfo.UserMenuItem;
+    for(let item of menu) {
+      for(let value of menus) {
+        if(item.ProjectModule_URL === value.key) {
+          item.icon = value.icon;
+          break;
+        }
+      }
+    }
+    this.setState({
+      UserName: UserInfo.UserName,
+      UserMenu: UserInfo.UserMenuItem
+    })
+
     this.setMenuOpenKey(this.props);
     this.getLocationName();
-    for(let item of menus ) {
-      if(item.sub) {
+    for(let item of this.state.UserMenu ) {
+      if(item.subnode.length > 0) {
         this.rootSubmenuKeys.push(item.key);
       }
     }
@@ -135,7 +153,8 @@ class App extends Component {
   
 
   render() {
-    // console.log(this.props);
+    const { UserName, UserMenu } = this.state;
+    console.log(UserMenu);
     return <Layout style={{ minHeight: "100%" }}>
         <Header>
           <div className="logoContainer">
@@ -151,7 +170,7 @@ class App extends Component {
                     <i className="iconBack userIcon" />
                     <span className="userName">
                       <span style={{ lineHeight: "20px" }}>欢迎登录，</span>
-                      <span style={{ lineHeight: "20px" }}>admin</span>
+                      <span style={{ lineHeight: "20px" }}>{UserName}</span>
                     </span>
                     <i className="iconBack dropdownIcon" />
                   </a>
@@ -162,7 +181,7 @@ class App extends Component {
         </Header>
         <Layout>
           <Sider>
-            <MenuItem menus={menus} theme="dark" mode={this.state.menuMode} selectedKeys={[this.state.selectOpenKey]} openKeys={this.state.openKeys} onClick={this.menuClick} onOpenChange={this.onOpenChange} />
+            <MenuItem menus={UserMenu} theme="dark" mode={this.state.menuMode} selectedKeys={[this.state.selectOpenKey]} openKeys={this.state.openKeys} onClick={this.menuClick} onOpenChange={this.onOpenChange} />
           </Sider>
           <Content>
             <Col span={24} className="localtion">
