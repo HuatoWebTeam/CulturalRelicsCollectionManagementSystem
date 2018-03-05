@@ -23,16 +23,28 @@ class AddRelicsApp extends Component {
     beforeUpload = (file) => {
         console.log(file);
         const isLt3M = file.size / 1024 /1024 < 3;
-        console.log(this.state);
+        
         if(!isLt3M) {
             message.error('请选择小于3M的图片!!!');
+            return false;
             
         }
-
-        return isLt3M;
+        const render = new FileReader();
+        render.readAsDataURL(file);
+        render.onload = (e) => {
+          file.url = e.target.result;
+          this.setState(({fileList}) => ({
+            fileList: [...fileList, file],
+          }))
+        }
+        console.log(this.state);
+        return true;
     }
     // 选择图片之后
-    handleChange = ({fileList}) => this.setState({fileList});
+    handleChange = ({fileList}) => {
+      // this.setState({fileList});
+      console.log(fileList);
+      };
 
     // 关闭预览
     handleCancel = () => this.setState({ previewVisible: false});
