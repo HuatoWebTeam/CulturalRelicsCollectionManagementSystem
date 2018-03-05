@@ -38,6 +38,7 @@ const WarehouseInfo = asyncComponent(() => import('../pages/WarehouseManagement/
 const TankInfo = asyncComponent(() => import('../pages/WarehouseManagement/TankInfo'));                     // 存储柜信息维护
 const StatisicalAnalysis = asyncComponent(() => import('../pages/StatisicalAnalysis'));                     // 统计分析
 const OperationLog = asyncComponent(() => import('../pages/UserOperation/OperationLog'));                   // 操作日志
+const AssignPermisssions = asyncComponent(() => import('../pages/UserOperation/AssignPermisssions'));                   // 权限分配
 
 
 
@@ -47,38 +48,37 @@ class Routes extends Component {
     render() {
         console.log(this.props)
         return <Switch>
-            
-              <Route exact path="/App/Home" state={{ title: "首页" }} component={Home} />
-              <Route exact path="/App/CollecExhibition" component={CollecExhibition} />
-              <Route exact path="/App/ExhibitionDetails/:id" component={ExhibitionDetails} />
-              <Route exact path="/App/AddExhibition" component={AddExhibition} />
-              <Route exact path="/App/CollecRepair" component={CollecRepair} />
-              <Route exact path="/App/NewRepairList" component={NewRepairList} />
-              <Route exact path="/App/Information" component={Information} />
-              <Route exact path="/App/AddRelics" component={AddRelics} />
-              <Route exact path="/App/Credentials" component={Credentials} />
-              <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
-              <Route exact path="/App/PutInStorage" component={PutInStroage} />
-              <Route exact path="/App/Outbound" component={Outbound} />
-              <Route exact path="/App/NewOutbound" component={NewOutbound} />
-              <Route exact path="/App/Accounts" component={Accounts} />
-              <Route exact path="/App/Inventory" component={Inventory} />
-              <Route exact path="/App/NewInventory" component={NewInventory} />
-              <Route exact path="/App/Solicition" component={Solicition} />
-              <Route exact path="/App/AddSolicition" component={AddSolicition} />
-              <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
-              <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
-              <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
-              <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
-              <Route exact path="/App/NewComplexOutbound" component={NewComplexOutbound} />
-              <Route exact path="/App/ImageManagement" component={ImageManagement} />
-              <Route exact path="/App/WarehouseInfo" component={WarehouseInfo} />
-              <Route exact path="/App/TankInfo" component={TankInfo} />
-              <Route exact path="/App/StatisicalAnalysis" component={StatisicalAnalysis} />
-              <Route exact path="/App/OperationLog" component={OperationLog} />
-              <Route exact path="/App/About" component={About} />
-              <Route render={() => <Redirect to="/App/Home" />} />
-            
+            <Route exact path="/App/Home" state={{ title: "首页" }} component={Home} />
+            <Route exact path="/App/CollecExhibition" component={CollecExhibition} />
+            <Route exact path="/App/ExhibitionDetails/:id" component={ExhibitionDetails} />
+            <Route exact path="/App/AddExhibition" component={AddExhibition} />
+            <Route exact path="/App/CollecRepair" component={CollecRepair} />
+            <Route exact path="/App/NewRepairList" component={NewRepairList} />
+            <Route exact path="/App/Information" component={Information} />
+            <Route exact path="/App/AddRelics" component={AddRelics} />
+            <Route exact path="/App/Credentials" component={Credentials} />
+            <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
+            <Route exact path="/App/PutInStorage" component={PutInStroage} />
+            <Route exact path="/App/Outbound" component={Outbound} />
+            <Route exact path="/App/NewOutbound" component={NewOutbound} />
+            <Route exact path="/App/Accounts" component={Accounts} />
+            <Route exact path="/App/Inventory" component={Inventory} />
+            <Route exact path="/App/NewInventory" component={NewInventory} />
+            <Route exact path="/App/Solicition" component={Solicition} />
+            <Route exact path="/App/AddSolicition" component={AddSolicition} />
+            <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
+            <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
+            <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
+            <Route exact path="/App/ComplexOutbound" component={ComlexOutbound} />
+            <Route exact path="/App/NewComplexOutbound" component={NewComplexOutbound} />
+            <Route exact path="/App/ImageManagement" component={ImageManagement} />
+            <Route exact path="/App/WarehouseInfo" component={WarehouseInfo} />
+            <Route exact path="/App/TankInfo" component={TankInfo} />
+            <Route exact path="/App/StatisicalAnalysis" component={StatisicalAnalysis} />
+            <Route exact path="/App/OperationLog" component={OperationLog} />
+            <Route exact path="/App/AssignPermisssions" component={AssignPermisssions} />
+            <Route exact path="/App/About" component={About} />
+            <Route render={() => <Redirect to="/App/Home" />} />
           </Switch>;
     }
 }
