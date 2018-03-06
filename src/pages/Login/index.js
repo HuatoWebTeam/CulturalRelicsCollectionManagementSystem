@@ -115,7 +115,7 @@ class LoginForm extends Component {
                 }} height={40} width={120} />
             </FormItem>
             <FormItem>
-              <Button htmlType="submit" type="primary" style={{ width: "100%", height: "40px" }}>
+              <Button htmlType="submit" type="primary" loading={this.state.loading} style={{ width: "100%", height: "40px" }}>
                 登录
               </Button>
             </FormItem>
