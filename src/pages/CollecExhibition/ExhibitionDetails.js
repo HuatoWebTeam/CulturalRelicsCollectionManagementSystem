@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 // import { relicDetails } from './data';
 import './index.less';
+import { ExhibitionDetailsApi } from './api';
 
 class ExhibitionDetails extends Component {
   state = {
-    id: null
+    id: null,
+    pageIndex: 1,
+    total: 0,
+    data: []
   };
 
   componentWillMount() {
@@ -14,7 +18,53 @@ class ExhibitionDetails extends Component {
       id: this.props.match.params.id
     });
   }
+  componentDidMount() {
+    this.getDetailsList();
 
+  }
+  getDetailsList () {
+    const { pageIndex, id } = this.state;
+    let params = {
+      pageIndex: pageIndex,
+      Exhibition_Odd: id
+    };
+    ExhibitionDetailsApi(params).then(res => {
+      console.log(res);
+      if (res.length > 0) {
+        this.setState({ total: res[0].Count });
+        let dataSource = [];
+        for (let item of res) {
+          dataSource.push({
+            key: item.Collection_Number,
+            serialNum: item.Collection_Number,
+            img: item.Collection_img,
+            name: item.Collection_Name,
+            number: item.Number,
+            levelInfo: item.Grade,
+            material: item.MaterialQuality,
+            years: item.Collection_Years,
+            howComplete: item.Integrity,
+            relicState: item.Collection_State,
+            exhibitionState: item.ExhibitionState
+          });
+          this.setState({ data: dataSource });
+        }
+      };
+      
+      this.setState({ total: 0 });
+      
+
+
+    })
+    
+  };
+
+  paginationChange (page) {
+    this.setState({
+      pageIndex: page
+    });
+    this.getDetailsList()
+  }
   dataSoure = [
     {
       serialNum: "CPOhkjfg213",
@@ -58,6 +108,7 @@ class ExhibitionDetails extends Component {
   ];
 
   render() {
+    const { total, pageIndex, data } = this.state;
     const relicDetails = [
       {
         title: "文物编号",
@@ -154,7 +205,7 @@ class ExhibitionDetails extends Component {
           藏品展览详情
         </Col>
         <Col span={24} className="exhibition-content" style={{marginTop: '20px'}} >
-          <Table bordered columns={relicDetails} dataSource={this.dataSoure} />
+          <Table pagination={{ total: total, onChange: this.paginationChange }} bordered columns={relicDetails} dataSource={data} />
         </Col>
       </Row>
     );
