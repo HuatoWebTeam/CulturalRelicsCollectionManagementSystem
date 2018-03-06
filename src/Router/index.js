@@ -38,7 +38,7 @@ const WarehouseInfo = asyncComponent(() => import('../pages/WarehouseManagement/
 const TankInfo = asyncComponent(() => import('../pages/WarehouseManagement/TankInfo'));                     // 存储柜信息维护
 const StatisicalAnalysis = asyncComponent(() => import('../pages/StatisicalAnalysis'));                     // 统计分析
 const OperationLog = asyncComponent(() => import('../pages/UserOperation/OperationLog'));                   // 操作日志
-const AssignPermisssions = asyncComponent(() => import('../pages/UserOperation/AssignPermisssions'));                   // 权限分配
+const AssignPermissions = asyncComponent(() => import('../pages/UserOperation/AssignPermissions'));         // 权限分配
 
 
 
@@ -46,7 +46,7 @@ const AssignPermisssions = asyncComponent(() => import('../pages/UserOperation/A
 class Routes extends Component {
     
     render() {
-        console.log(this.props)
+        // console.log(this.props)
         return <Switch>
             <Route exact path="/App/Home" state={{ title: "首页" }} component={Home} />
             <Route exact path="/App/CollecExhibition" component={CollecExhibition} />
@@ -76,7 +76,7 @@ class Routes extends Component {
             <Route exact path="/App/TankInfo" component={TankInfo} />
             <Route exact path="/App/StatisicalAnalysis" component={StatisicalAnalysis} />
             <Route exact path="/App/OperationLog" component={OperationLog} />
-            <Route exact path="/App/AssignPermisssions" component={AssignPermisssions} />
+            <Route exact path="/App/AssignPermisssions" component={AssignPermissions} />
             <Route exact path="/App/About" component={About} />
             <Route render={() => <Redirect to="/App/Home" />} />
           </Switch>;
