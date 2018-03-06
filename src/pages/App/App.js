@@ -144,39 +144,64 @@ class AppContent extends Component {
 
   dropdownChange = ({ key }) => {
     console.log(key);
-    if(key === '设置') {
+    if (key === "设置") {
       this.setState({
-        setPwdVisible: true,
-      })
-    };
+        setPwdVisible: true
+      });
+    } else {
+      this.showConfirm();
+    }
 
-  this.showConfirm();
   };
- 
- // 
- showConfirm = () => {
-   confirm({
-     title: '提示',
-     content: '确认退出？',
-     onOk() {
-       console.log('ok');
-     },
-     onCancel () {
-       return false;
-     }
-   })
- }
+
+  //
+  showConfirm = () => {
+    const _this = this;
+    confirm({
+      title: "提示",
+      content: "确认退出？",
+      onOk() {
+        console.log("ok");
+        Cookie.remove('UserInfo');
+        setTimeout(() => {
+          _this.props.history.push("/login");
+        }, 500);
+        
+      },
+      onCancel() {
+        return false;
+      }
+    });
+  };
+
+  handleCancel = () => {
+    this.setState({
+      setPwdVisible: false
+    });
+  };
+
+  handleOk = () => {
+    console.log('ok');
+    this.setState({
+      setPwdVisible: false
+    })
+  }
 
   render() {
     const { UserName, UserMenu, setPwdVisible } = this.state;
     // console.log(UserMenu);
-    const dropdownMenu = <Menu className="system-dropdown" onClick={this.dropdownChange}>
-        {menuName.map((item, idx) => <Menu.Item key={item.title}>
+    const dropdownMenu = (
+      <Menu className="system-dropdown" onClick={this.dropdownChange}>
+        {menuName.map((item, idx) => (
+          <Menu.Item key={item.title}>
             <Icon type={item.icon} />
             <span> {item.title} </span>
-          </Menu.Item>)}
-      </Menu>;
-    return <Layout style={{ minHeight: "100%" }}>
+          </Menu.Item>
+        ))}
+      </Menu>
+    );
+    return (
+      <Layout style={{ minHeight: "100%" }}>
         <Header>
           <div className="logoContainer">
             <div className="logo iconBack" />
@@ -199,15 +224,32 @@ class AppContent extends Component {
               </div>
             </div>
           </div>
-          <Modal visible={setPwdVisible} title="修改密码">
+          <Modal
+            visible={setPwdVisible}
+            title="修改密码"
+            onCancel={this.handleCancel}
+            onOk={this.handleOk}
+          >
             <Form>
-              <Form.Item label="原密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+              <Form.Item
+                label="原密码:"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 16 }}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item label="密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+              <Form.Item
+                label="密码:"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 16 }}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item label="确认密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+              <Form.Item
+                label="确认密码:"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 16 }}
+              >
                 <Input />
               </Form.Item>
             </Form>
@@ -215,13 +257,20 @@ class AppContent extends Component {
         </Header>
         <Layout>
           <Sider>
-            <MenuItem menus={UserMenu} theme="dark" mode={this.state.menuMode} selectedKeys={[this.state.selectOpenKey]} openKeys={this.state.openKeys} onClick={this.menuClick} onOpenChange={this.onOpenChange} />
+            <MenuItem
+              menus={UserMenu}
+              theme="dark"
+              mode={this.state.menuMode}
+              selectedKeys={[this.state.selectOpenKey]}
+              openKeys={this.state.openKeys}
+              onClick={this.menuClick}
+              onOpenChange={this.onOpenChange}
+            />
           </Sider>
           <Content>
             <Col span={24} className="localtion">
-              <i className="iconBack localtion" />当前位置： <span className="localtionName">
-                {this.state.localtionName}
-              </span>
+              <i className="iconBack localtion" />当前位置：{" "}
+              <span className="localtionName">{this.state.localtionName}</span>
             </Col>
             <Col span={24} className="main-container">
               <Routes RouteChange={this.getLocationName} />
@@ -229,7 +278,8 @@ class AppContent extends Component {
           </Content>
         </Layout>
         {/* <Footer>Footer</Footer> */}
-      </Layout>;
+      </Layout>
+    );
   }
 }
 
