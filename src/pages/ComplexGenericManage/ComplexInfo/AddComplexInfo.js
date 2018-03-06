@@ -49,6 +49,8 @@ class AddSilicition extends Component {
   };
 
   render() {
+    // console.log(this.props);
+    const { getFieldDecorator } = this.props.form;
     const { previewVisible, previewImage, fileList } = this.state;
     const uploadButton = (
       <div>
@@ -57,123 +59,78 @@ class AddSilicition extends Component {
       </div>
     );
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           添加信息
         </Col>
         <Col span={24} className="addComplexInfo-container">
           <Form layout="inline" style={{ width: "710px" }}>
-            <FormItem
-              label="文物图片:"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              style={{ width: "100%" }}
-            >
-              <Upload
-                action="//jsonplaceholder.typicode.com/posts/"
-                listType="picture-card"
-                fileList={fileList}
-                beforeUpload={this.beforeUpload}
-              >
+            <FormItem label="文物图片:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
+              <Upload action="//jsonplaceholder.typicode.com/posts/" listType="picture-card" fileList={fileList} beforeUpload={this.beforeUpload}>
                 {fileList.length >= 3 ? null : uploadButton}
               </Upload>
-              <Modal
-                visible={previewVisible}
-                footer={null}
-                onCancel={this.handleCancel}
-              >
-                <img
-                  alt="upload"
-                  src={previewImage}
-                  style={{ width: "100%" }}
-                />
+              <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                <img alt="upload" src={previewImage} style={{ width: "100%" }} />
               </Modal>
             </FormItem>
-            <FormItem
-              label="文物名称"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="文物名称" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("relicsName", {
+                rules: [{ required: true, message: "请输入文物名称" }]
+              })(<Input placeholder="请输入文物名称" />)}
             </FormItem>
-            <FormItem
-              label="RFID标签:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="RFID标签:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("rfid", {
+                rules: [{ required: true, message: "请输入RFID标签" }]
+              })(<Input placeholder="请输入RFID标签" />)}
             </FormItem>
-            <FormItem
-              label="征集时间:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <DatePicker />
+            <FormItem label="征集时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("date", {
+                rules: [{ required: true, message: "请选择征集时间" }]
+              })(<DatePicker />)}
             </FormItem>
-            <FormItem
-              label="分级信息:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Select>
-                <Option value="0">一级文物</Option>
-              </Select>
+            <FormItem label="分级信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("levelInfo", {
+                initialValue: 0,
+                rules: [{ required: true, message: "请选择分级信息" }]
+              })(<Select>
+                  <Option value={0}>一级文物</Option>
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="数量:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="数量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("number", {
+                rules: [{ required: true, message: "请输入数量" }]
+              })(<Input placeholder="请输入数量" />)}
             </FormItem>
-            <FormItem
-              label="类别:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Select>
-                <Option value="0">青铜器</Option>
-              </Select>
+            <FormItem label="类别:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("category", {
+                initialValue: 0,
+                rules: [{ required: true, message: "请选择类别" }]
+              })(<Select>
+                  <Option value={0}>青铜器</Option>
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="材质:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="材质:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("material", {
+                rules: [{ required: true, message: "请输入材质" }]
+              })(<Input placeholder="请输入材质" />)}
             </FormItem>
-            <FormItem
-              label="重量:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="重量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("weight", {
+                rules: [{ required: true, message: "请输入重量" }]
+              })(<Input placeholder="请输入重量" />)}
             </FormItem>
-            <FormItem
-              label="尺寸:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
-              <Input />
+            <FormItem label="尺寸:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("size", {
+                rules: [{ required: true, message: "请输入尺寸" }]
+              })(<Input placeholder='请输入尺寸' />)}
             </FormItem>
             <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
               <Button type="primary">提交</Button>
             </FormItem>
           </Form>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
-
-export default AddSilicition;
+const AddComplexInfo = Form.create()(AddSilicition);
+export default AddComplexInfo;

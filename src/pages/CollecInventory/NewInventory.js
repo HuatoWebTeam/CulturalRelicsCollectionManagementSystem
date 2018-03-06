@@ -69,7 +69,7 @@ class NewInventory extends Component {
                     <DatePicker />
                   </FormItem>
                   <FormItem label="盘点人:" className="form-width50" >
-                    <Input />
+                    <Input placeholder='请输入盘点人' />
                   </FormItem>
                   <Col span={24} style={{ padding: "20px 70px" }}>
                     <Button type="primary">选择盘点文物</Button>

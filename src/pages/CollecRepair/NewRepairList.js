@@ -106,39 +106,56 @@ class NewRepairListApp extends Component {
             </Col>
             <Col span={24} className="new-repair-container">
               <Form onSubmit={this.formSubmit.bind(this)} layout="inline">
-                <Col span={24} style={{width: '730px'}} >
-                    <FormItem label="申请时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
-                        {getFieldDecorator("date", {
-                            rules: [
-                            { required: true, message: "请选择申请时间" }
-                            ]
-                        })(<DatePicker placeholder='请选择时间' />)}
-                    </FormItem>
-                    <FormItem label="申请人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
-                        {getFieldDecorator("head", {
-                            rules: [{ required: true, message: "请输入申请人" }]
-                        })(<Input placeholder="请输入申请人" />)}
-                    </FormItem>
-                    <FormItem label="修复方案:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
-                        {getFieldDecorator("repairPlan", {
-                            rules: [
-                            { required: true, message: "请输入修复方案" }
-                            ]
-                        })(<TextArea />)}
-                    </FormItem>
-                    <FormItem label="预期修复结果:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
-                        {getFieldDecorator("repairResult", {
-                            rules: [
-                            { required: true, message: "请输入预期修复结果" }
-                            ]
-                        })(<TextArea />)}
-                    </FormItem>
+                <Col span={24} style={{ width: "730px" }}>
+                  <FormItem label="申请时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("date", {
+                      rules: [
+                        { required: true, message: "请选择申请时间" }
+                      ]
+                    })(<DatePicker placeholder="请选择时间" />)}
+                  </FormItem>
+                  <FormItem label="申请人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("head", {
+                      rules: [
+                        { required: true, message: "请输入申请人" }
+                      ]
+                    })(<Input placeholder="请输入申请人" />)}
+                  </FormItem>
+                  <FormItem label="修复编号:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("repairNumber", {
+                      rules: [
+                        { required: true, message: "请输入修复编号" }
+                      ]
+                    })(<Input placeholder='请输入修复编号' />)}
+                  </FormItem>
+                  <FormItem label="修复方案:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("repairPlan", {
+                      rules: [
+                        { required: true, message: "请输入修复方案" }
+                      ]
+                    })(<Input />)}
+                  </FormItem>
+                  <FormItem label="预期修复结果:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
+                    {getFieldDecorator("repairResult", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "请输入预期修复结果"
+                        }
+                      ]
+                    })(<TextArea />)}
+                  </FormItem>
                 </Col>
-                <Col span={24} >
-                    <Table columns={repairListColumns} dataSource={repairListData} bordered pagination={false} />
+                <Col span={24} style={{ marginBottom: "20px", marginLeft: "121px" }}>
+                  <Button type="primary">选择修复文物</Button>
                 </Col>
-                <Col span={24} style={{padding: '20px 0'}} >
-                    <Button type='primary' htmlType='submit' style={{float: 'right'}} >提交修复单</Button>
+                <Col span={24}>
+                  <Table columns={repairListColumns} dataSource={repairListData} bordered pagination={false} />
+                </Col>
+                <Col span={24} style={{ padding: "20px 0" }}>
+                  <Button type="primary" htmlType="submit" style={{ float: "right" }}>
+                    提交修复单
+                  </Button>
                 </Col>
               </Form>
             </Col>

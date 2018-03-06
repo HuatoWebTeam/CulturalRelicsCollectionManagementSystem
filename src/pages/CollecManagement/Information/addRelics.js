@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Upload, Modal, Icon, Select, Button, message } from 'antd';
+import { Row, Col, Form, Input, Upload, Modal, Icon, Select, Button, message, DatePicker } from 'antd';
 import './index.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -61,7 +61,7 @@ class AddRelicsApp extends Component {
 
     render() {
 
-        const { getFieldDecorator } = this.props;
+        const { getFieldDecorator } = this.props.form;
         const { previewVisible, previewImage, fileList } = this.state;
         const uploadButton = (
             <div>
@@ -74,14 +74,9 @@ class AddRelicsApp extends Component {
               新增藏品
             </Col>
             <Col span={24} style={{ padding: "40px 100px" }} className="add-relics">
-              <Form layout="inline" style={{ width: "710px" }} onSubmit={this.handleSubmit.bind(this)} >
+              <Form layout="inline" style={{ width: "710px" }} onSubmit={this.handleSubmit.bind(this)}>
                 <FormItem label="文物图片" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
-                  <Upload 
-                  action="//jsonplaceholder.typicode.com/posts/" 
-                  listType="picture-card" fileList={fileList} 
-                  beforeUpload={this.beforeUpload}
-                  onPreview={this.handlePreview} 
-                  onChange={this.handleChange}>
+                  <Upload action="//jsonplaceholder.typicode.com/posts/" listType="picture-card" fileList={fileList} beforeUpload={this.beforeUpload} onPreview={this.handlePreview} onChange={this.handleChange}>
                     {fileList.length >= 3 ? null : uploadButton}
                   </Upload>
                   <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
@@ -92,70 +87,139 @@ class AddRelicsApp extends Component {
                   </span>
                 </FormItem>
                 <FormItem className="form-width50" label="文物名称:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("relicsName", {
+                    rules: [
+                      { required: true, message: "请输入文物名称" }
+                    ]
+                  })(<Input placeholder="请输入文物名称" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="入库类型:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">新增入库</Option>
-                  </Select>
+                  {getFieldDecorator("type", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择文物类型" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>新增入库</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="RFID标签:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("rfid", {
+                    rules: [
+                      { required: true, message: "请输入RFID标签" }
+                    ]
+                  })(<Input placeholder="请输入RFID标签" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="存台箱号:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">新增入库</Option>
-                  </Select>
+                  {getFieldDecorator("carton", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择存台箱号" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>新增入库</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="文物编号:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("relicsNum", {
+                    rules: [
+                      { required: true, message: "请输入文物编号" }
+                    ]
+                  })(<Input placeholder="请输入文物编号" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="分级信息:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">普通藏品</Option>
-                    <Option value="1">一级文物</Option>
-                  </Select>
+                  {getFieldDecorator("levalInfo", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择分级信息" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>普通藏品</Option>
+                      <Option value={1}>一级文物</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="文物数量:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("number", {
+                    rules: [
+                      { required: true, message: "请输入文物数量" }
+                    ]
+                  })(<Input placeholder="请输入文物数量" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="文物状态:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">馆内自藏品</Option>
-                    <Option value="1">新增入库</Option>
-                  </Select>
+                  {getFieldDecorator("relicsState", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择文物状态" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>馆内自藏品</Option>
+                      <Option value={1}>新增入库</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="入馆时间:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("date", {
+                    rules: [
+                      { required: true, message: "请选择入馆时间" }
+                    ]
+                  })(<DatePicker />)}
                 </FormItem>
                 <FormItem className="form-width50" label="年代:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">唐</Option>
-                    <Option value="1">宋</Option>
-                  </Select>
+                  {getFieldDecorator("relicsYears", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择文物年代" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>唐</Option>
+                      <Option value={1}>宋</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="材质:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("material", {
+                    rules: [
+                      { required: true, message: "请输入文物材质" }
+                    ]
+                  })(<Input placeholder="请输入文物材质" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="类别:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">新增入库</Option>
-                  </Select>
+                  {getFieldDecorator("category", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择文物类别" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>新增入库</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="重量:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("weight", {
+                    rules: [
+                      { required: true, message: "请输入文物重量" }
+                    ]
+                  })(<Input placeholder="请输入文物重量" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="完整程度:" labelCol={{ span: 8 }}>
-                  <Select defaultValue="0">
-                    <Option value="0">破损</Option>
-                    <Option value="1">完整</Option>
-                  </Select>
+                  {getFieldDecorator("howComplete", {
+                    initialValue: 0,
+                    rules: [
+                      { required: true, message: "请选择完整程度" }
+                    ]
+                  })(<Select>
+                      <Option value={0}>破损</Option>
+                      <Option value={1}>完整</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem className="form-width50" label="尺寸:" labelCol={{ span: 8 }}>
-                  <Input />
+                  {getFieldDecorator("size", {
+                    rules: [
+                      { required: true, meaage: "请输入文物尺寸" }
+                    ]
+                  })(<Input placeholder='请输入文物尺寸' />)}
                 </FormItem>
-                <FormItem style={{width: '100%'}} wrapperCol={{offset: 4}} >
-                    <Button type='primary' htmlType='submit' >提交</Button>
+                <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
+                  <Button type="primary" htmlType="submit">
+                    提交
+                  </Button>
                 </FormItem>
               </Form>
             </Col>
