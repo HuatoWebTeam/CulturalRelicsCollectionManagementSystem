@@ -1,43 +1,36 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Dropdown, Col } from "antd";
+import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, Input } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus';
 import Cookie from 'js-cookie';
 import './App.less'
 const { Header, Content, Sider } = Layout;
+const confirm = Modal.confirm;
 
-const menuName = ['退出'];
+const menuName = [{ title: '设置', icon: 'setting' }, { title: '退出', icon: 'logout'}];
 
-const dropdownMenu = (
-  <Menu>
-    {
-      menuName.map((item, idx) => 
-        <Menu.Item key={idx} >
-          {item}
-        </Menu.Item>
-      )
-    }
-  </Menu>
-)
 
-class App extends Component {
 
+
+
+class AppContent extends Component {
   rootSubmenuKeys = [];
   state = {
-    localtionName: '',
+    localtionName: "",
     selectOpenKey: "",
     menuMode: "inline",
     openKeys: [],
-    UserName: '',
-    UserMenu: []
+    UserName: "",
+    UserMenu: [],
+    setPwdVisible: false
   };
-  componentWillMount () {
-    let UserInfo = Cookie.getJSON('UserInfo');
+  componentWillMount() {
+    let UserInfo = Cookie.getJSON("UserInfo");
     let menu = UserInfo.UserMenuItem;
-    for(let item of menu) {
-      for(let value of menus) {
-        if(item.ProjectModule_URL === value.key) {
+    for (let item of menu) {
+      for (let value of menus) {
+        if (item.ProjectModule_URL === value.key) {
           item.icon = value.icon;
           break;
         }
@@ -46,21 +39,20 @@ class App extends Component {
     this.setState({
       UserName: UserInfo.UserName,
       UserMenu: UserInfo.UserMenuItem
-    })
+    });
 
     this.setMenuOpenKey(this.props);
     this.getLocationName();
-    for(let item of this.state.UserMenu ) {
-      if(item.subnode.length > 0) {
+    for (let item of this.state.UserMenu) {
+      if (item.subnode.length > 0) {
         this.rootSubmenuKeys.push(item.key);
       }
     }
-    
+
     // console.log(this.rootSubmenuKeys)
   }
   componentDidMount() {
     // console.log(this.props);
-    
     // window.addEventListener("scroll", this.handleScroll);
   }
 
@@ -68,21 +60,21 @@ class App extends Component {
     console.log("卸载");
   }
 
-  getLocationName (keys) {
+  getLocationName(keys) {
     console.log(this.props);
     const pathname = keys || this.props.location.pathname;
     for (let item of menus) {
       // console.log(item.key);
       // console.log(pathname);
       if (item.key === pathname) {
-        console.log('---1')
-        if(item.isHidden) {
+        console.log("---1");
+        if (item.isHidden) {
           this.setState({
             localtionName: item.title,
             selectOpenKey: item.fatherName
           });
           break;
-        } 
+        }
         this.setState({ localtionName: item.title });
         break;
       } else if (pathname.indexOf(item.key) !== -1) {
@@ -104,17 +96,17 @@ class App extends Component {
               localtionName: name.title,
               selectOpenKey: name.fatherName,
               openKeys: [item.key]
-            })
+            });
             break;
-          } else if (name.key === pathname ) {
-            this.setState({ 
-              localtionName: item.title + ' > ' + name.title,
+          } else if (name.key === pathname) {
+            this.setState({
+              localtionName: item.title + " > " + name.title,
               openKeys: [item.key]
             });
             break;
           }
         }
-      } 
+      }
     }
   }
   //
@@ -130,7 +122,7 @@ class App extends Component {
   openMenu = v => {
     console.log(v);
   };
-  menuClick = (item) => {
+  menuClick = item => {
     console.log(item);
     this.getLocationName(item.key);
     this.setState({ selectOpenKey: item.key });
@@ -150,11 +142,40 @@ class App extends Component {
     }
   };
 
-  
+  dropdownChange = ({ key }) => {
+    console.log(key);
+    if(key === '设置') {
+      this.setState({
+        setPwdVisible: true,
+      })
+    };
+
+  this.showConfirm();
+  };
+ 
+ // 
+ showConfirm = () => {
+   confirm({
+     title: '提示',
+     content: '确认退出？',
+     onOk() {
+       console.log('ok');
+     },
+     onCancel () {
+       return false;
+     }
+   })
+ }
 
   render() {
-    const { UserName, UserMenu } = this.state;
-    console.log(UserMenu);
+    const { UserName, UserMenu, setPwdVisible } = this.state;
+    // console.log(UserMenu);
+    const dropdownMenu = <Menu className="system-dropdown" onClick={this.dropdownChange}>
+        {menuName.map((item, idx) => <Menu.Item key={item.title}>
+            <Icon type={item.icon} />
+            <span> {item.title} </span>
+          </Menu.Item>)}
+      </Menu>;
     return <Layout style={{ minHeight: "100%" }}>
         <Header>
           <div className="logoContainer">
@@ -178,6 +199,19 @@ class App extends Component {
               </div>
             </div>
           </div>
+          <Modal visible={setPwdVisible} title="修改密码">
+            <Form>
+              <Form.Item label="原密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="确认密码:" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
         </Header>
         <Layout>
           <Sider>
@@ -198,5 +232,7 @@ class App extends Component {
       </Layout>;
   }
 }
+
+const App = Form.create()(AppContent);
 
 export default App;
