@@ -1,0 +1,13 @@
+
+
+文物RFID：rfid
+储柜RFID：cabinet
+文物编号：relicsNum
+文物图片：relicsImg
+文物名称：relicsName
+储存位置：localtion
+数量： number
+分级信息：levelInfo
+材质：material
+年代：years
+完整程度：howComplete
