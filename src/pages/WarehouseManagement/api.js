@@ -22,3 +22,16 @@ export const InsertStorehouse = (params) => {
 export const GetStorageeManageData = (params) => {
     return axios.post("/WarehouseManage/GetStorageeManageData", params).then(res => res.data)
 }
+
+// 编辑存储柜信息
+
+export const UpdateStorage = (params) => {
+    return axios.post("/WarehouseManage/UpdateStorage", params).then(res => res.data);
+}
+
+
+// 新增存储柜信息
+
+export const InsertStorage = (params) => {
+    return axios.post("/WarehouseManage/InsertStorage", params).then(res => res.data);
+}

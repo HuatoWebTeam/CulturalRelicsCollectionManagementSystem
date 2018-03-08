@@ -32,7 +32,7 @@ export  const menus = [
         { key: '/App/TankInfo', title: '存储柜信息维护', icon: 'nullIcon' }
     ] },
     { key: '/App/StatisicalAnalysis', title: '统计分析', icon: 'iconBack statisic' },
-    { key: 'UserManagement', title: '用户操作管理', icon: 'iconBack user', sub: [
+    { key: 'UserManagement', title: '用户管理', icon: 'iconBack user', sub: [
         { key: '/App/OperationLog', title: '操作日志', icon: 'nullIcon' },
         { key: '/App/AssignPermisssions', title: '权限分配', icon: 'nullIcon' }
     ]}
