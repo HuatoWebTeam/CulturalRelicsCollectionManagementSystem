@@ -1,44 +1,75 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
+import { GetCollectionCertificationData } from "./api";
 
 const Search = Input.Search;
 
 class ComplexGeneric extends Component {
     state = {  
-        billData: [
-            {
-                key: 0,
-                rfid: 'DH12354684653',
-                relicsImg: require('../../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                date: '2018-02-26',
-                number: 1,
-                levelInfo: '普通藏品',
-                material: '陶器',
-                years: '唐',
-                howComplete: '破损',
-                state: '代管文物',
-                category: '人物'
+        billData: [ ],
+        condition: '',
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0
+    }
+
+    componentWillMount() {
+        this.getCredentialsList();
+    }
+
+    getCredentialsList() {
+        const { condition, pageIndex, pageSize } = this.state;
+
+        let params = {
+            parameters: {
+                Condition: condition,
+                PageeIndex: pageIndex,
+                PageSize: pageSize
             }
-        ]
+        };
+        GetCollectionCertificationData(params).then(res => {
+            console.log(res);
+            let data = res.Data;
+            for(let item of data) {
+                item.key = item.CollectionNumber;
+            };
+            this.setState({
+                billData: data,
+                total: res.Total
+            })
+        })
+    }
+
+    paginationChange = (page) => {
+        this.setState({
+            pageIndex: page
+        }, () => {
+            this.getCredentialsList();
+        })
     }
 
     handleSearch (value) {
         console.log(value);
+        this.setState({
+            condition: value,
+            pageIndex: 1
+        }, () => {
+            this.getCredentialsList();
+        })
     }
     render() {
-        const { billData } = this.state;
+        const { billData, pageIndex, pageSize, total } = this.state;
         const billColumns = [
             {
                 title: 'RFID号',
-                dataIndex: 'rfid',
-                key: 'rfid'
+                dataIndex: 'CollectionRfid',
+                key: 'CollectionRfid'
             },
             {
                 title: '文物图片',
-                dataIndex: 'relicsImg',
-                key: 'relicaImg',
+                dataIndex: 'Collectionimg1',
+                key: 'Collectionimg1',
                 render: (text, idx) => {
                     return (
                         <img style={{width: '55px', height: '55px'}}
@@ -48,48 +79,48 @@ class ComplexGeneric extends Component {
             },
             {
                 title: '文物名称',
-                dataIndex: 'relicsName',
-                key: 'relicsName'
+                dataIndex: 'CollectionName',
+                key: 'CollectionName'
             },
             {
                 title: '入馆时间',
-                dataIndex: 'date',
-                key: 'date'
+                dataIndex: 'CollectionTime',
+                key: 'CollectionTime'
             },
             {
                 title: '数量',
-                dataIndex: 'number',
-                key: 'number'
+                dataIndex: 'Number',
+                key: 'Number'
             },
             {
                 title: '分级信息',
-                dataIndex: 'levelInfo',
-                key: 'levelInfo'
+                dataIndex: 'Grade',
+                key: 'Grade'
             },
             {
                 title: '材质',
-                dataIndex: 'material',
-                key: 'material'
+                dataIndex: 'MaterialQuality',
+                key: 'MaterialQuality'
             },
             {
                 title: '年代',
-                dataIndex: 'years',
-                key: 'years'
+                dataIndex: 'CollectionYears',
+                key: 'CollectionYears'
             },
             {
                 title: '完整程度',
-                dataIndex: 'howComplete',
-                key: 'howComplete'
+                dataIndex: 'Integrity',
+                key: 'Integrity'
             },
             {
                 title: '状态',
-                dataIndex: 'state',
-                key: 'state'
+                dataIndex: 'CollectionState',
+                key: 'CollectionState'
             },
             {
                 title: '类别',
-                dataIndex: 'category',
-                key: 'category'
+                dataIndex: 'Category',
+                key: 'Category'
             }
 
         ]
@@ -103,13 +134,13 @@ class ComplexGeneric extends Component {
                             制作凭证
                         </Button>
                         <Search 
-                        style={{width: '260px', float: 'right'}}
+                         style={{width: '260px', float: 'right'}}
                          enterButton
                          onSearch={this.handleSearch}
                          />
                     </Col>
                     <Col span={24} >
-                        <Table columns={billColumns} dataSource={billData}  bordered />
+                        <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange  }} columns={billColumns} dataSource={billData}  bordered />
                     </Col>
                 </Col>
             </Row>

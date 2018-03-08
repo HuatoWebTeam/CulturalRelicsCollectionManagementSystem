@@ -147,6 +147,16 @@ class ComplexGeneric extends Component {
                 title: '重量',
                 dataIndex: 'weight',
                 key: 'weight'
+            },
+            {
+                title: '编辑',
+                dataIndex: '',
+                key: 'operation',
+                render: (text, record) => {
+                    return (
+                        <Button type='primary' >编辑</Button>
+                    )
+                }
             }
         ]
 

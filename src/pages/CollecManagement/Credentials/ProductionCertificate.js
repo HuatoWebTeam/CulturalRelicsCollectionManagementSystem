@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Select, DatePicker, Button } from 'antd';
 import './index.less';
+import { CollectionCertification } from './api';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -14,12 +15,22 @@ class ProductionCertificateApp extends Component {
            const values = { ...fieldsValue, 'date': fieldsValue['date'].format("YYYY-MM-DD") };
            console.log(values);
            // this.props.history.push("/App/Home");
+           let params = {
+             collection: {
+               CollectionNumber: values.relicsNum,
+               CollectionRfid: values.rfid,
+               Number: values.number
+             }
+           }
+           CollectionCertification(params).then(res => {
+             console.log(res);
+           })
          }
        });
     }
 
     render() {
-        console.log(this.props);
+        // console.log(this.props);
         const { getFieldDecorator } = this.props.form;
         return <Row className="main-content">
             <Col className="title">凭证制作</Col>
@@ -38,20 +49,11 @@ class ProductionCertificateApp extends Component {
                   })(<Input />)}
                 </FormItem>
                 <FormItem label="文物编号:" labelCol={{ span: 8 }}>
-                  {getFieldDecorator("levelInfo", {
+                  {getFieldDecorator("relicsNum", {
                     rules: [
                       { required: true, message: "请输入文物编号" }
                     ]
                   })(<Input />)}
-                </FormItem>
-                <FormItem label="分级信息:" labelCol={{ span: 8 }}>
-                  {getFieldDecorator("levelInfo", {
-                    rules: [
-                      { required: true, message: "请选择分级信息" }
-                    ]
-                  })(<Select >
-                      <Option value="0">新增入库</Option>
-                    </Select>)}
                 </FormItem>
                 <FormItem label="文物数量:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("number", {
@@ -59,6 +61,15 @@ class ProductionCertificateApp extends Component {
                       { required: true, message: "请输入文物数量" }
                     ]
                   })(<Input />)}
+                </FormItem>
+                {/* <FormItem label="分级信息:" labelCol={{ span: 8 }}>
+                  {getFieldDecorator("levelInfo", {
+                    rules: [
+                      { required: true, message: "请选择分级信息" }
+                    ]
+                  })(<Select>
+                      <Option value="0">新增入库</Option>
+                    </Select>)}
                 </FormItem>
                 <FormItem label="文物状态:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("relicsState", {
@@ -103,8 +114,8 @@ class ProductionCertificateApp extends Component {
                   {getFieldDecorator("size", {
                     rules: [{ required: true, message: "请输入尺寸" }]
                   })(<Input />)}
-                </FormItem>
-                <FormItem style={{width: '100%'}} wrapperCol={{ offset: 4 }} >
+                </FormItem> */}
+                <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
                   <Button type="primary" htmlType="submit">
                     绑定制作
                   </Button>
