@@ -1,36 +1,77 @@
 import React, { Component } from 'react';
 
 import { Row, Col, Button, Input, Table } from 'antd';
+import { GetCollectionData } from './api';
 const Search = Input.Search;
 
 class ComplexGeneric extends Component {
     state = {  
-        relicsInfoData: [
-            {
-                relicsNum: 'CP0135',
-                relicsImg: require('../../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                libraryTime: '2010-25-56',
-                number: 1,
-                levelInfo: '普通藏品',
-                material: '陶器',
-                years: '唐',
-                howComplete: '破损',
-                state: '代管文物',
-                category: '动物',
-                size: 140,
-                weight: '6Kg',
-                key: 0
-            }
-        ]
+        relicsInfoData: [],
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0,
+        condition: ''
     }
 
+    componentWillMount() {
+        this.getColletionList();
+    }
+    // 获取数据
+    getColletionList () {
+        const { pageIndex, pageSize, condition } = this.state;
+        let params = {
+            PageIndex: pageIndex,
+            PageSize: pageSize,
+            Condition: condition
+        };
+        GetCollectionData(params).then(res => {
+            console.log(res);
+            let data = [];
+            for(let item of res.Data) {
+                data.push({
+                  relicsNum: item.CollectionNumber,
+                  relicsImg: item.Collectionimg1,
+                  relicsName: item.CollectionName,
+                  libraryTime: item.CollectionTime,
+                  number: item.Number,
+                  levelInfo: item.Grade,
+                  material: item.MaterialQuality,
+                  years: item.CollectionYears,
+                  howComplete: item.Integrity,
+                  state: item.CollectionState,
+                  category: item.Category,
+                  size: item.Size,
+                  weight: item.Weight,
+                  key: item.CollectionNumber
+                });
+            }
+            this.setState({
+                relicsInfoData: data,
+                total: res.Total
+            })
+        })
+    }
     // 点击搜索
-    onSearchButton (value) {
-        console.log(value)
+    onSearchButton =  (value) => {
+        console.log(value);
+        this.setState({
+            condition: value,
+            pageIndex: 1
+        }, () => {
+            this.getColletionList();
+        })
+
+    }
+    // 分页改变
+    paginationChange = (page) => {
+        this.setState({
+            pageIndex: page
+        }, () => {
+            this.getColletionList();
+        })
     }
     render() {
-        const { relicsInfoData } = this.state;
+        const { relicsInfoData, pageIndex, pageSize, total } = this.state;
         const relicInfoColumns = [
             {
                 title: '文物编号',
@@ -119,12 +160,13 @@ class ComplexGeneric extends Component {
                         <Button type='primary' icon='plus' onClick={() => { this.props.history.push('/App/AddRelics') }} >新增藏品</Button>
                         <Search 
                             enterButton
+                            placeholder='请输入文物名称'
                             onSearch={ this.onSearchButton }
                             style={{ width: '260px', float: 'right' }}
                          />
                     </Col>
                     <Col span={24} >
-                        <Table columns={relicInfoColumns} dataSource={relicsInfoData} bordered />
+                        <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={relicInfoColumns} dataSource={relicsInfoData} bordered />
                     </Col>
                 </Col>
             </Row>

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Upload, Modal, Icon, Select, Button, message, DatePicker } from 'antd';
 import './index.less';
+import moment from 'moment';
+import { InsertCollection } from './api';
+import qs from 'qs';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -51,10 +54,39 @@ class AddRelicsApp extends Component {
     // 提交
     handleSubmit (e) {
         e.preventDefault();
-        this.props.form.validateFields((err, value) => {
+        this.props.form.validateFields((err, values) => {
           if (!err) {
-            console.log(value);
+            console.log(values);
             // this.props.history.push("/App/Home");
+            const value = {
+              ...values,
+              'date': values['date'].format('YYYY-MM-DD')
+            };
+            let params = {
+              collection: {
+                CollectionName: value.relicsName,
+                ReservoirType: value.type,
+                StorageId: value.carton,
+                CollectionNumber: value.relicsNum,
+                Grade: value.levelInfo,
+                Number: value.number,
+                CollectionState: value.relicsState,
+                CollectionTime: value.date,
+                MaterialQuality: value.material,
+                Category: value.category,
+                Weight: value.weight,
+                Integrity: value.howComplete,
+                Size: value.size,
+              }
+              
+
+            }
+            let formData = new FormData();
+            formData.append('collection', params );
+            console.log(formData);
+            InsertCollection(qs.stringify(params)).then(res => {
+              console.log(res);
+            })
           }
         });
     }
@@ -97,19 +129,19 @@ class AddRelicsApp extends Component {
                   {getFieldDecorator("type", {
                     initialValue: 0,
                     rules: [
-                      { required: true, message: "请选择文物类型" }
+                      { required: true, message: "请选择入库类型" }
                     ]
                   })(<Select>
                       <Option value={0}>新增入库</Option>
                     </Select>)}
                 </FormItem>
-                <FormItem className="form-width50" label="RFID标签:" labelCol={{ span: 8 }}>
+                {/* <FormItem className="form-width50" label="RFID标签:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("rfid", {
                     rules: [
                       { required: true, message: "请输入RFID标签" }
                     ]
                   })(<Input placeholder="请输入RFID标签" />)}
-                </FormItem>
+                </FormItem> */}
                 <FormItem className="form-width50" label="存台箱号:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("carton", {
                     initialValue: 0,
@@ -128,7 +160,7 @@ class AddRelicsApp extends Component {
                   })(<Input placeholder="请输入文物编号" />)}
                 </FormItem>
                 <FormItem className="form-width50" label="分级信息:" labelCol={{ span: 8 }}>
-                  {getFieldDecorator("levalInfo", {
+                  {getFieldDecorator("levelInfo", {
                     initialValue: 0,
                     rules: [
                       { required: true, message: "请选择分级信息" }
@@ -158,10 +190,11 @@ class AddRelicsApp extends Component {
                 </FormItem>
                 <FormItem className="form-width50" label="入馆时间:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("date", {
+                    initialValue: moment(),
                     rules: [
                       { required: true, message: "请选择入馆时间" }
                     ]
-                  })(<DatePicker />)}
+                  })(<DatePicker format='YYYY-MM-DD' />)}
                 </FormItem>
                 <FormItem className="form-width50" label="年代:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("relicsYears", {
