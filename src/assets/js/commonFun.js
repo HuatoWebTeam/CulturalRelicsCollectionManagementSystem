@@ -1,4 +1,9 @@
 
+import moment from 'moment';
+
+
+export const RangePickerDefault = [moment()
+           .subtract(6, "days"), moment()];
 
 
 // 截取时间，
