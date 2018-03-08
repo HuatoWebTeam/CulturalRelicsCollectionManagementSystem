@@ -16,6 +16,7 @@ class CollecExhibition extends Component {
     date: [],
     format: "YYYY-MM-DD",
     pageIndex: 1,
+    pageSize: 5,
     total: 0,
     data: []
   };
@@ -37,19 +38,20 @@ class CollecExhibition extends Component {
 
   // 获取藏品展览列表
   getExhibitionList() {
-    const { date, pageIndex } = this.state;
-    // console.log(date);
+    const { date, pageIndex, pageSize } = this.state;
+    // console.log(pageIndex);
     let UserName = Cookie.getJSON("UserInfo").UserName;
     // console.log(UserName);
     let params = {
       strUser: UserName,
       beginTime: date[0],
       endTime: date[1],
-      pageIndex: pageIndex
+      pageIndex: pageIndex,
+      pageSize: pageSize
     };
 
     ExhibitionAll(params).then(res => {
-      console.log(res);
+      // console.log(res);
       if (res.length > 0) {
         this.setState({ total: res[0].Count });
         let dataSource = [];
@@ -75,11 +77,13 @@ class CollecExhibition extends Component {
   }
   // 选择页码
   paginationChange = page => {
-    console.log(page);
+    // console.log(page);
     this.setState({
       pageIndex: page
+    }, () => {
+      this.getExhibitionList();
     });
-    this.getExhibitionList();
+    
   };
   // 选择日期
   handleDateChange = (date, dateString) => {
@@ -117,7 +121,7 @@ class CollecExhibition extends Component {
 
   render() {
     // let _this = this;
-    const { date, format, pageIndex, total, data } = this.state;
+    const { date, format, pageIndex, pageSize, total, data } = this.state;
     const tableColumns = [
       {
         title: "展览单号",
@@ -201,7 +205,8 @@ class CollecExhibition extends Component {
               pagination={{
                 total: total,
                 onChange: this.paginationChange,
-                current: pageIndex
+                current: pageIndex,
+                pageSize
               }}
             />
           </Col>

@@ -11,3 +11,9 @@ export const ExhibitionAll = (params) => {
 export const ExhibitionDetailsApi = (params) => {
     return axios.post("/Exhibition/ExhibitionDetails", params).then(res => res.data)
 }
+
+// 新增展览清单
+export const ExDataAddApp = (params) => {
+    return axios.post("/Exhibition/ExDetaAddApp", params).then(res => res.data );
+}
+
