@@ -2,160 +2,139 @@ import React, { Component } from 'react';
 
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
+import { RepairApi } from './api';
 const Search = Input.Search;
 
 
 class CollecRepair extends Component {
 
     state = {  
-        repairData: [
-            {
-                repairOrder: 'FADGFAGR435',
-                applyTime: '2018-02-24',
-                applicant: '李四',
-                relicsNumber: 'CP006',
-                relicsImg: require('../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                number: 1,
-                classification: '普通成品',
-                material: '陶器',
-                repairMethods: '补缺',
-                repairCycle: '一个月',
-                repairMan: '王五',
-                relicsState: '在库',
-                repairState: '待修复',
-                key: 0
-            },
-            {
-                repairOrder: 'FADGFAGR435',
-                applyTime: '2018-02-24',
-                applicant: '李四',
-                relicsNumber: 'CP006',
-                relicsImg: require('../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                number: 1,
-                classification: '普通成品',
-                material: '陶器',
-                repairMethods: '补缺',
-                repairCycle: '一个月',
-                repairMan: '王五',
-                relicsState: '入库',
-                repairState: '已修复',
-                key: 1
-            },
-            {
-                repairOrder: 'FADGFAGR435',
-                applyTime: '2018-02-24',
-                applicant: '李四',
-                relicsNumber: 'CP006',
-                relicsImg: require('../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                number: 1,
-                classification: '普通成品',
-                material: '陶器',
-                repairMethods: '补缺',
-                repairCycle: '一个月',
-                repairMan: '王五',
-                relicsState: '出库',
-                repairState: '修复中',
-                key: 2
-            },
-            {
-                repairOrder: 'FADGFAGR435',
-                applyTime: '2018-02-24',
-                applicant: '李四',
-                relicsNumber: 'CP006',
-                relicsImg: require('../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                number: 1,
-                classification: '普通成品',
-                material: '陶器',
-                repairMethods: '补缺',
-                repairCycle: '一个月',
-                repairMan: '王五',
-                relicsState: '在库',
-                repairState: '修复异常',
-                key: 3
-            }
-
-        ]
+        repairData: [],
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0,
+        SearchName: ''
     }
 
-    searchButton () {
-        console.log('search')
+    componentWillMount() {
+        this.getRepairList();
+    }
+
+    getRepairList =  () => {
+        const { pageIndex, pageSize, SearchName } = this.state;
+        let params = {
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+            Repair_Id: SearchName
+        };
+        RepairApi(params).then(res => {
+            console.log(res);
+            
+            if(res.length === 0) {
+                this.setState({
+                    total: 0
+                });
+            } else {
+                for(let i = 0; i < res.length; i++) {
+                    res[i].key = res[i].Repair_Id;
+                }
+
+                this.setState({
+                    repairData: res,
+                    total: res[0].count
+                });
+            }
+        })
+    }
+
+    paginationChange = (pageIndex) => {
+        console.log(pageIndex);
+        this.setState({
+            pageIndex: pageIndex
+        }, () => {
+            this.getRepairList();
+        });
+        
+    }
+
+    searchButton (value) {
+        console.log('search');
+        this.setState({
+            pageIndex: 1,
+        })
     }
 
 
     render () {
-
+        const { pageIndex, total } = this.state;
         const repairList = [
             {
                 title: '修复单号',
-                dataIndex: 'repairOrder',
-                key: 'repairOrder'
+                dataIndex: 'Repair_Id',
+                key: 'Repair_Id'
             },
             {
                 title: '申请时间',
-                dataIndex: 'applyTime',
-                key: 'applyTime'
+                dataIndex: 'Repair_Time',
+                key: 'Repair_Time'
             },
             {
                 title: '申请人',
-                dataIndex: 'applicant',
-                key: 'applicant'
+                dataIndex: 'Repair_Applicant',
+                key: 'Repair_Applicant'
             },
             {
                 title: '文物编号',
-                dataIndex: 'relicsNumber',
-                key: 'relicsNumber'
+                dataIndex: 'Collection_Number',
+                key: 'Collection_Number'
             },
             {
                 title: '文物图片',
-                dataIndex: 'relicsImg',
-                key: 'relicsImg',
+                dataIndex: 'Collection_img',
+                key: 'Collection_img',
                 render: (text, index) => {
                     return <img style={{width: '55px', height: '55px'}} src={text}  alt={index} />
                 }
             },
             {
                 title: '文物名称',
-                dataIndex: 'relicsName',
-                key: 'relicsName'
+                dataIndex: 'Collection_Name',
+                key: 'Collection_Name'
             },
             {
                 title: '数量',
-                dataIndex: 'number',
-                key: 'number'
+                dataIndex: 'Number',
+                key: 'Number'
             },
             {
                 title: '分级信息',
-                dataIndex: 'classification',
-                key: 'classification'
+                dataIndex: 'Grade',
+                key: 'Grade'
             },
             {
                 title: '材质',
-                dataIndex: 'material',
-                key: 'material'
+                dataIndex: 'MaterialQuality',
+                key: 'MaterialQuality'
             },
             {
                 title: '修复方法',
-                dataIndex: 'repairMethods',
-                key: 'repairMethods'
+                dataIndex: 'Repair_Method',
+                key: 'Repair_Method'
             },
             {
                 title: '修复周期',
-                dataIndex: 'repairCycle',
-                key: 'repairCycle'
+                dataIndex: 'Repair_cycle',
+                key: 'Repair_cycle'
             },
             {
                 title: '修复人',
-                dataIndex: 'repairMan',
-                key: 'repairMan'
+                dataIndex: 'Repair_Restorer',
+                key: 'Repair_Restorer'
             },
             {
                 title: '文物状态',
-                dataIndex: 'relicsState',
-                key: 'relicsState',
+                dataIndex: 'Collection_State',
+                key: 'Collection_State',
                 render: (text) => {
                     return <span style={{
                         color: text === '在库' ? '#e15d05' : ( text === '出库' ? '#3065bf' : '#666')
@@ -164,8 +143,8 @@ class CollecRepair extends Component {
             },
             {
                 title: '修复状态',
-                dataIndex: 'repairState',
-                key: 'repairState',
+                dataIndex: 'Repair_State',
+                key: 'Repair_State',
                 render:(text) => {
                     return <span style={{
                         color: text === '待修复' ? '#e15d05' : ( text === '修复中' ? '#3065bf' : (text === '已修复' ? '#666' : 'red'))
@@ -173,7 +152,7 @@ class CollecRepair extends Component {
                 }
             }
         ]
-        console.log(this.state)
+        // console.log(this.state)
         return <Row className="main-content">
             <Col className="title">藏品修复列表</Col>
             <Col className="list-content">
@@ -182,11 +161,12 @@ class CollecRepair extends Component {
                   新建修复单
                 </Button>
                 <Search
+                 placeholder='请输入修复单号'
                  onSearch={this.searchButton}
                  enterButton ></Search>
               </Col>
               <Col>
-                <Table bordered columns={repairList} dataSource={this.state.repairData}  />
+                <Table pagination={{ current: pageIndex, total: total, onChange: this.paginationChange }} bordered columns={repairList} dataSource={this.state.repairData}  />
               </Col>
             </Col>
           </Row>;
