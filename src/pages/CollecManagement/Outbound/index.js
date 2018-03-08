@@ -1,34 +1,86 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Input, DatePicker, Table } from 'antd';
 import './index.less';
+import moment from 'moment';
+import { RangePickerDefault } from '../../../assets/js/commonFun';
+import { GetOutTheLibraryData } from './api';
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
 
 class ComplexGeneric extends Component {
     state = {  
-        outboundData: [
-            {
-                outboundNum: 'CK1756321',
-                relicsNum: 'Cp156',
-                relicsImg: require('../../../assets/img/描金彩观音像.jpg'),
-                relicsName: '描金彩观音像',
-                years: '唐',
-                number: 1,
-                date: '2018-02-26',
-                levelInfo: '普通藏品',
-                material: '陶器',
-                howComplete: '破损',
-                state: '在库',
-                category: '艺术',
-                size: '140',
-                weight: '6Kg',
-                key: 0
+        outboundData: [],
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0,
+        date: [],
+        condition: ''
+    }
+
+    componentWillMount() {
+        this.getOutboundList();
+    }
+
+    getOutboundList () {
+        const { pageIndex, pageSize, date, condition } = this.state;
+        let params = {
+            parameters:{
+                Condition: condition,
+                StaDate: date[0],
+                EndDate: date[1],
+                PageIndex: pageIndex,
+                PageSize: pageSize
             }
-        ]
+        }
+        GetOutTheLibraryData(params).then(res => {
+            console.log(res);
+            let data = [];
+            for(let item of res.Data) {
+                console.log(item);
+                data.push({
+                    key: item.CollectionNumber,
+                    outboundNum: null,
+                    relicsNum: item.CollectionNumber,
+                    rfid: item.CollectionRfid,
+                    relicsImg: item.Collectionimg1,
+                    relicsName: item.CollectionName,
+                    date: item.OutDateTime,
+                    localtion: item.StorageId,
+                    number: item.Number,
+                    levelInfo: item.Grade,
+                    material: item.MaterialQuality,
+                    years: item.CollectionYears,
+                    howComplete: item.Integrity,
+                    state: item.CollectionState,
+                    category: item.Category,
+                    operation: item.UserName
+                })
+            }
+            this.setState({
+                outboundData:data,
+                total: res.Total
+            })
+        })
+    }
+
+    rangePickerChange = (value) => {
+        // console.log(value);
+        let format = 'YYYY-MM-DD';
+        let date = [value[0].format(format), value[1].format(format)]
+        // console.log(date);
+        this.setState({
+            date: date
+        });
     }
 
     handleSearch (e) {
-        console.log(e)
+        console.log(e);
+        this.setState({
+            condition: e,
+            pageIndex: 1
+        }, () => {
+            this.getOutboundList();
+        } )
     }
 
     render() {
@@ -123,7 +175,7 @@ class ComplexGeneric extends Component {
                   </Button>
                 </Col>
                 <Col span={24} style={{ padding: "20px 0" }}>
-                  <RangePicker />
+                  <RangePicker defaultValue={RangePickerDefault} format='YYYY-MM-DD' onChange={this.rangePickerChange} />
                   <Button type="primary" style={{ marginLeft: "20px" }}>
                     搜索
                   </Button>

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Button, Input, Table, Select, DatePicker } from 'antd';
 import './index.less';
+import moment from 'moment';
+import RelicsDialog from "../../Components/RelicsDialog";
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -106,32 +108,35 @@ class NewOutboundApp extends Component {
                       rules: [
                         { required: true, message: "请输入出库用途" }
                       ]
-                    })(<Input />)}
+                    })(<Input placeholder="请输入出库用途" />)}
                   </FormItem>
                   <FormItem label="出库类型:" labelCol={{ span: 6 }} className="form-item50">
-                    {getFieldDecorator("outboundPurposes", {
+                    {getFieldDecorator("outboundType", {
+                      initialValue: [0],
                       rules: [
                         { required: true, message: "请选择出库类型" }
                       ]
                     })(<Select>
-                        <Option value="0">陈列</Option>
+                        <Option value={0}>陈列</Option>
                       </Select>)}
                   </FormItem>
                   <FormItem label="出库时间:" labelCol={{ span: 6 }} className="form-item50">
-                    {getFieldDecorator("outboundPurposes", {
+                    {getFieldDecorator("outboundDate", {
+                      initialValue: moment(),
                       rules: [
                         { required: true, message: "请选择出库时间" }
                       ]
-                    })(<DatePicker />)}
+                    })(<DatePicker format="YYYY-MM-DD" />)}
                   </FormItem>
                   <FormItem label="操作人:" labelCol={{ span: 6 }} className="form-item50">
-                    {getFieldDecorator("outboundPurposes", {
+                    {getFieldDecorator("outboundPeople", {
+                      initialValue: null,
                       rules: [
                         { required: true, message: "请输入操作人" }
                       ]
-                    })(<Input />)}
+                    })(<Input placeholder="请输入操作人" />)}
                   </FormItem>
-                  <Button type="primary" style={{ marginLeft: "90px", marginBottom: '20px' }}>
+                  <Button type="primary" onClick={() => { this.refs.relicsDialog.openModal(); }} style={{ marginLeft: "90px", marginBottom: "20px" }}>
                     选择出库文物
                   </Button>
                 </Col>
@@ -139,13 +144,16 @@ class NewOutboundApp extends Component {
                   <Table columns={newOutboundColumns} dataSource={newOutboundData} pagination={false} bordered />
                 </Col>
                 <Col span={24}>
-                  <FormItem  className='submitBtn' >
-                    <Button type="primary" htmlType="submit"  >
+                  <FormItem className="submitBtn">
+                    <Button type="primary" htmlType="submit">
                       提交出库单
                     </Button>
                   </FormItem>
                 </Col>
               </Form>
+            </Col>
+            <Col span={24}>
+              <RelicsDialog chooseData={this.chooseData} title="新建出库单" ref="relicsDialog" />
             </Col>
           </Row>;
     }
