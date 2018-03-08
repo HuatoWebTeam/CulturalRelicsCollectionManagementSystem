@@ -53,12 +53,12 @@ class RelicsDialog extends Component {
     };
     // console.log(params);
     ColleApi(params).then(res => {
-      // console.log(res);
+      console.log(res);
       let data = [];
       for (let item of res) {
         data.push({
           key: item.Collection_Number,
-          rfid: item.Collection_RFID,
+          relicsNum: item.Collection_Number,
           cabinet: item.Storage_RFID,
           relicsImg: item.Collection_img,
           relicsName: item.Collection_Name,
@@ -122,9 +122,9 @@ class RelicsDialog extends Component {
     } = this.state;
     const chooseRelicsColumns = [
       {
-        title: "文物RFID",
-        dataIndex: "rfid",
-        key: "rfid"
+        title: "文物编号",
+        dataIndex: "relicsNum",
+        key: "relicsNum"
       },
       {
         title: "储柜RFID",

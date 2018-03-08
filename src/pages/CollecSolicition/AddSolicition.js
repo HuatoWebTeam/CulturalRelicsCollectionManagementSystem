@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Upload, Icon, Modal, Input, Select, DatePicker, Button, message } from 'antd';
 import './index.less';
+import moment from 'moment';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const {TextArea} = Input;
@@ -49,6 +50,16 @@ class AddSilicitionApp extends Component {
     console.log(fileList);
   };
 
+  handleFormSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, fieldsValue) => {
+
+      if(!err) {
+        console.log(fieldsValue)
+      }
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { previewVisible, previewImage, fileList } = this.state;
@@ -64,7 +75,7 @@ class AddSilicitionApp extends Component {
           添加征集信息
         </Col>
         <Col span={24} className="addSolicition-container">
-          <Form layout="inline" style={{ width: "710px" }}>
+          <Form layout="inline" onSubmit={this.handleFormSubmit} style={{ width: "100%" }}>
             <FormItem label="文物图片:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
               <Upload action="//jsonplaceholder.typicode.com/posts/" listType="picture-card" beforeUpload={this.beforeUpload} fileList={fileList}>
                 {fileList.length >= 3 ? null : uploadButton}
@@ -78,6 +89,34 @@ class AddSilicitionApp extends Component {
                 rules: [{ required: true, message: "请输入文物名称" }]
               })(<Input placeholder="请输入文物名称" />)}
             </FormItem>
+            <FormItem label="征集文物ID:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("soliciRelicsId", {
+                rules: [{ required: true, message: "请输入征集文物ID" }]
+              })(<Input placeholder="请输入征集文物ID" />)}
+            </FormItem>
+            <FormItem label="分级信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("levelInfo", {
+                initialValue: 0,
+                rules: [{ required: true, message: "请选择分级信息" }]
+              })(<Select>
+                  <Option value={0}>一级文物</Option>
+                </Select>)}
+            </FormItem>
+            <FormItem label="文物编号:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("relicsNum", {
+                rules: [{ required: true, message: "请输入文物编号" }]
+              })(<Input placeholder="请输入文物编号" />)}
+            </FormItem>
+            <FormItem label="文物年代:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("years", {
+                rules: [{ required: true, message: "请输入文物年代" }]
+              })(<Input placeholder="请输入文物年代" />)}
+            </FormItem>
+            <FormItem label="完整程度:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("howComplete", {
+                rules: [{ required: true, message: "请输入完整程度" }]
+              })(<Input placeholder="请输入完整程度" />)}
+            </FormItem>
             <FormItem label="征集方式:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("solicitMethods", {
                 initialValue: 0,
@@ -88,21 +127,14 @@ class AddSilicitionApp extends Component {
             </FormItem>
             <FormItem label="征集时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("date", {
+                initialValue: moment(),
                 rules: [{ required: true, message: "请选择征集时间" }]
-              })(<DatePicker />)}
-            </FormItem>
-            <FormItem label="分级信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
-              {getFieldDecorator("levelInfo", {
-                initialValue: 0,
-                rules: [{ required: true, message: "请选择分级信息" }]
-              })(<Select>
-                  <Option value={0}>一级文物</Option>
-                </Select>)}
+              })(<DatePicker format='YYYY-MM-DD' />)}
             </FormItem>
             <FormItem label="数量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("number", {
                 rules: [{ required: true, message: "请输入数量" }]
-              })(<Input />)}
+              })(<Input placeholder="请输入数量" />)}
             </FormItem>
             <FormItem label="类别:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("category", {
@@ -115,7 +147,7 @@ class AddSilicitionApp extends Component {
             <FormItem label="材质:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("material", {
                 rules: [{ required: true, message: "请输入材质" }]
-              })(<Input />)}
+              })(<Input placeholder="请输入材质" />)}
             </FormItem>
             <FormItem label="出土信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50 unearthed">
               {getFieldDecorator("unearthedInfo", {
@@ -125,15 +157,17 @@ class AddSilicitionApp extends Component {
             <FormItem label="重量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("weight", {
                 rules: [{ required: true, message: "请输入重量" }]
-              })(<Input />)}
+              })(<Input placeholder="请输入重量" />)}
             </FormItem>
             <FormItem label="尺寸:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("size", {
                 rules: [{ required: true, message: "请输入尺寸" }]
-              })(<Input />)}
+              })(<Input placeholder="请输入尺寸" />)}
             </FormItem>
             <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
-              <Button type="primary" htmlType='submit' >提交</Button>
+              <Button type="primary" htmlType="submit">
+                提交
+              </Button>
             </FormItem>
           </Form>
         </Col>
