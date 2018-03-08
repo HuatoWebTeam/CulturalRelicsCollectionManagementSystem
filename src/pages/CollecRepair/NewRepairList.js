@@ -192,7 +192,7 @@ class NewRepairListApp extends Component {
                   </Button>
                 </Col>
               </Form>
-              <RelicsDialog chooseData={this.chooseData} title="选择展览文物" ref="relicsDialog" />
+              <RelicsDialog chooseData={this.chooseData} title="选择修复文物" ref="relicsDialog" />
             </Col>
           </Row>;
     }
