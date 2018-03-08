@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Col, DatePicker, Button, Table } from 'antd';
 import './index.less';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 
 class CollecAccounts extends Component {
@@ -19,6 +21,10 @@ class CollecAccounts extends Component {
                 backLibrary: 51
             }
         ]
+    }
+    // 禁止选择时间
+    disabledDate = (current) => {
+        return current && current > moment().endOf('day');
     }
     render() {
         const { accountData } = this.state;
@@ -69,17 +75,17 @@ class CollecAccounts extends Component {
                 key: 'backLibrary'
             }
         ]
-
+        
         return <Row className="main-content">
             <Col span={24} className="title">
               藏品账目列表
             </Col>
             <Col span={24} className="accounts-container">
-              <Col span={24} className='search-container' >
-                <RangePicker />
+              <Col span={24} className="search-container">
+                <RangePicker defaultValue={[moment().subtract(6, "days"), moment()]} format="YYYY-MM-DD" disabledDate={this.disabledDate} />
                 <Button type="primary">搜索</Button>
               </Col>
-              <Col span={24}  >
+              <Col span={24}>
                 <Table columns={accountsColumns} dataSource={accountData} bordered />
               </Col>
             </Col>

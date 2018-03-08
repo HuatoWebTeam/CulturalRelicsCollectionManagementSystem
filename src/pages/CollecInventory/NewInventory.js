@@ -27,7 +27,7 @@ class NewInventory extends Component {
           key: 'date'
         },
         {
-          tutle: '文物库房',
+          title: '文物库房',
           dataIndex: 'relicsWarehouse',
           key: 'relicsWarehpuse'
         },
@@ -65,11 +65,17 @@ class NewInventory extends Component {
             <Col span={24} className="newInventory-container">
               <Form layout="inline">
                 <Col span={24} style={{ width: "710px" }}>
-                  <FormItem label="盘点时间:" className="form-width50" >
+                  <FormItem label="盘点时间:" labelCol={{span:8}} className="form-width50" >
                     <DatePicker />
                   </FormItem>
-                  <FormItem label="盘点人:" className="form-width50" >
+                  <FormItem label="盘点人:" labelCol={{span:8}} className="form-width50" >
                     <Input placeholder='请输入盘点人' />
+                  </FormItem>
+                  <FormItem label="盘点单号:" labelCol={{span:8}} className="form-width50" >
+                    <Input placeholder='请输入盘点单号' />
+                  </FormItem>
+                  <FormItem label="盘点名称:" labelCol={{span:8}} className="form-width50" >
+                    <Input placeholder='请输入盘点名称' />
                   </FormItem>
                   <Col span={24} style={{ padding: "20px 70px" }}>
                     <Button type="primary">选择盘点文物</Button>
