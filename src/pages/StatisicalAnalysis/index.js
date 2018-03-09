@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { Row, Col, Button, DatePicker } from 'antd';
 import './index.less';
 import ReactEcharts from 'echarts-for-react';
+import moment from 'moment';
+import { RangePickerDefault } from '../../assets/js/commonFun';
+import { GetStatisticalAnalysisData } from './api';
 const { RangePicker } = DatePicker;
 
 
@@ -28,8 +31,32 @@ class Statisical extends Component {
         data: [150, 232, 201, 154, 190, 330, 410]
       }
     ],
-    chartLineWidth: 2
+    date: RangePickerDefault,
+    chartLineWidth: 2,
+    format: 'YYYY-MM-DD'
   };
+
+  componentWillMount() {
+    console.log(this.state);
+    const { date, format } = this.state;
+    console.log(date[0].format(format));
+    this.setState({
+      date: [date[0].format(format), date[1].format(format)]
+    }, () => {
+        this.getChartsData();
+    })
+  }
+
+  getChartsData () {
+    const { date } =this.state; 
+    let params = {
+        StaDate: date[0],
+        EndDate: date[1]
+      }
+      GetStatisticalAnalysisData(params).then(res => {
+        console.log(res);
+      })
+  }
 
   getLineChartOption = () => {
     const option = {
@@ -127,7 +154,7 @@ class Statisical extends Component {
         </Col>
         <Col span={24} className="statisical-container">
           <Col span={24} style={{ paddingBottom: "20px" }}>
-            <RangePicker />
+            <RangePicker defaultValue={RangePickerDefault} format='YYYY-MM-DD' />
             <Button type="primary" style={{ marginLeft: "20px" }}>
               查询
             </Button>
