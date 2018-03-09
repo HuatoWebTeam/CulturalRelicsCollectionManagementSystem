@@ -12,7 +12,7 @@ class RelicsDialog extends Component {
     modalTitle: null,
     relicsStoreList: [],
     searchStore: 0,
-    searchCategory: 0,
+    searchCategory: '全部',
     searchName: "",
     searchRelicsData: [],
     checkBoxArr: []
@@ -114,12 +114,7 @@ class RelicsDialog extends Component {
     }
   };
   render() {
-    const {
-      chooseCollRelics,
-      relicsStoreList,
-      searchRelicsData,
-      modalTitle
-    } = this.state;
+    const { chooseCollRelics, relicsStoreList, searchRelicsData, modalTitle, searchStore, searchCategory } = this.state;
     const chooseRelicsColumns = [
       {
         title: "文物编号",
@@ -172,49 +167,34 @@ class RelicsDialog extends Component {
         key: "howComplete"
       }
     ];
-    return (
-      <Modal
-        visible={chooseCollRelics}
-        title={modalTitle}
-        onCancel={this.handleCancel}
-        onOk={this.handleOk}
-        width="1260px"
-      >
+    return <Modal visible={chooseCollRelics} title={modalTitle} onCancel={this.handleCancel} onOk={this.handleOk} width="1260px">
         <Col span={24} className="chooseRelics-modal">
           <Form layout="inline" style={{ width: "100%", marginBottom: "20px" }}>
-            <FormItem
-              label="文物库房:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Select
-                defaultValue={0}
-                onSelect={value => {
+            <FormItem label="文物库房:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+              <Select defaultValue={searchStore} onSelect={value => {
                   this.setState({ searchStore: value });
-                }}
-              >
+                }}>
                 <Option value={0}>全部</Option>
                 {relicsStoreList.map((item, idx) => (
-                  <Option value={item.Storehouse_Id} key={item.Storehouse_Id}>
+                  <Option
+                    value={item.Storehouse_Id}
+                    key={item.Storehouse_Id}
+                  >
                     {item.Storehouse_Name}
                   </Option>
                 ))}
               </Select>
             </FormItem>
-            <FormItem
-              label="文物分类:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Select
-                defaultValue={0}
-                onSelect={value => {
+            <FormItem label="文物分类:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+              <Select defaultValue={searchCategory} onSelect={value => {
                   this.setState({ searchCategory: value });
-                }}
-              >
-                <Option value={0}>全部</Option>
+                }}>
+                <Option value='全部'>全部</Option>
                 {relicsStoreList.map((item, idx) => (
-                  <Option value={item.Storehouse_Id} key={item.Storehouse_Id}>
+                  <Option
+                    value={item.Storehouse_Name}
+                    key={item.Storehouse_Id}
+                  >
                     {item.Storehouse_Name}
                   </Option>
                 ))}
@@ -225,17 +205,10 @@ class RelicsDialog extends Component {
             </FormItem>
           </Form>
           <Col span={24}>
-            <Table
-              rowSelection={this.rowSelection}
-              dataSource={searchRelicsData}
-              columns={chooseRelicsColumns}
-              pagination={false}
-              bordered
-            />
+            <Table rowSelection={this.rowSelection} dataSource={searchRelicsData} columns={chooseRelicsColumns} pagination={false} bordered />
           </Col>
         </Col>
-      </Modal>
-    );
+      </Modal>;
   }
 }
 
