@@ -41,13 +41,13 @@ class ProductionCertificateApp extends Component {
                     rules: [{ required: true, message: "请输入RFID号" }]
                   })(<Input />)}
                 </FormItem>
-                <FormItem label="文物名称:" labelCol={{ span: 8 }}>
+                {/* <FormItem label="文物名称:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("relicsName", {
                     rules: [
                       { required: true, message: "请输入文物名称" }
                     ]
                   })(<Input />)}
-                </FormItem>
+                </FormItem> */}
                 <FormItem label="文物编号:" labelCol={{ span: 8 }}>
                   {getFieldDecorator("relicsNum", {
                     rules: [
