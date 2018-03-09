@@ -1,96 +1,185 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, Table, Input, DatePicker } from 'antd';
+import { Row, Col, Button, Form, Table, Input, DatePicker, message } from 'antd';
 import './index.less';
+import moment from 'moment';
+import RelicsDialog from "../Components/RelicsDialog";
+import { InventoryAdd } from './api'; 
 const FormItem = Form.Item;
 
-class NewInventory extends Component {
-    state = {  
-      chooseInventoryRelics: [
-        {
-          key: 0,
-          date: '2018-02-28',
-          relicsWarehouse: '库房 1',
-          relicsName: '云纹扁足鼎',
-          relicsNumber:1,
-          type: '青铜',
-          levelInfo: '普通藏品',
-          inventoryPeople: '李四'
+class NewInventoryApp extends Component {
+  state = {
+    chooseInventoryRelics: [],
+    chooseRelicsNum: []
+  };
+  // 提交
+  formSubmit = e => {
+    e.preventDefault();
+    const { chooseRelicsNum } = this.state;
+    this.props.form.validateFields((err, fieldsValue) => {
+      if (!err) {
+        console.log(fieldsValue);
+        const { chooseRelicsNum } = this.state;
+        if(chooseRelicsNum.length === 0 ){
+          message.error('请选择盘点文物');
         }
-      ]
-    }
-    render() {
-      const { chooseInventoryRelics } = this.state;
-      const inventoryColumns = [
-        {
-          title: '时间',
-          dataIndex: 'date',
-          key: 'date'
-        },
-        {
-          title: '文物库房',
-          dataIndex: 'relicsWarehouse',
-          key: 'relicsWarehpuse'
-        },
-        {
-          title: '文物名称',
-          dataIndex: 'relicsName',
-          key: 'relicsName'
-        },
-        {
-          title: '文物数量',
-          dataIndex: 'relicsNumber',
-          key: 'relicsNumber'
-        },
-        {
-          title: '类型',
-          dataIndex: 'type',
-          key: 'type'
-        },
-        {
-          title: '分级信息',
-          dataIndex: 'levelInfo',
-          key: 'levelInfo'
-        },
-        {
-          title: '盘点人',
-          dataIndex: 'inventoryPeople',
-          key: 'inventoryPeople'
-        }
-      ]
+        let value = {
+          ...fieldsValue,
+          'date': fieldsValue['date'].format('YYYY-MM-DD')
+        };
+        let params = {
+          InventoryMan: value.inventPeople,
+          Inventory_Time: value.date,
+          Inventory_Odd: value.inventNum,
+          Inventory_Name: value.inventName,
+          Collection_Number: chooseRelicsNum.join(',')
+        };
+        InventoryAdd(params).then(res => {
+          console.log(res)
+        })
 
-        return <Row className="main-content">
-            <Col span={24} className="title">
-              新建盘点单
-            </Col>
-            <Col span={24} className="newInventory-container">
-              <Form layout="inline">
-                <Col span={24} style={{ width: "710px" }}>
-                  <FormItem label="盘点时间:" labelCol={{span:8}} className="form-width50" >
-                    <DatePicker />
-                  </FormItem>
-                  <FormItem label="盘点人:" labelCol={{span:8}} className="form-width50" >
-                    <Input placeholder='请输入盘点人' />
-                  </FormItem>
-                  <FormItem label="盘点单号:" labelCol={{span:8}} className="form-width50" >
-                    <Input placeholder='请输入盘点单号' />
-                  </FormItem>
-                  <FormItem label="盘点名称:" labelCol={{span:8}} className="form-width50" >
-                    <Input placeholder='请输入盘点名称' />
-                  </FormItem>
-                  <Col span={24} style={{ padding: "20px 70px" }}>
-                    <Button type="primary">选择盘点文物</Button>
-                  </Col>
-                </Col>
-                <Col span={24} >
-                  <Table columns={inventoryColumns} dataSource={chooseInventoryRelics} bordered pagination={false} />
-                </Col>
-                <Col span={24} style={{padding: '20px 40px'}} >
-                  <Button type='primary' style={{float: 'right'}} >提交盘点单</Button>
-                </Col>
-              </Form>
-            </Col>
-          </Row>;
+      }
+    });
+  };
+
+  // 选择盘点文物
+  chooseData  = (value) => {
+    console.log(value);
+    let keys = [];
+    // let data = [];
+    for(let item of value) {
+      keys.push(item.key);
+      
     }
+    this.setState({
+      chooseRelicsNum: keys,
+      chooseInventoryRelics: value
+    })
+  }
+
+  render() {
+    const { chooseInventoryRelics } = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const inventoryColumns = [
+      {
+        title: "文物编码",
+        dataIndex: "relicsNum",
+        key: "relicsNum"
+      },
+      {
+        title: "文物名称",
+        dataIndex: "relicsName",
+        key: "relicsName"
+      },
+      {
+        title: "文物位置",
+        dataIndex: "localtion",
+        key: "localtion"
+      },
+      {
+        title: "文物数量",
+        dataIndex: "number",
+        key: "number"
+      },
+      {
+        title: "文物材质",
+        dataIndex: "material",
+        key: "material"
+      },
+      {
+        title: "分级信息",
+        dataIndex: "levelInfo",
+        key: "levelInfo"
+      },
+      // {
+      //   title: "盘点人",
+      //   dataIndex: "inventoryPeople",
+      //   key: "inventoryPeople"
+      // }
+    ];
+
+    return (
+      <Row className="main-content">
+        <Col span={24} className="title">
+          新建盘点单
+        </Col>
+        <Col span={24} className="newInventory-container">
+          <Form layout="inline" onSubmit={this.formSubmit}>
+            <Col span={24} style={{ width: "710px" }}>
+              <FormItem
+                label="盘点时间:"
+                labelCol={{ span: 8 }}
+                className="form-width50"
+              >
+                {getFieldDecorator("date", {
+                  initialValue: moment(),
+                  rules: [{ required: true, message: "请选择盘点时间" }]
+                })(<DatePicker format="YYYY-MM-DD" />)}
+              </FormItem>
+              <FormItem
+                label="盘点人:"
+                labelCol={{ span: 8 }}
+                className="form-width50"
+              >
+                {getFieldDecorator("inventPeople", {
+                  rules: [{ required: true, message: "请输入盘点人" }]
+                })(<Input placeholder="请输入盘点人" />)}
+              </FormItem>
+              <FormItem
+                label="盘点单号:"
+                labelCol={{ span: 8 }}
+                className="form-width50"
+              >
+                {getFieldDecorator("inventNum", {
+                  rules: [{ required: true, message: "请输入盘点单号" }]
+                })(<Input placeholder="请输入盘点单号" />)}
+              </FormItem>
+              <FormItem
+                label="盘点名称:"
+                labelCol={{ span: 8 }}
+                className="form-width50"
+              >
+                {getFieldDecorator("inventName", {
+                  rules: [{ required: true, message: "请输入盘点名称" }]
+                })(<Input placeholder="请输入盘点名称" />)}
+              </FormItem>
+              <Col span={24} style={{ padding: "20px 70px" }}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    this.refs.relicsDialog.openModal();
+                  }}
+                >
+                  选择盘点文物
+                </Button>
+              </Col>
+            </Col>
+            <Col span={24}>
+              <Table
+                columns={inventoryColumns}
+                dataSource={chooseInventoryRelics}
+                bordered
+                pagination={false}
+              />
+            </Col>
+            <Col span={24} style={{ padding: "20px 40px" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ float: "right" }}
+              >
+                提交盘点单
+              </Button>
+            </Col>
+          </Form>
+          <RelicsDialog
+            chooseData={this.chooseData}
+            title="选择盘点文物"
+            ref="relicsDialog"
+          />
+        </Col>
+      </Row>
+    );
+  }
 }
-
+const NewInventory = Form.create()(NewInventoryApp);
 export default NewInventory;
