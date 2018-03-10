@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Upload, Select, Button, message, Modal, Icon, DatePicker } from 'antd';
-
+import { CollectionImgUpload } from './api';
 import moment from "moment";
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -10,7 +10,8 @@ class RelicsInfoDialogApp extends Component {
   state = {
     previewVisible: false, // 预览
     previewImage: "", // 预览的图片url
-    fileList: [] // 图片列表
+    fileList: [], // 图片列表
+    reset: false
   };
 
   // 点击预览
@@ -31,16 +32,33 @@ class RelicsInfoDialogApp extends Component {
       message.error("请选择小于3M的图片!!!");
       return false;
     }
-    const render = new FileReader();
-    render.readAsDataURL(file);
-    render.onload = e => {
-      file.url = e.target.result;
-      this.setState(({ fileList }) => ({
-        fileList: [...fileList, file]
-      }));
-    };
-    console.log(this.state);
-    return true;
+
+    // console.log(this.state);
+    this.uploadImg(file);
+    return false;
+  };
+
+  // 上传图片
+  uploadImg = file => {
+    let formData = new FormData();
+    formData.append("file", file);
+    CollectionImgUpload(formData).then(res => {
+      console.log(res);
+      if (res.Msg === "文件上传成功!") {
+        let fileLists = {
+          uid: "-" + new Date().getTime(),
+          name: "",
+          status: "done",
+          url: res.Data
+        };
+        console.log("success");
+        this.setState(({ fileList }) => ({
+          fileList: [...fileList, fileLists]
+        }));
+      } else {
+        message.error("上传失败");
+      }
+    });
   };
   // 选择图片之后
   handleChange = ({ fileList }) => {
@@ -48,19 +66,26 @@ class RelicsInfoDialogApp extends Component {
     // this.setState({ fileList });
     // console.log(fileList);
   };
-  handleRemove = (file) => {
+  handleRemove = file => {
     //   console.log(file);
     //   console.log(this.state.fileList);
-      const { fileList } = this.state;
-      for(let i = 0; i < fileList.length; i++) {
-          if(fileList[i].status === "removed"){
-              fileList.splice(i, 1);
-          }
+    const { fileList } = this.state;
+    for (let i = 0; i < fileList.length; i++) {
+      if (fileList[i].status === "removed") {
+        fileList.splice(i, 1);
       }
+    }
     //   console.log(fileList)
-      this.setState({
-          fileList: fileList
-      })
+    this.setState({
+      fileList: fileList
+    });
+  };
+
+  resetFormFun() {
+    this.setState({
+      fileList: []
+    });
+    this.props.form.resetFields();
   }
 
   // 关闭预览
@@ -69,21 +94,48 @@ class RelicsInfoDialogApp extends Component {
   handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-        if (!err) {
-          console.log(values);
-          // this.props.history.push("/App/Home");
+      if (!err) {
+        console.log(values);
+        const { fileList } = this.state;
+        if(fileList.length > 0) {
+          console.log(fileList[1] === undefined);
           const value = {
             ...values,
-            date: values["date"].format("YYYY-MM-DD")
+            date: values["date"].format("YYYY-MM-DD"),
+            Collectionimg1: fileList[0] === undefined ? null : fileList[0].url,
+            Collectionimg2: fileList[1] === undefined ? null : fileList[1].url,
+            Collectionimg3: fileList[2] === undefined ? null : fileList[2].url
           };
           this.props.submit(value);
-          
+        } else {
+          message.error('请选择图片');
         }
+        
+      }
     });
   }
+
+  componentDidUpdate() {
+    const { reset } = this.props;
+    console.log(this.props);
+    if (reset === true) {
+      this.setState(
+        {
+          fileList: [],
+          reset: false
+        },
+        () => {
+          this.props.onReset();
+        }
+      );
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
+
     const { previewVisible, previewImage, fileList } = this.state;
+
     const uploadButton = (
       <div>
         <Icon type="plus" />
@@ -105,7 +157,7 @@ class RelicsInfoDialogApp extends Component {
               style={{ width: "100%" }}
             >
               <Upload
-                action="//jsonplaceholder.typicode.com/posts/"
+                action="/CollectionManage/CollectionImgUpload"
                 listType="picture-card"
                 fileList={fileList}
                 beforeUpload={this.beforeUpload}
@@ -149,13 +201,15 @@ class RelicsInfoDialogApp extends Component {
                 </Select>
               )}
             </FormItem>
-            {/* <FormItem className="form-width50" label="RFID标签:" labelCol={{ span: 8 }}>
-                  {getFieldDecorator("rfid", {
-                    rules: [
-                      { required: true, message: "请输入RFID标签" }
-                    ]
-                  })(<Input placeholder="请输入RFID标签" />)}
-                </FormItem> */}
+            <FormItem
+              className="form-width50"
+              label="存储位置:"
+              labelCol={{ span: 8 }}
+            >
+              {getFieldDecorator("localtion", {
+                rules: [{ required: true, message: "请输入存储位置" }]
+              })(<Input placeholder="请输入存储位置" />)}
+            </FormItem>
             <FormItem
               className="form-width50"
               label="存台箱号:"
@@ -235,9 +289,7 @@ class RelicsInfoDialogApp extends Component {
             >
               {getFieldDecorator("relicsYears", {
                 rules: [{ required: true, message: "请输入文物年代" }]
-              })(
-                <Input placeholder='请输入文物年代'  />
-              )}
+              })(<Input placeholder="请输入文物年代" />)}
             </FormItem>
             <FormItem
               className="form-width50"
