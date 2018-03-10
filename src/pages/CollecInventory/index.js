@@ -174,21 +174,16 @@ class CollecInventory extends Component {
       }
     ];
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           藏品盘点列表
         </Col>
-        <Col span={24} className="inventory-container">
+        <Col span={24} className="inventory-container" style={{ padding: "20px 40px 20px 20px" }}>
           <Col span={24} style={{ marginBottom: "20px" }}>
             <Col span={24} style={{ paddingBottom: "20px" }}>
-              <Button
-                type="primary"
-                icon="plus"
-                onClick={() => {
+              <Button type="primary" icon="plus" onClick={() => {
                   this.props.history.push("/App/NewInventory");
-                }}
-              >
+                }}>
                 新建盘点单
               </Button>
             </Col>
@@ -208,11 +203,7 @@ class CollecInventory extends Component {
                   </Select>
                 </FormItem>
                 <FormItem>
-                  <RangePicker
-                    onChange={this.datePickerChange}
-                    defaultValue={RangePickerDefault}
-                    format="YYYY-MM-DD"
-                  />
+                  <RangePicker onChange={this.datePickerChange} defaultValue={RangePickerDefault} format="YYYY-MM-DD" />
                 </FormItem>
                 <FormItem>
                   <Button onClick={this.queryInventData} type="primary">
@@ -222,29 +213,14 @@ class CollecInventory extends Component {
               </Form>
             </Col>
             <Col span={6}>
-              <Search
-                placeholder="请输入盘点单号"
-                enterButton
-                onSearch={this.searchData}
-              />
+              <Search placeholder="请输入盘点单号" enterButton onSearch={this.searchData} />
             </Col>
           </Col>
           <Col span={24}>
-            <Table
-              columns={inventoryColumns}
-              dataSource={inventoryDataList}
-              bordered
-              pagination={{
-                current: pageIndex,
-                pageSize: pageSize,
-                total: total,
-                onChange: this.paginationChange
-              }}
-            />
+            <Table columns={inventoryColumns} dataSource={inventoryDataList} bordered pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} />
           </Col>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 

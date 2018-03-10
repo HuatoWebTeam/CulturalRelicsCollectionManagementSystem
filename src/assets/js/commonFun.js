@@ -31,6 +31,7 @@ export const relicsYears = [
     { value: '现代', key: 14 }
 ];
 
+// 文物类别
 export const relicsCateGory = [
     { value: '玉器', key: 1 },
     { value: '瓷器', key: 2 },

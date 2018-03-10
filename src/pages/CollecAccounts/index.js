@@ -65,7 +65,7 @@ class CollecAccounts extends Component {
                 key: 'checkedOut'
             },
             {
-                title: '待入账数',
+                title: '待入库数',
                 dataIndex: 'stayAccount',
                 key: 'stayAccount'
             },
@@ -80,13 +80,13 @@ class CollecAccounts extends Component {
             <Col span={24} className="title">
               藏品账目列表
             </Col>
-            <Col span={24} className="accounts-container">
+            <Col span={24} className="accounts-container" style={{padding: '20px 40px 20px 20px'}} >
               <Col span={24} className="search-container">
                 <RangePicker defaultValue={[moment().subtract(6, "days"), moment()]} format="YYYY-MM-DD" disabledDate={this.disabledDate} />
                 <Button type="primary">搜索</Button>
               </Col>
               <Col span={24}>
-                <Table columns={accountsColumns} dataSource={accountData} bordered />
+                <Table pagination={false} columns={accountsColumns} dataSource={accountData} bordered />
               </Col>
             </Col>
           </Row>;

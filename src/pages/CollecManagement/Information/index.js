@@ -160,27 +160,24 @@ class ComplexGeneric extends Component {
             }
         ]
 
-        return (
-            <Row className='main-content' >
-                <Col className='title' span={24} >
-                    藏品信息列表
-                </Col>
-                <Col span={24} className='' >
-                    <Col span={24} style={{padding: '20px 40px 20px 20px'}} >
-                        <Button type='primary' icon='plus' onClick={() => { this.props.history.push('/App/AddRelics') }} >新增藏品</Button>
-                        <Search 
-                            enterButton
-                            placeholder='请输入文物名称'
-                            onSearch={ this.onSearchButton }
-                            style={{ width: '260px', float: 'right' }}
-                         />
-                    </Col>
-                    <Col span={24} >
-                        <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={relicInfoColumns} dataSource={relicsInfoData} bordered />
-                    </Col>
-                </Col>
-            </Row>
-        );
+        return <Row className="main-content">
+            <Col className="title" span={24}>
+              藏品信息列表
+            </Col>
+            <Col span={24} className="info-content" style={{ padding: "20px 40px 20px 20px" }}>
+              <Col span={24} style={{paddingBottom: '20px'}} >
+                <Button type="primary" icon="plus" onClick={() => {
+                    this.props.history.push("/App/AddRelics");
+                  }}>
+                  新增藏品
+                </Button>
+                <Search enterButton placeholder="请输入文物名称" onSearch={this.onSearchButton} style={{ width: "260px", float: "right" }} />
+              </Col>
+              <Col span={24}>
+                <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={relicInfoColumns} dataSource={relicsInfoData} bordered />
+              </Col>
+            </Col>
+          </Row>;
     }
 }
 
