@@ -61,6 +61,9 @@ class CollecRepair extends Component {
         console.log('search');
         this.setState({
             pageIndex: 1,
+            SearchName: value
+        }, () => {
+            this.getRepairList();
         })
     }
 
