@@ -54,8 +54,8 @@ class CollecInventory extends Component {
     InventallApi(params).then(res => {
       console.log(res);
       if (res.length > 0) {
-        for (let item of res) {
-          item.key = item.Inventory_Odd;
+        for (let i = 0; i < res.length; i++) {
+          res[i].key = i;
         }
         this.setState({
           inventoryDataList: res,

@@ -34,7 +34,22 @@ class NewInventoryApp extends Component {
           Collection_Number: chooseRelicsNum.join(',')
         };
         InventoryAdd(params).then(res => {
-          console.log(res)
+          console.log(res);
+          if(res === true) {
+            this.setState(
+              {
+                chooseRelicsNum: []
+              },
+              () => {
+                this.props.form.resetFields();
+                message.success("新建盘点单成功");
+                this.refs.relicsDialog.resetTableCheck();
+              }
+            );
+          } else {
+            message.error('新建盘点单失败')
+          }
+          
         })
 
       }
