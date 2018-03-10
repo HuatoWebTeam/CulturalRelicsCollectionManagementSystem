@@ -6,21 +6,32 @@ import { connect } from 'react-redux';
 import VerifyCode from "../Components/VerificationCode";
 import './index.less';
 import { LoginApi } from './api';
+import { getIp } from '../../assets/js/getIp';
 
 const FormItem = Form.Item;
 
 class LoginForm extends Component {
   state = {
     verCode: '',
-    loading: false
+    loading: false,
+    UserIp: ''
   };
+  componentWillMount() {
+    getIp((ip) => {
+      this.setState({
+        UserIp: ip
+      })
+    })
+  }
   handleSubmit (e) {
     e.preventDefault();
     this.props.form.validateFields((err, value) => {
       if(!err) {
         console.log(value);
         this.setState({loading: true});
-        let userInfo = { strUser: value.userName, strPwd: value.password }
+        const { UserIp } = this.state;
+        console.log(UserIp)
+        let userInfo = { strUser: value.userName, strPwd: value.password, ip: UserIp }
 
         LoginApi(userInfo).then(res => {
           console.log(res);
