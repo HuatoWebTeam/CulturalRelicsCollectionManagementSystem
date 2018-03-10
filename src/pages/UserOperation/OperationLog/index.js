@@ -28,11 +28,11 @@ class UserOperation extends Component {
                 dataIndex: 'userName',
                 key: 'userName'
             },
-            {
-                title: '操作IP地址',
-                dataIndex: 'operationIP',
-                key: 'operationIP'
-            },
+            // {
+            //     title: '操作IP地址',
+            //     dataIndex: 'operationIP',
+            //     key: 'operationIP'
+            // },
             {
                 title: '操作类型',
                 dataIndex: 'operationType',
