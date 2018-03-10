@@ -22,6 +22,7 @@ class AddRelics extends Component {
           StorageId: value.carton,
           CollectionNumber: value.relicsNum,
           Grade: value.levelInfo,
+          CollectionYears: Number(value.years),
           Number: Number(value.number),
           CollectionState: value.relicsState,
           CollectionTime: value.date,
