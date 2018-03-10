@@ -33,9 +33,11 @@ class LoginForm extends Component {
             Token: Token,
             UserMenuItem: UserMenuItem,
             UserName: UserName
+          }, {
+            expires: 0.5
           });
           // Cookie.set('UserName', UserName);
-          let userAuth = JSON.stringify({ name: value.userName });
+          // let userAuth = JSON.stringify({ name: value.userName });
             // sessionStorage.setItem("user", userAuth);
             this.props.history.push("/App/Home");
             // console.log(Cookie.getJSON('UserInfo'));
