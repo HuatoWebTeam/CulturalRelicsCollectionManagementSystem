@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Form, Input, Upload, Select, Button, message, Modal, Icon, DatePicker } from 'antd';
 import { CollectionImgUpload } from './api';
 import moment from "moment";
+import { relicsYears, relicsCategory, putInCategory, levelInfo, relicsState } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -193,11 +194,15 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("type", {
-                initialValue: 0,
+                initialValue: 1,
                 rules: [{ required: true, message: "请选择入库类型" }]
               })(
                 <Select>
-                  <Option value={0}>新增入库</Option>
+                  {
+                    putInCategory.map((item, idx) =>
+                      <Option value={item.key} key={item.key} > { item.value } </Option>
+                    )
+                  }
                 </Select>
               )}
             </FormItem>
@@ -220,7 +225,7 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择存台箱号" }]
               })(
                 <Select>
-                  <Option value={0}>新增入库</Option>
+                  <Option value={0}>存台箱号</Option>
                 </Select>
               )}
             </FormItem>
@@ -239,12 +244,15 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("levelInfo", {
-                initialValue: 0,
+                initialValue: 1,
                 rules: [{ required: true, message: "请选择分级信息" }]
               })(
                 <Select>
-                  <Option value={0}>普通藏品</Option>
-                  <Option value={1}>一级文物</Option>
+                  {
+                    levelInfo.map((item, idx) =>
+                      <Option value={item.key} key={item.key} >{ item.value }</Option>
+                    )
+                  }
                 </Select>
               )}
             </FormItem>
@@ -263,12 +271,15 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsState", {
-                initialValue: 0,
+                initialValue: 1,
                 rules: [{ required: true, message: "请选择文物状态" }]
               })(
                 <Select>
-                  <Option value={0}>馆内自藏品</Option>
-                  <Option value={1}>新增入库</Option>
+                  {
+                    relicsState.map((item, idx) =>
+                      <Option value={item.key} key={item.key} > {item.value} </Option>
+                    )
+                  }
                 </Select>
               )}
             </FormItem>
@@ -288,8 +299,17 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsYears", {
+                initialValue: 1,
                 rules: [{ required: true, message: "请输入文物年代" }]
-              })(<Input placeholder="请输入文物年代" />)}
+              })(
+                <Select>
+                  {
+                    relicsYears.map((item, idx) =>
+                      <Option value={item.key} key={item.key} >{item.value}</Option>
+                    )
+                  }
+                </Select>
+              )}
             </FormItem>
             <FormItem
               className="form-width50"
@@ -302,15 +322,19 @@ class RelicsInfoDialogApp extends Component {
             </FormItem>
             <FormItem
               className="form-width50"
-              label="类别:"
+              label="文物类别:"
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("category", {
-                initialValue: 0,
+                initialValue: 1,
                 rules: [{ required: true, message: "请选择文物类别" }]
               })(
                 <Select>
-                  <Option value={0}>新增入库</Option>
+                  {
+                    relicsCategory.map((item, idx) =>
+                      <Option value={item.key} key={item.key}>{item.value}</Option>
+                    )
+                  }
                 </Select>
               )}
             </FormItem>

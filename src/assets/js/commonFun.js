@@ -32,7 +32,7 @@ export const relicsYears = [
 ];
 
 // 文物类别
-export const relicsCateGory = [
+export const relicsCategory = [
     { value: '玉器', key: 1 },
     { value: '瓷器', key: 2 },
     { value: '陶器', key: 3 },
@@ -45,4 +45,25 @@ export const relicsCateGory = [
     { value: '紫砂', key: 10 },
     { value: '甲骨', key: 11 },
     { value: '善本书', key: 12 }
+];
+
+
+// 入库类型
+export const putInCategory = [
+    { value: '新增入库', key: 1 }
+];
+
+// 分级信息
+export const levelInfo = [
+    { value: '一级文物', key: 1 },
+    { value: '二级文物', key: 2 },
+    { value: '三级藏品', key: 3 },
+    { value: '普通藏品', key: 4 }
+];
+
+// 文物状态
+
+export const relicsState = [
+    { value: '在库', key: 1 },
+    { value: '出库', key: 2 }
 ]

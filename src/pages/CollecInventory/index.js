@@ -5,6 +5,7 @@ import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
 import moment from 'moment'
 import { RangePickerDefault } from '../../assets/js/commonFun';
+import { Link } from 'react-router-dom';
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
@@ -117,6 +118,8 @@ class CollecInventory extends Component {
     });
   };
 
+
+
   render() {
     const {
       inventoryDataList,
@@ -137,31 +140,31 @@ class CollecInventory extends Component {
         dataIndex: "Inventory_Time",
         key: "Inventory_Time"
       },
-      {
-        title: "文物库房",
-        dataIndex: "Storehouse_Name",
-        key: "Storehouse_Name"
-      },
-      {
-        title: "文物名称",
-        dataIndex: "Collection_Name",
-        key: "Collection_Name"
-      },
+      // {
+      //   title: "文物库房",
+      //   dataIndex: "Storehouse_Name",
+      //   key: "Storehouse_Name"
+      // },
+      // {
+      //   title: "文物名称",
+      //   dataIndex: "Collection_Name",
+      //   key: "Collection_Name"
+      // },
       {
         title: "文物数量",
         dataIndex: "Number",
         key: "Number"
       },
-      {
-        title: "类型",
-        dataIndex: "Category",
-        key: "Category"
-      },
-      {
-        title: "分级信息",
-        dataIndex: "Grade",
-        key: "Grade"
-      },
+      // {
+      //   title: "类型",
+      //   dataIndex: "Category",
+      //   key: "Category"
+      // },
+      // {
+      //   title: "分级信息",
+      //   dataIndex: "Grade",
+      //   key: "Grade"
+      // },
       {
         title: "盘点人",
         dataIndex: "InventoryMan",
@@ -171,6 +174,16 @@ class CollecInventory extends Component {
         title: "状态",
         dataIndex: "Inventory_State",
         key: "Inventory_State"
+      },
+      {
+        title: '操作',
+        dataIndex: '',
+        key: 'operation',
+        render: (text, croed, idx) => {
+          return <Link to={`/App/ShowDetails/${text.id}`}>
+              详情
+            </Link>;
+        }
       }
     ];
 
