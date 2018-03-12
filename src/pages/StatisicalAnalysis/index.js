@@ -11,29 +11,14 @@ const { RangePicker } = DatePicker;
 
 class Statisical extends Component {
   state = {
-    data: [
-      {
-        name: "入库",
-        type: "line",
-        stack: "总量",
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: "出库",
-        type: "line",
-        stack: "总量",
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: "征集",
-        type: "line",
-        stack: "总量",
-        data: [150, 232, 201, 154, 190, 330, 410]
-      }
-    ],
+    data: [],
+    pieChartData:[],
     date: RangePickerDefault,
+    chartsDate: [],
+    pieChartsData: [],
     chartLineWidth: 2,
-    format: 'YYYY-MM-DD'
+    format: 'YYYY-MM-DD',
+    allData: {}
   };
 
   componentWillMount() {
@@ -55,10 +40,52 @@ class Statisical extends Component {
       }
       GetStatisticalAnalysisData(params).then(res => {
         console.log(res);
+        let pieData = [
+          { name: '入库', value: res.Data.StorageNumber },
+          { name: '出库', value: res.Data.OutNumber },
+          { name: '征集', value: res.Data.CallNumber }
+        ];
+        let lineChart = [];
+        let chartsDate = [];
+        
+        let chartsData = res.Data.ListIntermediateTable;
+        for(let item of chartsData) {
+          chartsDate.push(item.DateTime);
+        }
+        for(let n = 0; n < 3; n++) {
+          lineChart.splice(n, 1, {
+            name: n === 0 ? '入库' : (n === 1 ? '出库' : '征集'),
+            type: 'line',
+            data: []
+          });
+          console.log(lineChart);
+          for (let i = 0; i < chartsData.length; i++) {
+            if(n === 0) {
+              lineChart[n].data.push(chartsData[i].StorageNumber);
+            } else if(n === 1) {
+              lineChart[n].data.push(chartsData[i].OutNumber);
+            } else {
+              lineChart[n].data.push(chartsData[i].CallNumber);
+            }
+          } 
+        }
+        this.setState({
+          pieChartsData: pieData,
+          chartsDate: chartsDate,
+          data: lineChart,
+          allData: {
+            StorageNumber: res.Data.StorageNumber,
+            OutNumber: res.Data.OutNumber,
+            CallNumber: res.Data.CallNumber
+          }
+        });
+        
+
       })
   }
 
   getLineChartOption = () => {
+    const { chartsDate } = this.state;
     const option = {
       title: {
         text: ""
@@ -84,15 +111,16 @@ class Statisical extends Component {
       xAxis: {
         type: "category",
         boundaryGap: false,
-        data: [
-          "2017-10-12",
-          "2017-10-13",
-          "2017-10-14",
-          "2017-10-15",
-          "2017-10-16",
-          "2017-10-17",
-          "2017-10-18"
-        ]
+        data: chartsDate,
+        axisLabel: {
+          formatter: function(value) {
+            // console.log(value)
+            var str_before = value.split(' ')[0];
+            var str_after = value.split(' ')[1];
+            return str_after + '\n' + str_before;
+            
+          }
+        }
       },
       yAxis: {
         type: "value",
@@ -106,6 +134,7 @@ class Statisical extends Component {
   };
 
   getPieChartOption = () => {
+    const { pieChartsData } = this.state;
     return  {
     title : {
         text: '',
@@ -124,15 +153,11 @@ class Statisical extends Component {
     color: ["#3065bf", "#fabe55", "#ff875c"],
     series : [
         {
-            name: '入库',
+            name: '',
             type: 'pie',
             radius : '55%',
             center: ['50%', '60%'],
-            data:[
-                {value:335, name:'入库'},
-                {value:310, name:'出库'},
-                {value:234, name:'征集'},
-            ],
+            data:pieChartsData,
             itemStyle: {
                 emphasis: {
                     shadowBlur: 10,
@@ -146,7 +171,7 @@ class Statisical extends Component {
   }
 
   render() {
-    const { data, chartLineWidth } = this.state;
+    const { data, allData } = this.state;
 
     return <Row className="main-content">
         <Col span={24} className="title">
@@ -154,7 +179,7 @@ class Statisical extends Component {
         </Col>
         <Col span={24} className="statisical-container">
           <Col span={24} style={{ paddingBottom: "20px" }}>
-            <RangePicker defaultValue={RangePickerDefault} format='YYYY-MM-DD' />
+            <RangePicker defaultValue={RangePickerDefault} format="YYYY-MM-DD" />
             <Button type="primary" style={{ marginLeft: "20px" }}>
               查询
             </Button>
@@ -163,9 +188,9 @@ class Statisical extends Component {
             <Col span={16} style={{ textAlign: "center" }}>
               <ReactEcharts style={{ width: "100%", height: "400px" }} option={this.getLineChartOption()} />
               <Col span={24} style={{ height: "30px", lineHeight: "30px", background: "#e8eef8" }}>
-                <Col span={8}>入库总数： 4568件</Col>
-                <Col span={8}>入库总数： 4568件</Col>
-                <Col span={8}>入库总数： 4568件</Col>
+                <Col span={8}>入库总数： {allData.StorageNumber}件</Col>
+                <Col span={8}>出库总数： {allData.OutNumber}件</Col>
+                <Col span={8}>征集总数： {allData.CallNumber}件</Col>
               </Col>
             </Col>
             <Col span={8} style={{ padding: "40px 20px 0 20px" }}>

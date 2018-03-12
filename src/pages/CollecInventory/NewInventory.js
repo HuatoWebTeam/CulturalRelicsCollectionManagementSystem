@@ -3,13 +3,15 @@ import { Row, Col, Button, Form, Table, Input, DatePicker, message } from 'antd'
 import './index.less';
 import moment from 'moment';
 import RelicsDialog from "../Components/RelicsDialog";
+import { levelInfo } from "../../assets/js/commonFun";
 import { InventoryAdd } from './api'; 
 const FormItem = Form.Item;
 
 class NewInventoryApp extends Component {
   state = {
     chooseInventoryRelics: [],
-    chooseRelicsNum: []
+    chooseRelicsNum: [],
+    number: null
   };
   // 提交
   formSubmit = e => {
@@ -17,7 +19,7 @@ class NewInventoryApp extends Component {
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
         console.log(fieldsValue);
-        const { chooseRelicsNum } = this.state;
+        const { chooseRelicsNum, number } = this.state;
         if(chooseRelicsNum.length === 0 ){
           message.error('请选择盘点文物');
         }
@@ -30,7 +32,8 @@ class NewInventoryApp extends Component {
           Inventory_Time: value.date,
           Inventory_Odd: value.inventNum,
           Inventory_Name: value.inventName,
-          Collection_Number: chooseRelicsNum.join(',')
+          Collection_Number: chooseRelicsNum.join(','),
+          Inventory_Number: number
         };
         InventoryAdd(params).then(res => {
           console.log(res);
@@ -63,13 +66,15 @@ class NewInventoryApp extends Component {
     console.log(value);
     let keys = [];
     // let data = [];
+    let number = 0;
     for(let item of value) {
       keys.push(item.key);
-      
+      number = number + Number(item.number)
     }
     this.setState({
       chooseRelicsNum: keys,
-      chooseInventoryRelics: value
+      chooseInventoryRelics: value,
+      number: number
     })
   }
 
@@ -105,7 +110,14 @@ class NewInventoryApp extends Component {
       {
         title: "分级信息",
         dataIndex: "levelInfo",
-        key: "levelInfo"
+        key: "levelInfo",
+        render:(text) => {
+            for(let item of levelInfo) {
+                if(Number(text) === item.key) {
+                    return (<span>{item.value}</span>)
+                }
+            }
+        }
       },
       // {
       //   title: "盘点人",

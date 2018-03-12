@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Table, Modal, Form, Input, Select, message } from 'antd';
 import './index.less';
 import { GetStorageeManageData, InsertStorage, UpdateStorage } from "../api";
+import { StoreApi } from '../../Components/RelicsDialog/api'
 const FormItem = Form.Item;
 const Option = Select.Option;
 
 class TankInfoApp extends Component {
   state = {
+    warehouseList: [],
     tnakInfoList: [],
     tanknModalTitle: "添加存储柜信息",
     StorageId: '',
@@ -26,6 +28,7 @@ class TankInfoApp extends Component {
 
   componentWillMount () {
     this.getStoageList();
+    this.getWarehouseList();
   }
 
   addTankInfo = () => {
@@ -53,6 +56,16 @@ class TankInfoApp extends Component {
         this.setState({ tankVisible: true });
       });
       
+  }
+
+  // 获取库房
+  getWarehouseList () {
+    StoreApi().then(res => {
+      console.log(res);
+      this.setState({
+        warehouseList: res
+      })
+    })
   }
   // 获取存储柜信息
   getStoageList = () => {
@@ -142,6 +155,7 @@ class TankInfoApp extends Component {
 
   render() {
     const {
+      warehouseList,
       tnakInfoList,
       tankVisible,
       tankForm,
@@ -220,10 +234,15 @@ class TankInfoApp extends Component {
               <Form layout="inline">
                 <FormItem label="库房:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                   {getFieldDecorator("warehouseName", {
-                    initialValue: isAdd ? 1 : tankForm.warehouseName,
+                    initialValue: isAdd ? 0 : Number(tankForm.warehouseName),
                     rules: [{ required: true, message: "请选择库房" }]
                   })(<Select style={{ width: "100%" }}>
-                      <Option value={1}>库房1</Option>
+                      <Option value={0}>全部</Option>
+                      {
+                        warehouseList.length > 0 && warehouseList.map((item, idx) =>
+                          <Option value={item.Storehouse_Id} key={item.Storehouse_Id} >{item.Storehouse_Name}</Option>
+                        )
+                      }
                     </Select>)}
                 </FormItem>
                 <FormItem label="RFID:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>

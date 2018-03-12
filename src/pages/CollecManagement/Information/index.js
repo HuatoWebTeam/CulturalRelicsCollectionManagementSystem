@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { Row, Col, Button, Input, Table } from 'antd';
 import { GetCollectionData } from './api';
+import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
 const Search = Input.Search;
 
 class ComplexGeneric extends Component {
@@ -111,7 +112,14 @@ class ComplexGeneric extends Component {
             {
                 title: '分级信息',
                 dataIndex: 'levelInfo',
-                key: 'levelInfo'
+                key: 'levelInfo',
+                render:(text) => {
+                    for(let item of levelInfo) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
+                    }
+                }
             },
             {
                 title: '材质',
@@ -121,12 +129,26 @@ class ComplexGeneric extends Component {
             {
                 title: '年代',
                 dataIndex: 'years',
-                key: 'years'
+                key: 'years',
+                render:(text) => {
+                    for(let item of relicsYears) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
+                    }
+                }
             },
             {
                 title: '完整程度',
                 dataIndex: 'howComplete',
-                key: 'howComplete'
+                key: 'howComplete',
+                render: (text) => {
+                    if(Number(text) === 0) {
+                        return (<span>完整</span>)
+                    } else if(Number(text) === 1) {
+                        return (<span>破损</span>)
+                    }
+                }
             },
             {
                 title: '状态',
@@ -136,7 +158,14 @@ class ComplexGeneric extends Component {
             {
                 title: '类别',
                 dataIndex: 'category',
-                key: 'category'
+                key: 'category',
+                render:(text) => {
+                    for(let item of relicsCategory) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
+                    }
+                }
             },
             {
                 title: '尺寸',

@@ -4,6 +4,7 @@ import './index.less';
 import moment from 'moment';
 import RelicsDialog from '../Components/RelicsDialog';
 import { RepairAddApi } from './api';
+import { levelInfo } from "../../assets/js/commonFun";
 
 
 const FormItem = Form.Item;
@@ -118,7 +119,14 @@ class NewRepairListApp extends Component {
             {
                 title: '分级信息',
                 dataIndex: 'levelInfo',
-                key: 'levelInfo'
+                key: 'levelInfo',
+                render: (text) => {
+                    for(let item of levelInfo) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
+                    }
+                }
             },
             {
                 title: '材质',

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
+import { levelInfo, relicsYears, relicsCategory } from "../../assets/js/commonFun";
 const Search = Input.Search;
 
 class CollecSolicition extends Component {
@@ -98,7 +99,14 @@ class CollecSolicition extends Component {
       {
         title: "分级信息",
         dataIndex: "Grade",
-        key: "Grade"
+        key: "Grade",
+        render:(text) => {
+            for(let item of levelInfo) {
+                if(Number(text) === item.key) {
+                    return (<span>{item.value}</span>)
+                }
+            }
+        }
       },
       {
         title: "材质",
@@ -108,7 +116,14 @@ class CollecSolicition extends Component {
       {
         title: "类别",
         dataIndex: "Solicitation_State",
-        key: "Solicitation_State"
+        key: "Solicitation_State",
+        render:(text) => {
+            for(let item of relicsCategory) {
+                if(Number(text) === item.key) {
+                    return (<span>{item.value}</span>)
+                }
+            }
+        }
       },
       {
         title: "尺寸",

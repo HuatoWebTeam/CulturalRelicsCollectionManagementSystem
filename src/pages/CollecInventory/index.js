@@ -47,7 +47,6 @@ class CollecInventory extends Component {
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
-      StorageId: storeName,
       Inventory_Odd: inventNum,
       beginTime: date[0],
       endTime: date[1]
