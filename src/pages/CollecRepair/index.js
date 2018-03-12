@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { RepairApi } from './api';
+import { levelInfo } from '../../assets/js/commonFun';
 const Search = Input.Search;
 
 
@@ -112,7 +113,15 @@ class CollecRepair extends Component {
             {
                 title: '分级信息',
                 dataIndex: 'Grade',
-                key: 'Grade'
+                key: 'Grade',
+                render:(text) => {
+                    for(let item of levelInfo) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>);
+                            // break;
+                        }
+                    }
+                }
             },
             {
                 title: '材质',

@@ -31,14 +31,20 @@ class NewRepairListApp extends Component {
                   Repair_Applicant: values.head,
                   Repair_Method: values.repairPlan,
                   Collection_Number: chooseRelicsNum.join(','),
-                  Repair_Result: values.repairResult
+                  Repair_Result: values.repairResult,
+                  Repair_cycle: values.repairCalce,
+                  Repair_Restorer: values.repairPeople
                 }
                 RepairAddApi(params).then(res => {
                   console.log(res);
                   if(res === true) {
-                    message.success('新建修复单成功')
+                    message.success('新建修复单成功');
+                    this.props.form.resetFields();
+                    this.setState({
+                      repairListData: []
+                    })
                   } else {
-                    message.error('新建修复单失败')
+                    message.error('新建修复单失败');
                   }
                 })
             }
@@ -133,7 +139,9 @@ class NewRepairListApp extends Component {
 
         return <Row className="main-content">
             <Col span={24} className="title">
-              新建修复单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+              新建修复单 <div className="go-back" onClick={() => {
+                  this.props.history.goBack();
+                }} />
             </Col>
             <Col span={24} className="new-repair-container">
               <Form onSubmit={this.formSubmit.bind(this)} layout="inline">
@@ -144,7 +152,7 @@ class NewRepairListApp extends Component {
                       rules: [
                         { required: true, message: "请选择申请时间" }
                       ]
-                    })(<DatePicker format='YYYY-MM-DD' placeholder="请选择时间" />)}
+                    })(<DatePicker format="YYYY-MM-DD" placeholder="请选择时间" />)}
                   </FormItem>
                   <FormItem label="申请人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
                     {getFieldDecorator("head", {
@@ -158,14 +166,28 @@ class NewRepairListApp extends Component {
                       rules: [
                         { required: true, message: "请输入修复编号" }
                       ]
-                    })(<Input placeholder='请输入修复编号' />)}
+                    })(<Input placeholder="请输入修复编号" />)}
                   </FormItem>
                   <FormItem label="修复方案:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
                     {getFieldDecorator("repairPlan", {
                       rules: [
                         { required: true, message: "请输入修复方案" }
                       ]
-                    })(<Input />)}
+                    })(<Input placeholder="请输入修复方案" />)}
+                  </FormItem>
+                  <FormItem label="修复周期:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("repairCalce", {
+                      rules: [
+                        { required: true, message: "请输入修复周期" }
+                      ]
+                    })(<Input placeholder="请输入修复周期" />)}
+                  </FormItem>
+                  <FormItem label="修复人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
+                    {getFieldDecorator("repairPeople", {
+                      rules: [
+                        { required: true, message: "请输入修复人" }
+                      ]
+                    })(<Input placeholder="请输入修复人" />)}
                   </FormItem>
                   <FormItem label="预期修复结果:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
                     {getFieldDecorator("repairResult", {
@@ -180,8 +202,10 @@ class NewRepairListApp extends Component {
                 </Col>
                 <Col span={24} style={{ marginBottom: "20px", marginLeft: "121px" }}>
                   <Button type="primary" onClick={() => {
-                    this.refs.relicsDialog.openModal();
-                  }} >选择修复文物</Button>
+                      this.refs.relicsDialog.openModal();
+                    }}>
+                    选择修复文物
+                  </Button>
                 </Col>
                 <Col span={24}>
                   <Table columns={repairListColumns} dataSource={repairListData} bordered pagination={false} />

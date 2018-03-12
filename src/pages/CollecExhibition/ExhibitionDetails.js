@@ -3,6 +3,7 @@ import { Row, Col, Table } from 'antd';
 // import { relicDetails } from './data';
 import './index.less';
 import { ExhibitionDetailsApi } from './api';
+import { levelInfo, relicsYears } from '../../assets/js/commonFun';
 
 class ExhibitionDetails extends Component {
   state = {
@@ -147,7 +148,15 @@ class ExhibitionDetails extends Component {
       {
         title: "分级信息",
         dataIndex: "levelInfo",
-        key: "lavelInfo"
+        key: "lavelInfo",
+        render: (text) => {
+          // console.log(text);
+          for(let item of levelInfo) {
+            if(Number(text) === item.key) {
+              return (<span>{item.value}</span>);
+            }
+          }
+        }
       },
       {
         title: "材质",
@@ -157,12 +166,27 @@ class ExhibitionDetails extends Component {
       {
         title: "年代",
         dataIndex: "years",
-        key: "years"
+        key: "years",
+        render: (text) => {
+          console.log(text);
+          for(let item of relicsYears) {
+            if(Number(text) === item.key) {
+              return (<span>{item.value}</span>);
+            }
+          }
+        }
       },
       {
         title: "完整程度",
         dataIndex: "howComplete",
-        key: "howComplete"
+        key: "howComplete",
+        render:(text) => {
+          if(text === 0) {
+            return (<span>完整</span>)
+          } else if(text === 1) {
+            return (<span>破损</span>)
+          }
+        }
       },
       {
         title: "文物状态",

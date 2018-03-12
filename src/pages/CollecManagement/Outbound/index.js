@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Input, DatePicker, Table } from 'antd';
 import './index.less';
-import moment from 'moment';
+// import moment from 'moment';
 import { RangePickerDefault } from '../../../assets/js/commonFun';
 import { GetOutTheLibraryData } from './api';
 const Search = Input.Search;

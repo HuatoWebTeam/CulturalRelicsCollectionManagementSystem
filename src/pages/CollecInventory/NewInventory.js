@@ -14,7 +14,6 @@ class NewInventoryApp extends Component {
   // 提交
   formSubmit = e => {
     e.preventDefault();
-    const { chooseRelicsNum } = this.state;
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
         console.log(fieldsValue);

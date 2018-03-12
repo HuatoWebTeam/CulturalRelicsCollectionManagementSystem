@@ -155,6 +155,7 @@ class CollecSolicition extends Component {
               pagination={{
                 current: pageIndex,
                 pageSize: pageSize,
+                total: total,
                 onchenge: this.paginationChange
               }}
               columns={solicitionColumns}

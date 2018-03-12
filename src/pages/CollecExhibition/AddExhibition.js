@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 
-import { Row, Col, Form, Input, Select, DatePicker, Button, Table, Modal, message } from 'antd';
+import { Row, Col, Form, Input, Select, DatePicker, Button, Table, message } from 'antd';
 import './index.less';
 import { ExDataAddApp, } from "./api";
 import RelicsDialog from '../Components/RelicsDialog';
-import moment from 'moment';
 import { RangePickerDefault } from '../../assets/js/commonFun';
 const FormItem = Form.Item;
-const Search = Input.Search;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 

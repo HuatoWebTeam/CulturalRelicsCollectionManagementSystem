@@ -10,7 +10,7 @@ const Option = Select.Option;
 class NewOutboundApp extends Component {
   state = {
     newOutboundData: [],
-    format: 'YYYY-MM-DD'
+    format: "YYYY-MM-DD"
   };
 
   handleSubmit = e => {
@@ -19,59 +19,60 @@ class NewOutboundApp extends Component {
       if (!err) {
         console.log(value);
         const { newOutboundData, format } = this.state;
-        if(newOutboundData.length > 0) {
+        if (newOutboundData.length > 0) {
           let values = {
             ...value,
-            outboundDate: value['outboundDate'].format(format),
-            outboundType: typeof value['outboundType'] === 'number' ? value['outboundType'] : value['outboundType'][0]
+            outboundDate: value["outboundDate"].format(format),
+            outboundType:
+              typeof value["outboundType"] === "number"
+                ? value["outboundType"]
+                : value["outboundType"][0]
           };
           let relicsInfo = [];
-          for(let item of newOutboundData) {
+          for (let item of newOutboundData) {
             relicsInfo.push({
               CollectionNumber: item.relicsNum,
               Number: item.number
-            })
-          };
+            });
+          }
           console.log(values);
           let params = {
             outTheLibrary: {
               OutPurpose: values.outboundPurposes,
               OutType: values.outboundType,
               OutDateTime: values.outboundDate,
-              OutUserName:values.outboundPeople,
+              OutUserName: values.outboundPeople,
               ListCollection: relicsInfo
             }
-            
           };
-          console.log(params)
+          console.log(params);
           InsertOutTheLibrary(params).then(res => {
             console.log(res);
-            if(res.Msg === "操作成功!") {
-              message.success('新建出库单成功');
+            if (res.Msg === "操作成功!") {
+              message.success("新建出库单成功");
               this.props.form.resetFields();
               this.setState({
-                newOutboundData:[]
-              })
+                newOutboundData: []
+              });
             } else {
-              message.error('新建出库单失败');
+              message.error("新建出库单失败");
             }
-          })
+          });
         } else {
-          message.error('请选择出库文物');
+          message.error("请选择出库文物");
         }
-        
       }
     });
   };
-  chooseData = (value) => {
+  chooseDataList = value => {
     console.log(value);
     // for(let item of value) {
-      
+
     // }
     this.setState({
       newOutboundData: value
-    })
-  }
+    });
+  };
 
   render() {
     const { newOutboundData } = this.state;
@@ -141,7 +142,13 @@ class NewOutboundApp extends Component {
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          新建出库单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+          新建出库单{" "}
+          <div
+            className="go-back"
+            onClick={() => {
+              this.props.history.goBack();
+            }}
+          />
         </Col>
         <Col span={24} className="newOutbound-container">
           <Form layout="inline" onSubmit={this.handleSubmit}>
@@ -218,8 +225,7 @@ class NewOutboundApp extends Component {
         </Col>
         <Col span={24}>
           <RelicsDialog
-            title="选择出库文物"
-            chooseData={this.chooseData}
+            chooseData={this.chooseDataList}
             title="新建出库单"
             ref="relicsDialog"
           />

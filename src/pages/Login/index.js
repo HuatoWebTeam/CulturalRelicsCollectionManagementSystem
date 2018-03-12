@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Icon, Input, Button  } from 'antd';
-import axios from 'axios';
 import Cookie from 'js-cookie';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import VerifyCode from "../Components/VerificationCode";
 import './index.less';
 import { LoginApi } from './api';
@@ -57,20 +56,6 @@ class LoginForm extends Component {
           this.setState({loading:false});
           console.log(err);
         })
-        // axios
-        //   .get("/Loginfo/Login", { params: { strUser: "admin", strPwd: "admin" } }, )
-        //   .then(res => {
-        //     console.log(res);
-        //     // this.props.history.push("/App/Home");
-            
-        //     let userAuth = JSON.stringify({ name: value.userName });
-        //     sessionStorage.setItem("user", userAuth);
-        //     this.props.history.push("/App/Home");
-        //   })
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
-        
 
       }
 
@@ -84,7 +69,7 @@ class LoginForm extends Component {
 
   handleVerifyCode = (rule, value, callback) => {
     // console.log(rule, value);
-    const { getFieldValue } = this.props.form;
+    // const { getFieldValue } = this.props.form;
     if (value.toLowerCase() !== this.state.verCode) {
       callback('验证码输入错误');
     };

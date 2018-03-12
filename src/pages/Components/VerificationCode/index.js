@@ -11,20 +11,20 @@ function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-function drawLine(ctx,color,startX,startY,endX,endY) {
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-}
+// function drawLine(ctx,color,startX,startY,endX,endY) {
+//     ctx.strokeStyle = color;
+//     ctx.beginPath();
+//     ctx.moveTo(startX, startY);
+//     ctx.lineTo(endX, endY);
+//     ctx.stroke();
+// }
 
-function drawPoint (ctx,color,x,y,r,sAngle,eAngle) {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, r, sAngle, eAngle);
-    ctx.fill();
-}
+// function drawPoint (ctx,color,x,y,r,sAngle,eAngle) {
+//     ctx.fillStyle = color;
+//     ctx.beginPath();
+//     ctx.arc(x, y, r, sAngle, eAngle);
+//     ctx.fill();
+// }
 
 function switchTypeAndSetStringToArray(type,numbers,letters) {
     let txtArr = [];

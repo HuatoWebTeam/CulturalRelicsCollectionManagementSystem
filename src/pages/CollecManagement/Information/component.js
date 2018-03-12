@@ -300,7 +300,7 @@ class RelicsInfoDialogApp extends Component {
             >
               {getFieldDecorator("relicsYears", {
                 initialValue: 1,
-                rules: [{ required: true, message: "请输入文物年代" }]
+                rules: [{ required: true, message: "请选择文物年代" }]
               })(
                 <Select>
                   {
@@ -357,8 +357,8 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择完整程度" }]
               })(
                 <Select>
-                  <Option value={0}>破损</Option>
-                  <Option value={1}>完整</Option>
+                  <Option value={0}>完整</Option>
+                  <Option value={1}>破损</Option>
                 </Select>
               )}
             </FormItem>

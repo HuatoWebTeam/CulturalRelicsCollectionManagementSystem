@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Select, DatePicker, Button } from 'antd';
+import { Row, Col, Form, Input, Button } from 'antd';
 import './index.less';
 import { CollectionCertification } from './api';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 class ProductionCertificateApp extends Component {
     state = {  }

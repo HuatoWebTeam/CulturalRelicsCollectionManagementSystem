@@ -212,7 +212,7 @@ class AppContent extends Component {
               <div className="noticeIcon iconBack" />
               <div className="dropdownContainer">
                 <Dropdown overlay={dropdownMenu} trigger={["click"]}>
-                  <a className="ant-dropdown-link" href="javascript:;">
+                  <a className="ant-dropdown-link" href="#">
                     <i className="iconBack userIcon" />
                     <span className="userName">
                       <span style={{ lineHeight: "20px" }}>欢迎登录，</span>

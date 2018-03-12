@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, message } from 'antd';
+import { Row, Col, message } from 'antd';
 import './index.less';
-import qs from "qs";
 import { InsertCollection } from './api';
 import RelicsInfoDialog from "./component";
 
@@ -49,7 +48,7 @@ class AddRelics extends Component {
           })
           this.refs.relicsInfo.resetFields();
         } else {
-          message.error('操作失败')
+          message.error('操作失败');
         }
       });
   }

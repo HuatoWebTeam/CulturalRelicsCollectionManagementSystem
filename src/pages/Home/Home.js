@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Radio } from 'antd';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
 const RadioGroup  = Radio.Group;
