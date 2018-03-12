@@ -33,7 +33,10 @@ class ProductionCertificateApp extends Component {
         // console.log(this.props);
         const { getFieldDecorator } = this.props.form;
         return <Row className="main-content">
-            <Col className="title">凭证制作</Col>
+            <Col className="title">
+              凭证制作 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+              
+            </Col>
             <Col span={24} className="certificate-form">
               <Form layout="inline" onSubmit={this.handleSubmit.bind(this)} style={{ width: "710px" }}>
                 <FormItem label="RFID:" labelCol={{ span: 8 }}>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Button, Input, Table, Select, DatePicker } from 'antd';
+import { Row, Col, Form, Button, Input, Table, Select, DatePicker, message } from 'antd';
 import './index.less';
 import moment from 'moment';
 import RelicsDialog from "../../Components/RelicsDialog";
@@ -19,33 +19,47 @@ class NewOutboundApp extends Component {
       if (!err) {
         console.log(value);
         const { newOutboundData, format } = this.state;
-        let values = {
-          ...value,
-          outboundDate: value['outboundDate'].format(format),
-          outboundType: typeof value['outboundType'] === 'number' ? value['outboundType'] : value['outboundType'][0]
-        };
-        let relicsInfo = [];
-        for(let item of newOutboundData) {
-          relicsInfo.push({
-            CollectionNumber: item.relicsNum,
-            Number: item.number
+        if(newOutboundData.length > 0) {
+          let values = {
+            ...value,
+            outboundDate: value['outboundDate'].format(format),
+            outboundType: typeof value['outboundType'] === 'number' ? value['outboundType'] : value['outboundType'][0]
+          };
+          let relicsInfo = [];
+          for(let item of newOutboundData) {
+            relicsInfo.push({
+              CollectionNumber: item.relicsNum,
+              Number: item.number
+            })
+          };
+          console.log(values);
+          let params = {
+            outTheLibrary: {
+              OutPurpose: values.outboundPurposes,
+              OutType: values.outboundType,
+              OutDateTime: values.outboundDate,
+              OutUserName:values.outboundPeople,
+              ListCollection: relicsInfo
+            }
+            
+          };
+          console.log(params)
+          InsertOutTheLibrary(params).then(res => {
+            console.log(res);
+            if(res.Msg === "操作成功!") {
+              message.success('新建出库单成功');
+              this.props.form.resetFields();
+              this.setState({
+                newOutboundData:[]
+              })
+            } else {
+              message.error('新建出库单失败');
+            }
           })
-        };
-        console.log(values);
-        let params = {
-          outTheLibrary: {
-            OutPurpose: values.outboundPurposes,
-            OutType: values.outboundType,
-            OutDateTime: values.outboundDate,
-            OutUserName:values.outboundPeople,
-            ListCollection: relicsInfo
-          }
-          
-        };
-        console.log(params)
-        InsertOutTheLibrary(params).then(res => {
-          console.log(res);
-        })
+        } else {
+          message.error('请选择出库文物');
+        }
+        
       }
     });
   };
@@ -127,7 +141,7 @@ class NewOutboundApp extends Component {
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          新建出库单
+          新建出库单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} className="newOutbound-container">
           <Form layout="inline" onSubmit={this.handleSubmit}>

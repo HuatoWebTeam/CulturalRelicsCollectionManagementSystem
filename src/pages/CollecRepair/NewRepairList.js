@@ -133,7 +133,7 @@ class NewRepairListApp extends Component {
 
         return <Row className="main-content">
             <Col span={24} className="title">
-              新建修复单
+              新建修复单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
             </Col>
             <Col span={24} className="new-repair-container">
               <Form onSubmit={this.formSubmit.bind(this)} layout="inline">

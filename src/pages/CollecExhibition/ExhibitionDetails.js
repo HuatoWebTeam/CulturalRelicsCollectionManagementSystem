@@ -8,6 +8,7 @@ class ExhibitionDetails extends Component {
   state = {
     id: null,
     pageIndex: 1,
+    pageSize: 10,
     total: 0,
     data: []
   };
@@ -23,9 +24,10 @@ class ExhibitionDetails extends Component {
 
   }
   getDetailsList () {
-    const { pageIndex, id } = this.state;
+    const { pageIndex, id, pageSize } = this.state;
     let params = {
       pageIndex: pageIndex,
+      pageSize: pageSize,
       Exhibition_Odd: id
     };
     ExhibitionDetailsApi(params).then(res => {
@@ -49,9 +51,11 @@ class ExhibitionDetails extends Component {
           });
           this.setState({ data: dataSource });
         }
-      };
+      } else {
+        this.setState({ total: 0 });
+      }
       
-      this.setState({ total: 0 });
+      
       
 
 
@@ -108,7 +112,7 @@ class ExhibitionDetails extends Component {
   ];
 
   render() {
-    const { total, pageIndex, data } = this.state;
+    const { total, pageSize, pageIndex, data } = this.state;
     const relicDetails = [
       {
         title: "文物编号",
@@ -202,10 +206,10 @@ class ExhibitionDetails extends Component {
     return (
       <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
-          藏品展览详情
+          藏品展览详情 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} className="exhibition-content" style={{marginTop: '20px'}} >
-          <Table pagination={{ total: total, onChange: this.paginationChange }} bordered columns={relicDetails} dataSource={data} />
+          <Table pagination={{ total: total, pageSize: pageSize, current: pageIndex, onChange: this.paginationChange }} bordered columns={relicDetails} dataSource={data} />
         </Col>
       </Row>
     );

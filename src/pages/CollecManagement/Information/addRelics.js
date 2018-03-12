@@ -59,7 +59,7 @@ class AddRelics extends Component {
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          新增藏品
+          新增藏品 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} style={{ padding: "40px 100px" }} className="add-relics">
           <RelicsInfoDialog onReset={() => { this.setState({reset: false}) }} reset={reset} submit={this.formSubmit} ref='relicsInfo' />

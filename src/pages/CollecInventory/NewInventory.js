@@ -43,6 +43,9 @@ class NewInventoryApp extends Component {
               () => {
                 this.props.form.resetFields();
                 message.success("新建盘点单成功");
+                this.setState({
+                  chooseInventoryRelics: []
+                })
                 this.refs.relicsDialog.resetTableCheck();
               }
             );
@@ -115,7 +118,7 @@ class NewInventoryApp extends Component {
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          新建盘点单
+          新建盘点单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} className="newInventory-container">
           <Form layout="inline" onSubmit={this.formSubmit}>

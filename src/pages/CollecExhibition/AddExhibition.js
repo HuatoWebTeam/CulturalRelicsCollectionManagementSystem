@@ -24,7 +24,7 @@ class AddExhibitionForm extends Component {
       }
     ],
     addExhibitionData: [ ],
-    chooseRelicsNum: []
+    chooseRelicsNum: [],
   };
 
   componentWillMount(){
@@ -96,7 +96,7 @@ class AddExhibitionForm extends Component {
     // console.log(this.props);
     const {
       typeMenu,
-      addExhibitionData
+      addExhibitionData,
       
     } = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -175,7 +175,7 @@ class AddExhibitionForm extends Component {
     
     return <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
-          添加展览清单
+          添加展览清单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} className="exhibition-content" style={{ marginTop: "20px" }}>
           <Col className="exhibition-form-content">

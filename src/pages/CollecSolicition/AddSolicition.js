@@ -137,7 +137,7 @@ class AddSilicitionApp extends Component {
 
     return <Row className="main-content">
         <Col span={24} className="title">
-          添加征集信息
+          添加征集信息 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} className="addSolicition-container">
           <Form layout="inline" onSubmit={this.handleFormSubmit} style={{ width: "100%" }}>
