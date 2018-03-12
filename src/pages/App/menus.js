@@ -17,6 +17,7 @@ export  const menus = [
     { key:'/App/Accounts', title: '藏品账目', icon: 'iconBack accounts' },
     { key: '/App/Inventory', title: '藏品盘点', icon: 'iconBack inventory' },
     { key: '/App/NewInventory', title: '新建盘点单', isHidden: true, fatherName: '/App/Inventory' },
+    { key: '/App/ShowDetails', title: '盘点单详情', isHidden: true, fatherName: '/App/Inventory' },
     { key: '/App/Solicition', title: '藏品征集', icon: 'iconBack solicition' },
     { key: '/App/AddSolicition', title: '添加征集', isHidden: true, fatherName: '/App/Solicition' },
     { key: 'ComplexGeneric', title: '复仿制管理', icon: 'iconBack complexgeneric', sub: [
