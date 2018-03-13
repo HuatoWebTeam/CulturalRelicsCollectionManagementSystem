@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
-import { levelInfo, relicsYears, relicsCategory } from "../../assets/js/commonFun";
+import { levelInfo, relicsCategory } from "../../assets/js/commonFun";
 const Search = Input.Search;
 
 class CollecSolicition extends Component {

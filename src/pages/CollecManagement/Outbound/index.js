@@ -39,13 +39,13 @@ class ComplexGeneric extends Component {
             for(let item of res.Data) {
                 console.log(item);
                 data.push({
-                    key: item.CollectionNumber,
-                    outboundNum: null,
+                    key: item.OutNumber,
+                    outboundNum: item.OutNumber,
                     relicsNum: item.CollectionNumber,
                     rfid: item.CollectionRfid,
                     relicsImg: item.Collectionimg1,
                     relicsName: item.CollectionName,
-                    date: item.OutDateTime,
+                    date: item.CollectionTime,
                     localtion: item.StorageId,
                     number: item.Number,
                     levelInfo: item.Grade,

@@ -3,7 +3,7 @@ import { Row, Col, Button, DatePicker } from 'antd';
 import { DefaultPlayer as Video } from "react-html5video";
 import "react-html5video/dist/styles.css";
 import './index.less';
-import moment from "moment";
+// import moment from "moment";
 import { VideoApi } from './api';
 import { RangePickerDefault } from "../../assets/js/commonFun";
 const { RangePicker } = DatePicker;

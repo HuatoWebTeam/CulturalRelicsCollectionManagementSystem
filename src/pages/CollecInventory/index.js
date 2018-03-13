@@ -3,7 +3,6 @@ import { Row, Col, Select, DatePicker, Input, Button, Form, Table } from 'antd';
 import './index.less';
 import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
-import moment from 'moment'
 import { RangePickerDefault } from '../../assets/js/commonFun';
 import { Link } from 'react-router-dom';
 const Option = Select.Option;
@@ -43,7 +42,7 @@ class CollecInventory extends Component {
   }
 
   getInventoryList() {
-    const { pageIndex, pageSize, storeName, inventNum, date } = this.state;
+    const { pageIndex, pageSize, inventNum, date } = this.state;
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
@@ -133,6 +132,11 @@ class CollecInventory extends Component {
         title: "盘点单号",
         dataIndex: "Inventory_Odd",
         key: "Inventory_Odd"
+      },
+      {
+        title: '盘点名称',
+        dataIndex: 'Inventory_Name',
+        key: 'Inventory_Name'
       },
       {
         title: "时间",

@@ -3,7 +3,7 @@ import { Row, Col, Form, Button, Input, Table, Select, DatePicker, message } fro
 import './index.less';
 import moment from 'moment';
 import RelicsDialog from "../../Components/RelicsDialog";
-import { levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
+import { levelInfo, relicsYears } from '../../../assets/js/commonFun';
 import { InsertOutTheLibrary } from './api';
 const FormItem = Form.Item;
 const Option = Select.Option;

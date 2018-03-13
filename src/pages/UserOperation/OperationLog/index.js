@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, DatePicker, Button, Table } from 'antd';
-import moment from 'moment';
+// import moment from 'moment';
 import { RangePickerDefault } from '../../../assets/js/commonFun';
 import { LoginfoDesc } from './api'; 
 const { RangePicker } = DatePicker;
@@ -82,7 +82,6 @@ class UserOperation extends Component {
   render() {
     const {
       operationLogList,
-      defaultValue,
       formmat,
       pageIndex,
       pageSize,

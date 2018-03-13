@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Row, Col, Button, DatePicker } from 'antd';
 import './index.less';
 import ReactEcharts from 'echarts-for-react';
-import moment from 'moment';
 import { RangePickerDefault } from '../../assets/js/commonFun';
 import { GetStatisticalAnalysisData } from './api';
 const { RangePicker } = DatePicker;
@@ -171,7 +170,7 @@ class Statisical extends Component {
   }
 
   render() {
-    const { data, allData } = this.state;
+    const { allData } = this.state;
 
     return <Row className="main-content">
         <Col span={24} className="title">

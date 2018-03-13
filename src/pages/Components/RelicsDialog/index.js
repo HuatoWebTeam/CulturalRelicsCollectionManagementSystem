@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Form, Select, Modal, Table, Input } from 'antd';
 import { StoreApi, ColleApi } from './api';
-import { levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
+import { levelInfo, relicsYears } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { Search } = Input;
