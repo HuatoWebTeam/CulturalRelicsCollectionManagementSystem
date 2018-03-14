@@ -5,7 +5,7 @@ export  const menus = [
     { key: '/App/AddExhibition', title: '藏品展览 > 添加展览', isHidden: true, fatherName: '/App/CollecExhibition' },
     { key: '/App/CollecRepair', title: '藏品修复', icon: 'iconBack repair' },
     { key: '/App/NewRepairList', title: '藏品修复 > 新建修复单', isHidden: true, fatherName: '/App/CollecRepair' },
-    { key: '/App/RepairDetails', title: '藏品修复 > 修复单详情', isHidden: true, fatherName: 'App/CollecRepair' },
+    { key: '/App/RepairDetails', title: '藏品修复 > 修复单详情', isHidden: true, fatherName: '/App/CollecRepair' },
     { key: 'CollectionManagement', title: '藏品管理', icon: 'iconBack collection', sub: [
         { key: '/App/Information', title: '信息登记', icon: 'nullIcon' },
         { key: '/App/AddRelics', title: '藏品管理 > 信息登记 > 新增藏品', isHidden: true, fatherName: '/App/Information' },
