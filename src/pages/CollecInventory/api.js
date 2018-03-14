@@ -10,3 +10,10 @@ export const InventallApi = (params) => {
 export const InventoryAdd = (params) => {
     return axios.post("/Inventory/InventoryAdd", params).then(res => res.data)
 }
+
+// 藏品盘点  详情
+export const InvenDataAll = (params) => {
+    return axios
+      .post("/Inventory/InvenDataAll", params)
+      .then(res => res.data);
+}

@@ -183,7 +183,8 @@ class CollecInventory extends Component {
         dataIndex: '',
         key: 'operation',
         render: (text, croed, idx) => {
-          return <Link to={`/App/ShowDetails/${text.id}`}>
+          // console.log(text)
+          return <Link to={`/App/ShowDetails/${text.Inventory_Odd}`}>
               详情
             </Link>;
         }
