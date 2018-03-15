@@ -154,7 +154,7 @@ class CollecInventory extends Component {
       //   key: "Collection_Name"
       // },
       {
-        title: "文物数量",
+        title: "盘点数量",
         dataIndex: "Number",
         key: "Number"
       },
