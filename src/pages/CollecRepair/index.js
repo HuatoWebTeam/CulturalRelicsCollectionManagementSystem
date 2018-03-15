@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { RepairApi } from './api';
 import { levelInfo } from '../../assets/js/commonFun';
+import { Link } from 'react-router-dom';
 const Search = Input.Search;
 
 
@@ -70,7 +70,7 @@ class CollecRepair extends Component {
 
 
     render () {
-        const { pageIndex, total } = this.state;
+        const { pageIndex, total, pageSize } = this.state;
         const repairList = [
             {
                 title: '修复单号',
@@ -88,47 +88,6 @@ class CollecRepair extends Component {
                 key: 'Repair_Applicant'
             },
             {
-                title: '文物编号',
-                dataIndex: 'Collection_Number',
-                key: 'Collection_Number'
-            },
-            {
-                title: '文物图片',
-                dataIndex: 'Collection_img',
-                key: 'Collection_img',
-                render: (text, index) => {
-                    return <img style={{width: '55px', height: '55px'}} src={text}  alt={index} />
-                }
-            },
-            {
-                title: '文物名称',
-                dataIndex: 'Collection_Name',
-                key: 'Collection_Name'
-            },
-            {
-                title: '数量',
-                dataIndex: 'Number',
-                key: 'Number'
-            },
-            {
-                title: '分级信息',
-                dataIndex: 'Grade',
-                key: 'Grade',
-                render:(text) => {
-                    for(let item of levelInfo) {
-                        if(Number(text) === item.key) {
-                            return (<span>{item.value}</span>);
-                            // break;
-                        }
-                    }
-                }
-            },
-            {
-                title: '材质',
-                dataIndex: 'MaterialQuality',
-                key: 'MaterialQuality'
-            },
-            {
                 title: '修复方法',
                 dataIndex: 'Repair_Method',
                 key: 'Repair_Method'
@@ -144,16 +103,6 @@ class CollecRepair extends Component {
                 key: 'Repair_Restorer'
             },
             {
-                title: '文物状态',
-                dataIndex: 'Collection_State',
-                key: 'Collection_State',
-                render: (text) => {
-                    return <span style={{
-                        color: text === '在库' ? '#e15d05' : ( text === '出库' ? '#3065bf' : '#666')
-                    }} > {text} </span>
-                }
-            },
-            {
                 title: '修复状态',
                 dataIndex: 'Repair_State',
                 key: 'Repair_State',
@@ -161,6 +110,17 @@ class CollecRepair extends Component {
                     return <span style={{
                         color: text === '待修复' ? '#e15d05' : ( text === '修复中' ? '#3065bf' : (text === '已修复' ? '#666' : 'red'))
                     }} > {text} </span>
+                }
+            },
+            {
+                title: '操作',
+                dataIndex: '',
+                key: 'operation',
+                render: (text, croed, idx) => {
+                // console.log(text)
+                return <Link to={`/App/RepairDetails/${text.Repair_Id}`}>
+                    详情
+                    </Link>;
                 }
             }
         ]
@@ -178,7 +138,7 @@ class CollecRepair extends Component {
                  enterButton ></Search>
               </Col>
               <Col>
-                <Table pagination={{ current: pageIndex, total: total, onChange: this.paginationChange }} bordered columns={repairList} dataSource={this.state.repairData}  />
+                <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} bordered columns={repairList} dataSource={this.state.repairData}  />
               </Col>
             </Col>
           </Row>;
