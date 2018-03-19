@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Form, Input, Upload, Select, Button, message, Modal, Icon, DatePicker } from 'antd';
 import { CollectionImgUpload } from './api';
 import moment from "moment";
+import { connect } from 'react-redux';
 import { relicsYears, relicsCategory, putInCategory, levelInfo, relicsState } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -12,9 +13,50 @@ class RelicsInfoDialogApp extends Component {
     previewVisible: false, // 预览
     previewImage: "", // 预览的图片url
     fileList: [], // 图片列表
-    reset: false
+    reset: false,
+    formData: {
+      relicsName: null,
+      type: 1,
+      localtion: null,
+      carton: 0,
+      relicsNum: null,
+      levelInfo: 1,
+      number: null,
+      relicsState: 1,
+      date: moment(),
+      relicsYears: 1,
+      material: null,
+      category: 1,
+      weight: null,
+      howComplete: 0,
+      size: null
+    }
   };
-
+  componentWillMount () {
+    const { state, formData } = this.props.componentState;
+    console.log(state);
+    console.log(formData);
+    if(state === '编辑藏品') {
+      let data = {
+        category: Number(formData.category),
+        howComplete: Number(formData.howComplete),
+        key: formData.key,
+        levelInfo: Number(formData.levelInfo),
+        date: moment(formData.libraryTime),
+        material: formData.material,
+        numer: formData.number,
+        relicsName: formData.relicsName,
+        relicsNum: formData.relicsNum,
+        size: formData.size,
+        relicsState: Number(formData.state),
+        weight: formData.weight,
+        relicsYears: Number(formData.years)
+      }
+      this.setState({
+        formData: data
+      })
+    }
+  }
   // 点击预览
   handlePreview = file => {
     console.log(file);
@@ -135,7 +177,7 @@ class RelicsInfoDialogApp extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
 
-    const { previewVisible, previewImage, fileList } = this.state;
+    const { previewVisible, previewImage, fileList, formData } = this.state;
 
     const uploadButton = (
       <div>
@@ -185,6 +227,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsName", {
+                initialValue: formData.relicsName,
                 rules: [{ required: true, message: "请输入文物名称" }]
               })(<Input placeholder="请输入文物名称" />)}
             </FormItem>
@@ -194,7 +237,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("type", {
-                initialValue: 1,
+                initialValue: formData.type,
                 rules: [{ required: true, message: "请选择入库类型" }]
               })(
                 <Select>
@@ -212,6 +255,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("localtion", {
+                initialValue: formData.localtion,
                 rules: [{ required: true, message: "请输入存储位置" }]
               })(<Input placeholder="请输入存储位置" />)}
             </FormItem>
@@ -221,7 +265,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("carton", {
-                initialValue: 0,
+                initialValue: formData.carton,
                 rules: [{ required: true, message: "请选择存台箱号" }]
               })(
                 <Select>
@@ -235,6 +279,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsNum", {
+                initialValue: formData.relicsNum,
                 rules: [{ required: true, message: "请输入文物编号" }]
               })(<Input placeholder="请输入文物编号" />)}
             </FormItem>
@@ -244,7 +289,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("levelInfo", {
-                initialValue: 1,
+                initialValue: formData.levelInfo,
                 rules: [{ required: true, message: "请选择分级信息" }]
               })(
                 <Select>
@@ -262,6 +307,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("number", {
+                initialValue: formData.number,
                 rules: [{ required: true, message: "请输入文物数量" }]
               })(<Input placeholder="请输入文物数量" />)}
             </FormItem>
@@ -271,7 +317,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsState", {
-                initialValue: 1,
+                initialValue: formData.relicsState,
                 rules: [{ required: true, message: "请选择文物状态" }]
               })(
                 <Select>
@@ -289,7 +335,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("date", {
-                initialValue: moment(),
+                initialValue: formData.date,
                 rules: [{ required: true, message: "请选择入馆时间" }]
               })(<DatePicker format="YYYY-MM-DD" />)}
             </FormItem>
@@ -299,7 +345,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("relicsYears", {
-                initialValue: 1,
+                initialValue: formData.relicsYears,
                 rules: [{ required: true, message: "请选择文物年代" }]
               })(
                 <Select>
@@ -317,6 +363,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("material", {
+                initialValue: formData.material,
                 rules: [{ required: true, message: "请输入文物材质" }]
               })(<Input placeholder="请输入文物材质" />)}
             </FormItem>
@@ -326,7 +373,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("category", {
-                initialValue: 1,
+                initialValue: formData.category,
                 rules: [{ required: true, message: "请选择文物类别" }]
               })(
                 <Select>
@@ -344,6 +391,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("weight", {
+                initialValue:formData.weight,
                 rules: [{ required: true, message: "请输入文物重量" }]
               })(<Input placeholder="请输入文物重量" />)}
             </FormItem>
@@ -353,7 +401,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("howComplete", {
-                initialValue: 0,
+                initialValue: formData.howComplete,
                 rules: [{ required: true, message: "请选择完整程度" }]
               })(
                 <Select>
@@ -368,6 +416,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("size", {
+                initialValue: formData.size,
                 rules: [{ required: true, meaage: "请输入文物尺寸" }]
               })(<Input placeholder="请输入文物尺寸" />)}
             </FormItem>
@@ -382,5 +431,12 @@ class RelicsInfoDialogApp extends Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    componentState: state.main.collectionInfoData
+  };
+};
+
 const RelicsInfoDialog = Form.create()(RelicsInfoDialogApp);
-export default RelicsInfoDialog;
+export default connect(mapStateToProps)(RelicsInfoDialog);

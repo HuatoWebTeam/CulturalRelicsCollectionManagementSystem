@@ -6,6 +6,7 @@ import {
   UpdateStorehouse,
   InsertStorehouse
 } from "../api";
+import { connect } from 'react-redux';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
@@ -25,7 +26,12 @@ class WarehouseManageApp extends Component {
   };
 
   componentWillMount() {
-    this.getWraehousrList();
+    this.setState({
+      pageIndex: this.props.pageIndex
+    }, () => {
+      this.getWraehousrList();
+    })
+    
   }
 
   handleOk = () => {
@@ -98,6 +104,7 @@ class WarehouseManageApp extends Component {
       pageIndex: page
     }, () => {
       this.getWraehousrList();
+      this.props.changePageIndex(page)
     })
   }
 
@@ -223,4 +230,15 @@ class WarehouseManageApp extends Component {
   }
 }
 const WarehouseManage = Form.create()(WarehouseManageApp);
-export default WarehouseManage;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.warehousePage
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: "WAREHOUSEPAGE", payload: args })
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(WarehouseManage);

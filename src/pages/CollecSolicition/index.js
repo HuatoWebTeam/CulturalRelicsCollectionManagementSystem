@@ -3,6 +3,7 @@ import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
 import { levelInfo, relicsCategory } from "../../assets/js/commonFun";
+import { connect } from 'react-redux';
 const Search = Input.Search;
 
 class CollecSolicition extends Component {
@@ -15,7 +16,12 @@ class CollecSolicition extends Component {
   };
 
   componentWillMount() {
-    this.getSolicitionlist();
+    this.setState({
+      pageIndex: this.props.pageIndex
+    }, () => {
+      this.getSolicitionlist();
+    })
+    
   }
   // 获取征集列表
   getSolicitionlist() {
@@ -60,6 +66,7 @@ class CollecSolicition extends Component {
       },
       () => {
         this.getSolicitionlist();
+        this.props.changePageIndex(page)
       }
     );
   };
@@ -183,5 +190,16 @@ class CollecSolicition extends Component {
     );
   }
 }
+// SOLICITIONPAGE
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.solicitionPage
+  }
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: 'SOLICITIONPAGE', payload: args })
+  };
+};
 
-export default CollecSolicition;
+export default connect(mapStateToProps, mapDispatchToProps )(CollecSolicition);

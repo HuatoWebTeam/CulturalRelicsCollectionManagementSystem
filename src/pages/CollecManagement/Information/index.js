@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
-import { Row, Col, Button, Input, Table } from 'antd';
+import { Row, Col, Button, Input, Table, Modal } from 'antd';
 import { GetCollectionData } from './api';
 import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
+import RelicsInfoDialog from './component';
+import { connect } from 'react-redux';
 const Search = Input.Search;
 
 class ComplexGeneric extends Component {
@@ -15,7 +17,12 @@ class ComplexGeneric extends Component {
     }
 
     componentWillMount() {
-        this.getColletionList();
+        this.setState({
+            pageIndex: this.props.pageIndex
+        }, () => {
+            this.getColletionList();
+        })
+        
     }
     // 获取数据
     getColletionList () {
@@ -43,7 +50,8 @@ class ComplexGeneric extends Component {
                   category: item.Category,
                   size: item.Size,
                   weight: item.Weight,
-                  key: item.CollectionNumber
+                  key: item.CollectionNumber,
+                  localtion: null
                 });
             }
             this.setState({
@@ -69,6 +77,7 @@ class ComplexGeneric extends Component {
             pageIndex: page
         }, () => {
             this.getColletionList();
+            this.props.changePageIndex(page);
         })
     }
     render() {
@@ -183,7 +192,12 @@ class ComplexGeneric extends Component {
                 key: 'operation',
                 render: (text, record) => {
                     return (
-                        <Button type='primary' >编辑</Button>
+                        <Button type='primary' onClick={
+                            () => {
+                                this.props.changeFormData({state: '编辑藏品', formData: record});
+                                this.props.history.push('/App/AddRelics');
+                            }
+                        } >编辑</Button>
                     )
                 }
             }
@@ -196,6 +210,7 @@ class ComplexGeneric extends Component {
             <Col span={24} className="info-content" style={{ padding: "20px 40px 20px 20px" }}>
               <Col span={24} style={{paddingBottom: '20px'}} >
                 <Button type="primary" icon="plus" onClick={() => {
+                    this.props.changeFormData({state: '新增藏品', formData:{}})
                     this.props.history.push("/App/AddRelics");
                   }}>
                   新增藏品
@@ -209,5 +224,17 @@ class ComplexGeneric extends Component {
           </Row>;
     }
 }
+// COLLECINFO
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.collecInfoPage
+  }
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changeFormData: args => dispatch({ type: "COLLECINFO", payload: args }),
+    changePageIndex: args => dispatch({ type: 'COLLECINFOPAGE', payload: args })
+  };
+};
 
-export default ComplexGeneric;
+export default connect(mapStateToProps, mapDispatchToProps)(ComplexGeneric);

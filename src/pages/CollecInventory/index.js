@@ -5,6 +5,7 @@ import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
 import { RangePickerDefault } from '../../assets/js/commonFun';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
@@ -33,7 +34,8 @@ class CollecInventory extends Component {
     ];
     this.setState(
       {
-        date: defaultDate
+        date: defaultDate,
+        pageIndex: this.props.pageIndex
       },
       () => {
         this.getInventoryList();
@@ -100,6 +102,7 @@ class CollecInventory extends Component {
       pageIndex: page
     }, () => {
       this.getInventoryList();
+      this.props.changePageIndex(page)
     })
   }
   selectChange = value => {
@@ -240,5 +243,15 @@ class CollecInventory extends Component {
       </Row>;
   }
 }
-
-export default CollecInventory;
+// INVENTORYPAGE
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.inventoryPage
+  }
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: 'INVENTORYPAGE', payload: args })
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(CollecInventory);

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import './index.less';
 import { GetEntryTheLibraryData } from './api';
+import { connect } from 'react-redux';
 import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
 
 
@@ -14,7 +15,12 @@ class ComplexGeneric extends Component {
     }
 
     componentWillMount() {
-        this.getPutInList();
+        this.setState({
+            pageIndex: this.props.pageIndex
+        }, () => {
+            this.getPutInList();
+        })
+        
     }
 
     getPutInList() {
@@ -63,6 +69,7 @@ class ComplexGeneric extends Component {
             pageIndex: page
         }, () => {
             this.getPutInList();
+            this.props.changePageIndex(page)
         })
     }
 
@@ -184,4 +191,15 @@ class ComplexGeneric extends Component {
     }
 }
 
-export default ComplexGeneric;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.putInPage
+  };
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: "PUTINSTORAGEPAGE", payload: args })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps) (ComplexGeneric);

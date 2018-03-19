@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import { Row, Col, message } from 'antd';
 import './index.less';
-import { InsertCollection } from './api';
+import { InsertCollection, UpdateCollection } from "./api";
 import RelicsInfoDialog from "./component";
+import { connect } from 'react-redux';
 
 class AddRelics extends Component {
   state = {
     reset: false,
+    pageTitle: ''
   };
+  componentWillMount() {
+    this.setState({
+      pageTitle: this.props.title
+    })
+  }
   componentDidMount() {
-    
     console.log(this.refs.relicsInfo);
   }
   formSubmit = (value) => {
@@ -36,29 +42,40 @@ class AddRelics extends Component {
           Collectionimg3: value.Collectionimg3
         }
       };
-      // let formData = new FormData();
-      // formData.append("collection", params);
       console.log(params);
-      InsertCollection(params).then(res => {
-        console.log(res);
-        if(res.Msg === "操作成功!") {
-          message.success('操作成功');
-          this.setState({
-            reset: true
-          })
-          this.refs.relicsInfo.resetFields();
-        } else {
-          message.error('操作失败');
-        }
-      });
+      const { pageTitle } = this.state;
+      if(pageTitle === '新增藏品') {
+        InsertCollection(params).then(res => {
+          console.log(res);
+          if (res.Msg === "操作成功!") {
+            message.success("操作成功");
+            this.setState({ reset: true });
+            this.refs.relicsInfo.resetFields();
+          } else {
+            message.error("操作失败");
+          }
+        });
+      } else {
+        UpdateCollection(params).then(res => {
+          console.log(res);
+          if (res.Msg === "操作成功!") {
+            message.success("操作成功");
+            this.setState({ reset: true });
+            this.refs.relicsInfo.resetFields();
+          } else {
+            message.error("操作失败");
+          }
+        });
+      }
+      
   }
 
   render() {
-    const { reset } = this.state;
+    const { reset, pageTitle } = this.state;
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          新增藏品 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+          {pageTitle} <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} style={{ padding: "40px 100px" }} className="add-relics">
           <RelicsInfoDialog onReset={() => { this.setState({reset: false}) }} reset={reset} submit={this.formSubmit} ref='relicsInfo' />
@@ -67,4 +84,11 @@ class AddRelics extends Component {
     );
   }
 }
-export default AddRelics;
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    title: state.main.collectionInfoData.state
+  };
+};
+
+export default connect(mapStateToProps)(AddRelics);

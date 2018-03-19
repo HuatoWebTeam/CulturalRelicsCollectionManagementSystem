@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { GetCollectionCertificationData } from "./api";
+import { connect } from 'react-redux';
 import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
 
 const Search = Input.Search;
@@ -16,7 +17,12 @@ class ComplexGeneric extends Component {
     }
 
     componentWillMount() {
-        this.getCredentialsList();
+        this.setState({
+            pageIndex: this.props.pageIndex
+        }, () => {
+            this.getCredentialsList();
+        })
+        
     }
 
     getCredentialsList() {
@@ -47,6 +53,7 @@ class ComplexGeneric extends Component {
             pageIndex: page
         }, () => {
             this.getCredentialsList();
+            this.props.changePageIndex(page);
         })
     }
 
@@ -177,4 +184,14 @@ class ComplexGeneric extends Component {
     }
 }
 
-export default ComplexGeneric;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.billPage
+  }
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: 'BILLPAGE', payload: args })
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ComplexGeneric);

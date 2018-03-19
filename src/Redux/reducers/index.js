@@ -3,7 +3,20 @@
 import { combineReducers } from 'redux';
 import Cookie from 'js-cookie';
 
-import { CLICK_ME } from '../actions';
+import {
+  EXHIBITIONPAGE,
+  REPAIRPAGE,
+  COLLECINFO,
+  COLLECINFOPAGE,
+  BILLPAGE,
+  PUTINSTORAGEPAGE,
+  OUTBOUNDPAGE,
+  INVENTORYPAGE,
+  SOLICITIONPAGE,
+  WAREHOUSEPAGE,
+  TANKINFOPAGE,
+  OPERATIONPAGE
+} from "../actions";
 
 export let initialState = {
     login: {
@@ -13,16 +26,57 @@ export let initialState = {
     },
     main:{
         buttonText: '默认',
-        
+        exhibitionPage: 1,
+        repairPage: 1,
+        collectionInfoData:{
+            state: '新增藏品',
+            formData: []
+        },
+        collecInfoPage: 1,
+        billPage: 1,
+        putInPage: 1,
+        outboundPage: 1,
+        inventoryPage: 1,
+        solicitionPage: 1,
+        warehousePage:1,
+        tankInfoPage: 1,
+        operationPage: 1
     }
 };
 
 let reducers = combineReducers({
     main: (state = {}, action) => {
         switch (action.type) {
-            case CLICK_ME:
-                return {...state, buttonText: action.payload};
-        
+            case EXHIBITIONPAGE: 
+                return {...state, exhibitionPage: action.payload };
+            case REPAIRPAGE: 
+                return {...state, repairPage: action.payload };
+            case COLLECINFO: 
+                return { 
+                    ...state, 
+                    collectionInfoData: { 
+                        state: action.payload.state, 
+                        formData: action.payload.formData 
+                    } 
+                };
+            case COLLECINFOPAGE: 
+                return { ...state, collecInfoPage: action.payload};
+            case BILLPAGE: 
+                return {...state, billPage: action.payload }
+            case PUTINSTORAGEPAGE: 
+                return {...state, putInPage: action.payload}
+            case OUTBOUNDPAGE: 
+                return {...state, outboundPage: action.payload}
+            case INVENTORYPAGE: 
+                return {...state, inventoryPage: action.payload}
+            case SOLICITIONPAGE: 
+                return {...state, solicitionPage: action.payload}
+            case WAREHOUSEPAGE:
+                return {...state, warehousePage: action.payload}
+            case TANKINFOPAGE: 
+                return {...state, tankInfoPage: action.payload}
+            case OPERATIONPAGE:
+                return {...state, operationPage: action.payload}
             default:
                 return state;
         }

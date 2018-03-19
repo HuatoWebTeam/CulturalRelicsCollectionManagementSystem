@@ -1,20 +1,75 @@
 
-.main-content .assign-content {
-    height: ~'calc(100% - 60px)';
-    // padding: 20px;
-    .assign-title {
-        border-bottom: 2px solid #ccc;
-        padding: 20px 20px 10px;
-    }
+.main-content {
     .assign-content {
-        padding: 20px;
-        .assign-checkbox {
-            padding-bottom: 10px;
-        }
-        .ant-radio-group {
-            .ant-radio-wrapper{
-                width: 150px;
+        height: ~'calc(100% - 60px)';
+        // height: 100%;
+        // padding: 20px;
+        .assign-title {
+            // border-bottom: 2px solid #ccc;
+            padding: 20px ;
+            height: 100%;
+            .assign-contents {
+                border: 1px solid #aaa;
+                border-radius: 5px;
+                padding: 20px 0;
+                height: 100%;
+                .ant-collapse {
+                    border-radius: 0;
+                    .ant-collapse-item {
+                        .ant-collapse-header {
+                            background: #f0f5fa;
+                        }
+                    }
+                }
+                .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+                    right: 16px;
+                    left: inherit;
+                }
+                .assign-checkbox {
+                    padding-bottom: 10px;
+                }
+                .ant-radio-group {
+                    .ant-radio-wrapper{
+                        width: 100%;
+                        margin-right: 0;
+                        margin-bottom: 10px;
+                    }
+                }
             }
         }
+        
+    }
+
+    .gutter-row-right {
+        padding: 20px 20px 20px 0;
+        height: 80%;
+        .container {
+            // padding: 0 20px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            .assign-title {
+                height: 48px;
+                line-height: 48px;
+                padding-left: 20px;
+                background: #f0f5fa;
+                border-radius: 5px 5px 0 0;
+                border-bottom: 1px solid #aaa;
+            }
+            .assign-contents {
+                padding: 20px 20px;
+                .ant-checkbox-group {
+                    > .assign-checkbox {
+                        margin-bottom: 10px;
+                    }
+                    > .child-checkbox {
+                        .assign-checkbox {
+                            margin-bottom: 15px;
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 }
+

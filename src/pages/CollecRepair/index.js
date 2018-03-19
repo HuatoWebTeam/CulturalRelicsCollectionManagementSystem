@@ -4,6 +4,7 @@ import './index.less';
 import { RepairApi } from './api';
 import { levelInfo } from '../../assets/js/commonFun';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 const Search = Input.Search;
 
 
@@ -18,7 +19,12 @@ class CollecRepair extends Component {
     }
 
     componentWillMount() {
-        this.getRepairList();
+        this.setState({
+            pageIndex:this.props.pageIndex
+        }, () => {
+            this.getRepairList();
+        })
+        
     }
 
     getRepairList =  () => {
@@ -49,11 +55,12 @@ class CollecRepair extends Component {
     }
 
     paginationChange = (pageIndex) => {
-        console.log(pageIndex);
+        // console.log(pageIndex);
         this.setState({
             pageIndex: pageIndex
         }, () => {
             this.getRepairList();
+            this.props.changePageIndex(pageIndex)
         });
         
     }
@@ -145,4 +152,16 @@ class CollecRepair extends Component {
     }
 }
 
-export default CollecRepair;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.repairPage
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: "REPAIRPAGE", payload: args })
+  };
+};
+
+export default  connect(mapStateToProps, mapDispatchToProps)(CollecRepair);

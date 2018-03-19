@@ -3,6 +3,7 @@ import { Row, Col, DatePicker, Button, Table } from 'antd';
 // import moment from 'moment';
 import { RangePickerDefault } from '../../../assets/js/commonFun';
 import { LoginfoDesc } from './api'; 
+import { connect } from 'react-redux';
 const { RangePicker } = DatePicker;
 
 class UserOperation extends Component {
@@ -22,7 +23,8 @@ class UserOperation extends Component {
       RangePickerDefault[1].format(formmat)
     ];
     this.setState({
-      defaultValue: date
+      defaultValue: date,
+      pageIndex: this.props.pageIndex,
     }, () => {
       this.getOperationList();
     });
@@ -153,4 +155,16 @@ class UserOperation extends Component {
   }
 }
 
-export default UserOperation;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.operationPage
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: "OPERATIONPAGE", payload: args })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserOperation);

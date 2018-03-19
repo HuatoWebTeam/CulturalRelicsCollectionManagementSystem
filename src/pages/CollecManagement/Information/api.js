@@ -18,3 +18,8 @@ export const InsertCollection = (params) => {
 export const CollectionImgUpload = (params) => {
     return axios.post('/CollectionManage/CollectionImgUpload', params, header).then(res => res.data)
 }
+
+// 编辑文物信息 
+export const UpdateCollection = (params) => {
+    return axios.post("/CollectionManage/UpdateCollection", params).then(res => res.data)
+}

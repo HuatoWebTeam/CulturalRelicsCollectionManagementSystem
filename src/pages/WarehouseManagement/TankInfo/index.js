@@ -3,6 +3,7 @@ import { Row, Col, Button, Table, Modal, Form, Input, Select, message } from 'an
 import './index.less';
 import { GetStorageeManageData, InsertStorage, UpdateStorage } from "../api";
 import { StoreApi } from '../../Components/RelicsDialog/api'
+import { connect } from 'react-redux';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -27,8 +28,13 @@ class TankInfoApp extends Component {
   };
 
   componentWillMount () {
-    this.getStoageList();
-    this.getWarehouseList();
+    this.setState({
+      pageIndex: this.props.pageIndex
+    }, () => {
+      this.getStoageList();
+      this.getWarehouseList();
+    })
+    
   }
 
   addTankInfo = () => {
@@ -150,6 +156,7 @@ class TankInfoApp extends Component {
       pageIndex: page
     }, () => {
       this.getStoageList();
+      this.props.changePageIndex(page)
     })
   }
 
@@ -277,4 +284,16 @@ class TankInfoApp extends Component {
   }
 }
 const TankInfo = Form.create()(TankInfoApp);
-export default TankInfo;
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.tankInfoPage
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: args => dispatch({ type: "TANKINFOPAGE", payload: args })
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(TankInfo);

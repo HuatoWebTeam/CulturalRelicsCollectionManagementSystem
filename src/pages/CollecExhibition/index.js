@@ -6,6 +6,7 @@ import { subStr } from '../../assets/js/commonFun';
 import moment from 'moment';
 import { ExhibitionAll } from './api';
 import Cookie from 'js-cookie';
+import { connect } from 'react-redux';
 // import { tableColumns, tableData } from './data';
 const { RangePicker } = DatePicker;
 const Search  = Input.Search;
@@ -28,7 +29,8 @@ class CollecExhibition extends Component {
     let endDate = moment().format("YYYY-MM-DD");
     // console.log();
     this.setState({
-      date: [startDate, endDate]
+      date: [startDate, endDate],
+      pageIndex: this.props.pageIndex
     });
   }
 
@@ -51,7 +53,7 @@ class CollecExhibition extends Component {
     };
 
     ExhibitionAll(params).then(res => {
-      // console.log(res);
+      console.log(res);
       if (res.length > 0) {
         this.setState({ total: res[0].Count });
         let dataSource = [];
@@ -82,6 +84,7 @@ class CollecExhibition extends Component {
       pageIndex: page
     }, () => {
       this.getExhibitionList();
+      this.props.changePageIndex(page);
     });
     
   };
@@ -216,4 +219,16 @@ class CollecExhibition extends Component {
   }
 }
 
-export default CollecExhibition;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pageIndex: state.main.exhibitionPage
+  }
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changePageIndex: (args) => dispatch({type: 'EXHIBITIONPAGE', payload: args})
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CollecExhibition);
