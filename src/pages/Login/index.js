@@ -4,7 +4,7 @@ import Cookie from 'js-cookie';
 // import { connect } from 'react-redux';
 import VerifyCode from "../Components/VerificationCode";
 import './index.less';
-import { LoginApi } from './api';
+import { LoginApi, getUserIp } from "./api";
 import { getIp } from '../../assets/js/getIp';
 
 const FormItem = Form.Item;
@@ -16,11 +16,26 @@ class LoginForm extends Component {
     UserIp: ''
   };
   componentWillMount() {
-    getIp((ip) => {
-      this.setState({
-        UserIp: ip
-      })
-    })
+    var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
+    
+    if (RTCPeerConnection) {
+      getIp(ip => {
+        this.setState({ UserIp: ip });
+      });
+    } else {
+      getUserIp().then(res => {
+        // console.log(res)
+        var reg = /[^\(\)]+(?=\))/g;
+        var result = res.match(reg)
+        
+        result = JSON.parse(result[0])
+        // console.log(result.ip);
+        this.setState({
+          UserIp: result.ip
+        })
+      });
+    }
+      
   }
   handleSubmit (e) {
     e.preventDefault();

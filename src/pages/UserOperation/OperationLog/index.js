@@ -78,6 +78,7 @@ class UserOperation extends Component {
       pageIndex: page
     }, () => {
       this.getOperationList();
+      this.props.changePageIndex(page)
     })
   }
 

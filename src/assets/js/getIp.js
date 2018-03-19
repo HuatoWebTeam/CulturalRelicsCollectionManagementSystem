@@ -1,11 +1,28 @@
 
+// ActionX
+
+// function GetLocalIPAddr () {
+//     var oSetting = null, ip = null;
+//     try {
+//         oSetting = new ActiveXObject('rcbdyctl.Setting');
+//         ip = oSetting.GetIPAddress;
+//         if(ip.length === 0) {
+//             return null;
+//         }
+//         oSetting = null;
+//     } catch (e) {
+//         return ip
+//     }
+//     return ip;
+// }
+
 // 获取本地真实ip
 export const getIp = (callback) => {
     var ip_dups = {};
 
+    // console.log(GetLocalIPAddr())
     //compatibility for firefox and chrome
-    var RTCPeerConnection = window.RTCPeerConnection
-        || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
     var mediaConstraints = {
         optional: [{ RtpDataChannels: true }]
     };
