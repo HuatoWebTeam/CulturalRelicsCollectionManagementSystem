@@ -17,7 +17,6 @@ const renderChildMenuItem = ({Functional_Name, Functional__URl, icon, ...props }
       {icon &&  <i className={icon} /> }
       <span className='nav-text' > {Functional_Name} </span>
     </Link>
-
   </Menu.Item>;
 
 const renderSubMenu = ({ ProjectModule_URL, ProjectModule_Name, icon, subnode, ...props }) => 

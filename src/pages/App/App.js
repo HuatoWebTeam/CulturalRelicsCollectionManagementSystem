@@ -3,7 +3,7 @@ import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, Input } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus';
-import Cookie from 'js-cookie';
+// import Cookie from 'js-cookie';
 import './App.less'
 const { Header, Content, Sider } = Layout;
 const confirm = Modal.confirm;
@@ -26,7 +26,10 @@ class AppContent extends Component {
     setPwdVisible: false
   };
   componentWillMount() {
-    let UserInfo = Cookie.getJSON("UserInfo");
+    console.log(this.props);
+    let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
+    
+    console.log(UserInfo);
     let menu = UserInfo.UserMenuItem;
     for (let item of menu) {
       for (let value of menus) {
@@ -42,7 +45,7 @@ class AppContent extends Component {
     });
 
     this.setMenuOpenKey(this.props);
-    this.getLocationName();
+    // this.getLocationName();
     for (let item of this.state.UserMenu) {
       if (item.subnode.length > 0) {
         this.rootSubmenuKeys.push(item.key);
@@ -58,6 +61,10 @@ class AppContent extends Component {
 
   componentWillUnmount() {
     console.log("卸载");
+  }
+  componentWillReceiveProps() {
+    console.log(this.props)
+    this.setMenuOpenKey(this.props.history);
   }
 
   getLocationName(keys) {
@@ -112,12 +119,13 @@ class AppContent extends Component {
   //
   setMenuOpenKey = props => {
     let { pathname } = props.location;
-    // console.log(pathname);
+    console.log(pathname);
     if (pathname === "/") {
       pathname = "/App/Home";
     }
 
     this.setState({ selectOpenKey: pathname });
+    this.getLocationName(pathname);
   };
   openMenu = v => {
     console.log(v);
@@ -162,7 +170,7 @@ class AppContent extends Component {
       content: "确认退出？",
       onOk() {
         console.log("ok");
-        Cookie.remove('UserInfo');
+        sessionStorage.removeItem('UserInfo');
         setTimeout(() => {
           _this.props.history.push("/login");
         }, 500);
@@ -188,6 +196,7 @@ class AppContent extends Component {
   }
 
   render() {
+    // console.log(this.props)
     const { UserName, UserMenu, setPwdVisible } = this.state;
     // console.log(UserMenu);
     const dropdownMenu = (
