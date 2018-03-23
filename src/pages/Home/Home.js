@@ -4,6 +4,8 @@ import { Row, Col, Radio } from 'antd';
 // import classnames from 'classnames';
 import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
+// import Cookie from 'js-cookie';
+import { Link } from 'react-router-dom'; 
 const RadioGroup  = Radio.Group;
 const RadioButton = Radio.Button;
 
@@ -56,13 +58,13 @@ const newNotice = [
 
 // 快捷操作
 const shortcuts = [
-  { title: "藏品登记", icon: "iconBack registration", url: "" },
-  { title: "藏品入库", icon: "iconBack putinStroage", url: "" },
-  { title: '藏品出库', icon: 'iconBack putbound', url: '' },
-  { title: '藏品征集', icon: 'iconBack solictation', url: '' },
-  { title: '藏品展览', icon: 'iconBack exhibition', url: '' },
-  { title: '藏品修复', icon: 'iconBack repair', url: '' },
-  { title: '藏品注销', icon: 'iconBack cancelation', url: '' }
+  { title: "藏品登记", icon: "iconBack registration", url: "/App/Information", isHidden: true },
+  { title: "藏品入库", icon: "iconBack putinStroage", url: "/App/PutInStorage", isHidden: true },
+  { title: "藏品出库", icon: "iconBack putbound", url: "/App/Outbound", isHidden: true },
+  { title: "藏品征集", icon: "iconBack solictation", url: "/App/Solicition", isHidden: true },
+  { title: "藏品展览", icon: "iconBack exhibition", url: "/App/CollecExhibition", isHidden: true },
+  { title: "藏品修复", icon: "iconBack repair", url: "/App/CollecRepair", isHidden: true },
+  { title: "藏品注销", icon: "iconBack cancelation", url: "", isHidden: true }
 ];
 
 
@@ -75,6 +77,21 @@ class Home extends Component {
     }
    }
   componentWillMount () {
+    let userMenuList = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
+    console.log(userMenuList);
+    for(let item of userMenuList) {
+      for(let value of shortcuts) {
+        if(item.subnode.length > 0) {
+          for(let childItem of item.subnode) {
+            if(childItem.Functional__URl === value.url) {
+              value.isHidden = false;
+            }
+          }
+        } else if (item.ProjectModule_URL === value.url) {
+          value.isHidden = false
+        }
+      }
+    }
     this.setState({
       myMatters:{
         type: 'todo',
@@ -180,11 +197,14 @@ class Home extends Component {
             快捷操作
           </Col>
           <Col span={24} className="back-color-white shortcuts">
-            {shortcuts.map((item, idx) => <Col style={{ textAlign: 'center', marginBottom: '20px' }} span={6} key={idx}>
-                <div className='background' >
-                  <span className={item.icon} />
-                </div>
-                <div className='short-title' >{item.title}</div>
+            {shortcuts.map((item, idx) => !item.isHidden && <Col style={{ textAlign: 'center', marginBottom: '20px' }} span={6} key={idx}>
+                <Link to={item.url} >
+                  <div className='background' >
+                    <span className={item.icon} />
+                  </div>
+                  <div className='short-title' >{item.title}</div>
+                </Link>
+                
               </Col>)}
           </Col>
         </Col>
