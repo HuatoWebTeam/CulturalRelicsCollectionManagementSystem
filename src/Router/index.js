@@ -26,6 +26,7 @@ const ProductionCertificate = asyncComponent(() => import('../pages/CollecManage
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
 const Outbound = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
 const NewOutbound = asyncComponent(() => import('../pages/CollecManagement/Outbound/newOutbound'));         // 新建出库
+const OutboundDetails = asyncComponent(() => import('../pages/CollecManagement/Outbound/OutboundDetails')); // 出库详情
 const Accounts = asyncComponent(() => import('../pages/CollecAccounts'));                                   // 藏品账目
 const Inventory = asyncComponent(() => import('../pages/CollecInventory'));                                 // 藏品盘点
 const NewInventory = asyncComponent(() => import('../pages/CollecInventory/NewInventory'));                 // 新建盘点
@@ -43,7 +44,8 @@ const TankInfo = asyncComponent(() => import('../pages/WarehouseManagement/TankI
 const StatisicalAnalysis = asyncComponent(() => import('../pages/StatisicalAnalysis'));                     // 统计分析
 const OperationLog = asyncComponent(() => import('../pages/UserOperation/OperationLog'));                   // 操作日志
 const AssignPermissions = asyncComponent(() => import('../pages/UserOperation/AssignPermissions'));         // 权限分配
-
+const LatestNotice = asyncComponent(() => import('../pages/LatestNotice'));                     // 最新通知
+const WorkflowConfig = asyncComponent(() => import('../pages/UserOperation/WorkflowConfig'))  // 流程配置
 
 
 
@@ -66,6 +68,7 @@ class Routes extends Component {
             <Route exact path="/App/PutInStorage" component={PutInStroage} />
             <Route exact path="/App/Outbound" component={Outbound} />
             <Route exact path="/App/NewOutbound" component={NewOutbound} />
+            <Route exact path="/App/OutboundDetails/:id" component={OutboundDetails} />
             <Route exact path="/App/Accounts" component={Accounts} />
             <Route exact path="/App/Inventory" component={Inventory} />
             <Route exact path="/App/NewInventory" component={NewInventory} />
@@ -83,7 +86,8 @@ class Routes extends Component {
             <Route exact path="/App/StatisicalAnalysis" component={StatisicalAnalysis} />
             <Route exact path="/App/OperationLog" component={OperationLog} />
             <Route exact path="/App/AssignPermisssions" component={AssignPermissions} />
-            <Route exact path="/App/About" component={About} />
+            <Route exact path="/App/LatestNotice" component={LatestNotice} />
+            <Route exact path="/App/WorkflowConfig" component={WorkflowConfig} />
             <Route render={() => <Redirect to="/App/Home" />} />
           </Switch>;
     }
