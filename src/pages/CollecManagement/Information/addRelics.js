@@ -44,13 +44,15 @@ class AddRelics extends Component {
       };
       console.log(params);
       const { pageTitle } = this.state;
+      let _this = this;
       if(pageTitle === '新增藏品') {
         InsertCollection(params).then(res => {
           console.log(res);
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
-            this.setState({ reset: true });
-            this.refs.relicsInfo.resetFields();
+            _this.setState({ reset: true });
+            console.log(this.relicsInfo);
+            _this.refs.relicsInfo.resetFields();
           } else {
             message.error("操作失败");
           }
@@ -60,8 +62,8 @@ class AddRelics extends Component {
           console.log(res);
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
-            this.setState({ reset: true });
-            this.refs.relicsInfo.resetFields();
+            _this.setState({ reset: true });
+            _this.refs.relicsInfo.resetFields();
           } else {
             message.error("操作失败");
           }
