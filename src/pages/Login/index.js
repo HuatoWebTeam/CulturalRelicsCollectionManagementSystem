@@ -13,7 +13,9 @@ class LoginForm extends Component {
   state = {
     verCode: '',
     loading: false,
-    UserIp: ''
+    UserIp: '',
+    errorState: null,
+    errorText: ''
   };
   componentWillMount() {
     var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
@@ -40,35 +42,42 @@ class LoginForm extends Component {
   handleSubmit (e) {
     e.preventDefault();
     this.props.form.validateFields((err, value) => {
+      // console.log(err)
       if(!err) {
-        console.log(value);
+        // console.log(value);
         this.setState({loading: true});
         const { UserIp } = this.state;
-        console.log(UserIp)
+        // console.log(UserIp)
         let userInfo = { strUser: value.userName, strPwd: value.password, ip: UserIp }
-
+        let _this = this;
         LoginApi(userInfo).then(res => {
           console.log(res);
           // console.log(value);
           this.setState({loading:false});
-          let Token = res[0].Ticket;
-          let UserMenuItem = res[0].MyProperty;
-          let UserName = value.userName;
-          Cookie.set("UserInfo", {
-            Token: Token,
-            UserMenuItem: UserMenuItem,
-            UserName: UserName
-          }, {
-            expires: 0.5
-          });
-          // Cookie.set('UserName', UserName);
-          // let userAuth = JSON.stringify({ name: value.userName });
-            // sessionStorage.setItem("user", userAuth);
-            this.props.history.push("/App/Home");
-            // console.log(Cookie.getJSON('UserInfo'));
-            // console.log(Cookie.getJSON("UserName"));
+          if(res.length > 0) {
+            // let Token = res[0].Ticket;
+            let UserMenuItem = res[0].MyProperty;
+            let UserName = value.userName;
+            // Cookie.set("UserInfo", { 
+            //     UserMenuItem: UserMenuItem, UserName: UserName }, { expires: 0.5 });
+            sessionStorage.setItem("UserInfo", JSON.stringify({
+                UserMenuItem: UserMenuItem,
+                UserName: UserName
+              }));
+            setTimeout(() => {
+              // console.log(Cookie.getJSON("UserInfo"));
+              _this.props.history.push("/App/Home");
+            }, 500);
+          } else {
+            this.setState({
+              errorState: 'error',
+              errorText: '用户名或密码错误'
+            })
+          }
+          
+          
         }).catch(err => {
-          this.setState({loading:false});
+          _this.setState({loading:false});
           console.log(err);
         })
 
@@ -83,34 +92,61 @@ class LoginForm extends Component {
   }
 
   handleVerifyCode = (rule, value, callback) => {
-    // console.log(rule, value);
+    console.log(rule, value);
     // const { getFieldValue } = this.props.form;
-    if (value.toLowerCase() !== this.state.verCode) {
+    if(!value) {
+      callback('请输入验证码')
+    }else if (value.toLowerCase() !== this.state.verCode) {
       callback('验证码输入错误');
-    };
-    callback();
+    }else {
+      callback();
+    }
+    
+  }
+  handleUserInfo = (rule, value, callback) => {
+    if(!value) {
+      callback('请输入用户名');
+    } else {
+      this.setState({
+        errorState: null,
+        errorText: ''
+      });
+      callback();
+    }
+  }
+  handleUserPwdInfo = (rule, value, callback) => {
+    if(!value) {
+      callback('请输入密码');
+    } else {
+      this.setState({ errorState: null, errorText: "" });
+      callback();
+    }
   }
 
   render() {
     // console.log(this.props);
+    const { errorText, errorState } = this.state;
     const { getFieldDecorator } = this.props.form;
     return <Row className="login-container">
         <Col span={24} className="login-background" />
         <Col span={24} className="login-form">
-          <Form onSubmit={this.handleSubmit.bind(this)}>
+          <Form onSubmit={this.handleSubmit.bind(this)} className="form-content">
+            <FormItem className="form-title">
+              <h1>文物藏品综合管理系统</h1>
+            </FormItem>
             <FormItem>
               <Col span={24}>
                 <h2 style={{ textAlign: "center" }}>用户登录</h2>
               </Col>
             </FormItem>
-            <FormItem>
+            <FormItem validateStatus={errorState} help={errorText}>
               {getFieldDecorator("userName", {
-                rules: [{ required: true, message: "请输入用户名" }]
+                rules: [{ validator: this.handleUserInfo }]
               })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
             </FormItem>
-            <FormItem>
+            <FormItem validateStatus={errorState} help={errorText}>
               {getFieldDecorator("password", {
-                rules: [{ required: true, message: "请输入密码" }]
+                rules: [{ validator: this.handleUserPwdInfo }]
               })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} type="password" placeholder="请输入密码" />)}
             </FormItem>
             <FormItem>
@@ -123,7 +159,7 @@ class LoginForm extends Component {
               })(<Input placeholder="请输入验证码" prefix={<Icon type="safety" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} style={{ width: "50%", marginRight: "15px" }} />)}
 
               <VerifyCode onChange={value => {
-                  console.log(value);
+                  // console.log(value);
                   this.setState({ verCode: value.toLowerCase() });
                 }} height={40} width={120} />
             </FormItem>
