@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Radio, Checkbox, Button, message, Input, Collapse } from 'antd';
+import { Row, Col, Radio, Checkbox, Button, message, Input, Collapse, Modal } from 'antd';
 import { UserAll, UserModAddApi } from './api';
-import Cookie from 'js-cookie';
+// import Cookie from 'js-cookie';
+import { UserModApi } from './api';
 import './index.less';
 const RadioGroup = Radio.Group;
 const Search = Input.Search;
 const Panel = Collapse.Panel;
+const confirm = Modal.confirm;
 
 class AssignPermissions extends Component {
   state = {
@@ -36,14 +38,23 @@ class AssignPermissions extends Component {
         userList: res
       });
     });
-    let UserInfo = Cookie.getJSON("UserInfo");
+    let UserInfo = sessionStorage.getItem("UserInfo");
     console.log(UserInfo);
     let LoginName = UserInfo.UserName;
     let UserPageALL = UserInfo.UserMenuItem;
-    this.setState({
-      pageViewList: UserPageALL,
-      loginName: LoginName
-    });
+    // let menuParams = {
+    //   strUser: null,
+    //   strPwd: null,
+    //   ip: null
+    // };
+    UserModApi().then(res => {
+      console.log(res);
+      this.setState({
+        pageViewList: res,
+        loginName: LoginName
+      });
+    })
+    
   }
 
   // 获取用户权限
@@ -102,10 +113,16 @@ class AssignPermissions extends Component {
       RoleProjectModule_State: 1,
       Functional_Id: assignCheckedList.join(",")
     };
+    // let _this = this;
     UserModAddApi(params).then(res => {
       console.log(res);
       if (res === true) {
-        message.success("添加成功");
+        if(userName === loginName) {
+          this.showConfirm();
+        } else {
+          message.success("添加成功");
+        }
+        
       } else {
         message.error("添加失败");
       }
@@ -115,7 +132,6 @@ class AssignPermissions extends Component {
   onSearchUserName = (value) => {
     const { allUserList } = this.state;
     console.log(value);
-    let len = allUserList.length;
     let arr = [];
     for(let item of allUserList) {
       if(item.User_Name.indexOf(value) >= 0) {
@@ -123,6 +139,25 @@ class AssignPermissions extends Component {
       }
     };
     this.setState({ userList: arr });
+  };
+
+  // 添加成功后，弹窗
+  showConfirm = () => {
+    let _this = this;
+    confirm({
+      title: '',
+      content: '添加成功，请重新登录！！！',
+      onOk () {
+        console.log('remove')
+        sessionStorage.removeItem("UserInfo");
+        setTimeout(() => {
+          _this.props.history.push("/login");
+        }, 500);
+      },
+      onCancel() {
+
+      }
+    })
   }
 
   render() {
@@ -131,7 +166,7 @@ class AssignPermissions extends Component {
         <Col span={24} className="title">
           权限分配设置
         </Col>
-        <Col span={4} className="gutter-row assign-content" style={{ paddingRight: "20px" }}>
+        <Col span={5} className="gutter-row assign-content" style={{ paddingRight: "20px" }}>
           <Col span={24} className="assign-title">
             <Col span={24} className="assign-contents">
               <Col span={24} style={{ padding: "0 20px 20px " }}>
@@ -153,28 +188,28 @@ class AssignPermissions extends Component {
             </Col>
           </Col>
         </Col>
-        <Col span={20} className="gutter-row-right ">
+        <Col span={19} className="gutter-row-right ">
           <Col span={24} className="container">
             <Col span={24} className="assign-title">
               选择要分配的权限
             </Col>
             <Col span={24} className="assign-contents">
               <Checkbox.Group value={assignCheckedList} onChange={this.checkBoxChange}>
-                {pageViewList.map((item, idx) => (item.subnode.length === 0 ? <Col className="assign-checkbox" span={8} key={item.ProjectModule_Id}>
-                        <Checkbox value={item.ProjectModule_Id}>
+                {pageViewList.map((item, idx) => (item.menusAll.length === 0 ? <Col className="assign-checkbox" span={8} key={item.ProjectModule_Id}>
+                        <Checkbox value={Number(item.ProjectModule_Id)}>
                           {item.ProjectModule_Name}
                         </Checkbox>
                       </Col> : <Col span={24} className="child-checkbox" key={item.ProjectModule_Id}>
                         <Col span={24}>
                           <h3>{item.ProjectModule_Name}</h3>
                         </Col>
-                        {item.subnode.map((value, idx) => (
+                        {item.menusAll.map((value, idx) => (
                           <Col
                             span={8}
                             className="assign-checkbox"
                             key={value.Functional_Id}
                           >
-                            <Checkbox value={value.Functional_Id}>
+                            <Checkbox value={Number(value.Functional_Id)}>
                               {value.Functional_Name}
                             </Checkbox>
                           </Col>
@@ -183,7 +218,7 @@ class AssignPermissions extends Component {
               </Checkbox.Group>
             </Col>
           </Col>
-          <Col span={24} style={{ textAlign: "right", paddingRight: "40px", paddingTop: '20px' }}>
+          <Col span={24} style={{ textAlign: "right", paddingRight: "40px", paddingTop: "20px" }}>
             <Button type="primary" onClick={this.userAssignSubmit}>
               提交
             </Button>
