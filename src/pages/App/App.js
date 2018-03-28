@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, Input } from "antd";
+import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, Input, message } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus';
 // import Cookie from 'js-cookie';
-import './App.less'
+import './App.less';
+import { UpdateUserPwd } from '../../axios';
+import ChangePwd from './changePwd';
 const { Header, Content, Sider } = Layout;
 const confirm = Modal.confirm;
 
-const menuName = [{ title: '设置', icon: 'setting' }, { title: '退出', icon: 'logout'}];
+const menuName = [{ title: '修改密码', icon: 'setting' }, { title: '退出', icon: 'logout'}];
 
 
 
@@ -22,13 +24,12 @@ class AppContent extends Component {
     menuMode: "inline",
     openKeys: [],
     UserName: "",
-    UserMenu: [],
-    setPwdVisible: false
+    UserMenu: []
   };
   componentWillMount() {
     console.log(this.props);
     let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
-    
+
     console.log(UserInfo);
     let menu = UserInfo.UserMenuItem;
     for (let item of menu) {
@@ -63,18 +64,20 @@ class AppContent extends Component {
     console.log("卸载");
   }
   componentWillReceiveProps() {
-    console.log(this.props)
+    console.log(this.props);
     this.setMenuOpenKey(this.props.history);
   }
 
   getLocationName(keys) {
-    console.log(this.props);
+    // console.log(this.props);
+    // console.log(keys)
     const pathname = keys || this.props.location.pathname;
     for (let item of menus) {
       // console.log(item.key);
       // console.log(pathname);
+      // console.log(pathname.indexOf(item.key));
       if (item.key === pathname) {
-        console.log("---1");
+        // console.log("---1");
         if (item.isHidden) {
           this.setState({
             localtionName: item.title,
@@ -85,7 +88,7 @@ class AppContent extends Component {
         this.setState({ localtionName: item.title });
         break;
       } else if (pathname.indexOf(item.key) !== -1) {
-        // console.log(item);
+        console.log(item);
         this.setState({
           localtionName: item.title,
           selectOpenKey: item.fatherName
@@ -96,7 +99,7 @@ class AppContent extends Component {
         for (let name of item.sub) {
           // console.log(name);
           // console.log(pathname);
-          if (name.key === pathname && name.isHidden) {
+          if (pathname.indexOf(name.key) !== -1 && name.isHidden) {
             // console.log("-------------");
             // console.log(name);
             this.setState({
@@ -152,14 +155,13 @@ class AppContent extends Component {
 
   dropdownChange = ({ key }) => {
     console.log(key);
-    if (key === "设置") {
+    if (key === "修改密码") {
       this.setState({
         setPwdVisible: true
       });
     } else {
       this.showConfirm();
     }
-
   };
 
   //
@@ -170,11 +172,10 @@ class AppContent extends Component {
       content: "确认退出？",
       onOk() {
         console.log("ok");
-        sessionStorage.removeItem('UserInfo');
+        sessionStorage.removeItem("UserInfo");
         setTimeout(() => {
           _this.props.history.push("/login");
         }, 500);
-        
       },
       onCancel() {
         return false;
@@ -184,16 +185,47 @@ class AppContent extends Component {
 
   handleCancel = () => {
     this.setState({
+      oldPassword: null,
+      newPassword: null,
+      confirmPwd: null,
       setPwdVisible: false
     });
   };
 
   handleOk = () => {
-    console.log('ok');
-    this.setState({
-      setPwdVisible: false
-    })
-  }
+    console.log("ok");
+    console.log(this.refs.changepwd);
+    this.refs.changepwd.validateFields((err, value) => {
+      if(!err) {
+        console.log(value);
+        let params = {
+          userPwd: {
+            UserNewPwd: value.newpwd,
+            UserOriginalPwd: value.oldpwd
+          }
+        }
+        UpdateUserPwd(params).then(res => {
+          console.log(res);
+          let _this = this;
+          if(res.State === 1) {
+            message.success('修改成功, 请重新登录');
+            sessionStorage.removeItem("UserInfo");
+            setTimeout(() => {
+              _this.props.history.push("/login");
+            }, 1000);
+          } else if(res.State === 2) {
+            this.refs.changepwd.setFields({
+              oldpwd: {
+                errors: [new Error("原始密码错误")]
+              }
+            });
+          }
+        })
+        
+      }
+    });
+
+  };
 
   render() {
     // console.log(this.props)
@@ -239,29 +271,7 @@ class AppContent extends Component {
             onCancel={this.handleCancel}
             onOk={this.handleOk}
           >
-            <Form>
-              <Form.Item
-                label="原密码:"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 16 }}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="密码:"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 16 }}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="确认密码:"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 16 }}
-              >
-                <Input />
-              </Form.Item>
-            </Form>
+            <ChangePwd ref="changepwd" />
           </Modal>
         </Header>
         <Layout>

@@ -38,7 +38,8 @@ export  const menus = [
     { key: 'UserManagement', title: '用户管理', icon: 'iconBack user', sub: [
         { key: '/App/OperationLog', title: '操作日志', icon: 'nullIcon' },
         { key: '/App/AssignPermisssions', title: '权限分配', icon: 'nullIcon' },
-        { key: '/App/WorkflowConfig', title: '流程配置', icon: 'nullIcon' }
+        { key: '/App/WorkflowConfig', title: '流程配置', icon: 'nullIcon' },
+        { key: "/App/PeopleManagement", title: '人员管理', icon: 'nullIcon' }
     ]},
     { key: "/App/LatestNotice", title: '通知管理', icon: 'notification', sub: [], isHidden: false }
 

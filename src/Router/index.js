@@ -46,6 +46,7 @@ const OperationLog = asyncComponent(() => import('../pages/UserOperation/Operati
 const AssignPermissions = asyncComponent(() => import('../pages/UserOperation/AssignPermissions'));         // 权限分配
 const LatestNotice = asyncComponent(() => import('../pages/LatestNotice'));                     // 最新通知
 const WorkflowConfig = asyncComponent(() => import('../pages/UserOperation/WorkflowConfig'))  // 流程配置
+const PeopleManagement = asyncComponent(() => import('../pages/UserOperation/PeopleManagement'))  // 人员管理
 
 
 
@@ -86,6 +87,7 @@ class Routes extends Component {
             <Route exact path="/App/StatisicalAnalysis" component={StatisicalAnalysis} />
             <Route exact path="/App/OperationLog" component={OperationLog} />
             <Route exact path="/App/AssignPermisssions" component={AssignPermissions} />
+            <Route exact path="/App/PeopleManagement" component={PeopleManagement} />
             <Route exact path="/App/LatestNotice" component={LatestNotice} />
             <Route exact path="/App/WorkflowConfig" component={WorkflowConfig} />
             <Route render={() => <Redirect to="/App/Home" />} />
