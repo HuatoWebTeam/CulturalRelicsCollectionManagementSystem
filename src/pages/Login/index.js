@@ -64,9 +64,15 @@ class LoginForm extends Component {
                 UserMenuItem: UserMenuItem,
                 UserName: UserName
               }));
+              let pushPath = '';
+              if(UserMenuItem[0].subnode.length === 0) {
+                pushPath = UserMenuItem[0].ProjectModule_URL;
+              } else {
+                pushPath = UserMenuItem[0].subnode[0].Functional__URl;
+              }
             setTimeout(() => {
               // console.log(Cookie.getJSON("UserInfo"));
-              _this.props.history.push("/App/Home");
+              _this.props.history.push(pushPath);
             }, 500);
           } else {
             this.setState({
