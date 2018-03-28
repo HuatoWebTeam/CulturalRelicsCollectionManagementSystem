@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, DatePicker, Input, Table } from 'antd';
+import { Row, Col, Button, DatePicker, Input, Table, message } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
 import { subStr } from '../../assets/js/commonFun';
 import moment from 'moment';
 import { ExhibitionAll } from './api';
-import Cookie from 'js-cookie';
+// import Cookie from 'js-cookie';
 import { connect } from 'react-redux';
+import { ApprovalPassed, ApprovalDenied } from "../../axios";
 // import { tableColumns, tableData } from './data';
 const { RangePicker } = DatePicker;
 const Search  = Input.Search;
@@ -42,7 +43,8 @@ class CollecExhibition extends Component {
   getExhibitionList() {
     const { date, pageIndex, pageSize } = this.state;
     // console.log(pageIndex);
-    let UserName = Cookie.getJSON("UserInfo").UserName;
+    let UserName = JSON.parse(sessionStorage.getItem("UserInfo")).UserName;
+
     // console.log(UserName);
     let params = {
       strUser: UserName,
@@ -64,7 +66,9 @@ class CollecExhibition extends Component {
             theme: item.Exhibition_Theme,
             type: item.Exhibition_Type,
             date: subStr(item.StartTine) + " ~ " + subStr(item.EndTime),
-            head: item.Person_liable
+            head: item.Person_liable,
+            ReceivingPermissions: Number(item.ReceivingPermissions),
+            DeniedPermission: Number(item.DeniedPermission)
           });
           this.setState({
             data: dataSource
@@ -73,20 +77,20 @@ class CollecExhibition extends Component {
       } else {
         this.setState({ total: 0, data: [] });
       }
-
-      
     });
   }
   // 选择页码
   paginationChange = page => {
     // console.log(page);
-    this.setState({
-      pageIndex: page
-    }, () => {
-      this.getExhibitionList();
-      this.props.changePageIndex(page);
-    });
-    
+    this.setState(
+      {
+        pageIndex: page
+      },
+      () => {
+        this.getExhibitionList();
+        this.props.changePageIndex(page);
+      }
+    );
   };
   // 选择日期
   handleDateChange = (date, dateString) => {
@@ -98,29 +102,45 @@ class CollecExhibition extends Component {
   // 根据日期查询
   dateSearch = () => {
     this.setState({
-      pageIndex:1
+      pageIndex: 1
     });
     this.getExhibitionList();
-  }
+  };
 
-  dataSoure = [
-    {
-      id: 4564531,
-      theme: "展馆文物会展",
-      date: "2015-23-56",
-      type: "内管",
-      head: "李四",
-      key: 1
-    },
-    {
-      id: 4564531,
-      theme: "展馆文物会展",
-      date: "2015-23-56",
-      type: "内管",
-      head: "李四",
-      key: 0
-    }
-  ];
+  // 点击通过
+  clickApprove = item => {
+    let params = {
+      orderNumber: item,
+      flag: 5
+    };
+    let _this = this;
+    ApprovalPassed(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getExhibitionList();
+      } else {
+        message.error("操作失败");
+      }
+    });
+  };
+  // 拒绝
+  clickApproveReject = item => {
+    let params = {
+      orderNumber: item,
+      flag: 5
+    };
+    let _this = this;
+    ApprovalDenied(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getExhibitionList();
+      } else {
+        message.error("操作失败");
+      }
+    });
+  };
+
+
 
   render() {
     // let _this = this;
@@ -160,6 +180,32 @@ class CollecExhibition extends Component {
           // return <a href='javascripts:;' name='details'  onClick={_this.checkDetails(index)} >详情+{index}</a>;
           return <Link to={`/App/ExhibitionDetails/${text.id}`}>详情</Link>;
         }
+      },
+      {
+        title: "审批",
+        dataIndex: "",
+        key: "approval",
+        render: (text, value, idx) => {
+          return (
+            <div>
+              <Button
+                type="primary"
+                onClick={this.clickApprove.bind(this, text.id)}
+                disabled={text.ReceivingPermissions === 0}
+              >
+                同意
+              </Button>
+              <Button
+                type="danger"
+                onClick={this.clickApproveReject.bind(this, text.id)}
+                disabled={text.DeniedPermission === 0}
+                style={{ marginLeft: "10px" }}
+              >
+                拒绝
+              </Button>
+            </div>
+          );
+        }
       }
     ];
     return (
@@ -170,7 +216,7 @@ class CollecExhibition extends Component {
         <Col span={24} className="exhibition-content">
           <Col span={24} className="addexhibition">
             <Button
-              type="primrary"
+              type="primary"
               icon="plus"
               onClick={() => {
                 this.props.history.push("/App/AddExhibition");

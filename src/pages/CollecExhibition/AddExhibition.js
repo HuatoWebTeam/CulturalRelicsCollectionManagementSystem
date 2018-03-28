@@ -53,7 +53,7 @@ class AddExhibitionForm extends Component {
         };
         let thisRelicsNum = chooseRelicsNum.join(',')
         let params = {
-          Exhibition_Odd: values['exhibitionNum'],
+          // Exhibition_Odd: values['exhibitionNum'],
           Exhibition_Theme: values['exhibitionTheme'],
           Exhibition_Type: values['exhibitionType'],
           StartTine: values['date'][0],
@@ -206,11 +206,11 @@ class AddExhibitionForm extends Component {
                     rules: [{ required: true, message: "请输入展览主题" }]
                   })(<Input placeholder="请输入展览主题" />)}
                 </FormItem>
-                <FormItem label="展览单号:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                {/* <FormItem label="展览单号:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                   {getFieldDecorator("exhibitionNum", {
                     rules: [{ required: true, message: "请输入展览单号" }]
                   })(<Input placeholder="请输入展览单号" />)}
-                </FormItem>
+                </FormItem> */}
                 <FormItem label="展览类型:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                   {getFieldDecorator("exhibitionType", {
                     initialValue: [typeMenu[0].key],
