@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, DatePicker, Table } from 'antd';
+import { Row, Col, Button, Input, DatePicker, Table, message } from 'antd';
 import './index.less';
 // import moment from 'moment';
 import { RangePickerDefault, levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
 import { GetOutTheLibraryData } from './api';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { ApprovalPassed, ApprovalDenied } from '../../../axios';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -45,26 +47,16 @@ class ComplexGeneric extends Component {
       console.log(res);
       let data = [];
       for (let item of res.Data) {
-        console.log(item);
+        // console.log(item);
         data.push({
-          key: item.OutNumber,
-          outboundNum: item.OutNumber,
-          relicsNum: item.CollectionNumber,
-          rfid: item.CollectionRfid,
-          relicsImg: item.Collectionimg1,
-          relicsName: item.CollectionName,
-          date: item.CollectionTime,
-          localtion: item.StorageId,
-          number: item.Number,
-          levelInfo: item.Grade,
-          material: item.MaterialQuality,
-          years: item.CollectionYears,
-          howComplete: item.Integrity,
-          state: item.CollectionState,
-          category: item.Category,
-          operation: item.UserName,
-          size: item.Size,
-          weight: item.Weight
+          key: item.TheLibraryOdd,
+          outboundNum: item.TheLibraryOdd,
+          relicsNum: item.TheLibraryPurpose,
+          date: item.TheLibraryTime,
+          number: item.TheLibraryNumber,
+          operationPeople: item.Operator,
+          ReceivingPermissions: item.ReceivingPermissions,
+          DeniedPermission: item.DeniedPermission
         });
       }
       this.setState({
@@ -105,6 +97,39 @@ class ComplexGeneric extends Component {
       })
   }
 
+  // 点击通过
+  clickApprove = (item) => {
+    let params = {
+      orderNumber: item,
+      flag: 3
+    };
+    let _this = this;
+    ApprovalPassed(params).then(res => {
+      console.log(res);
+      if(res === true) {
+        _this.getOutboundList();
+      } else {
+        message.error('操作失败');
+      }
+    })
+  }
+  // 拒绝
+  clickApproveReject = (item) => {
+    let params = {
+      orderNumber: item,
+      flag: 3
+    }
+    let _this = this;
+    ApprovalDenied(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getOutboundList();
+      } else {
+        message.error("操作失败");
+      }
+    })
+  }
+
   render() {
     const { outboundData, pageIndex, pageSize, total } = this.state;
     const outboundColumns = [
@@ -114,28 +139,14 @@ class ComplexGeneric extends Component {
         dataIndex: "outboundNum"
       },
       {
-        title: "文物编号",
+        title: "出库用途",
         dataIndex: "relicsNum",
         key: "relicsNum"
       },
       {
-        title: "文物图片",
-        dataIndex: "relicsImg",
-        key: "relicsImg",
-        render: (text, idx) => {
-          return (
-            <img
-              alt={idx}
-              src={text}
-              style={{ width: "55px", height: "55px" }}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "relicsName",
-        key: "relicsName"
+        title: '出库数量',
+        dataIndex: 'number',
+        key: 'number'
       },
       {
         title: "出库时间",
@@ -143,78 +154,40 @@ class ComplexGeneric extends Component {
         key: "date"
       },
       {
-        title: "数量",
-        dataIndex: "number",
-        key: "number"
+        title: '操作人',
+        dataIndex: 'operationPeople',
+        key: 'operationPeople'
       },
       {
-        title: "分级信息",
-        dataIndex: "levelInfo",
-        key: "levelInfo",
-        render: text => {
-          for (let item of levelInfo) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
+        title: '操作',
+        dataIndex:'',
+        key: 'operation',
+        render:(text, value) => {
+          
+          return <Link
+              to={`/App/OutboundDetails/${text.outboundNum}`}
+            >
+              详情
+            </Link>;
         }
       },
       {
-        title: "材质",
-        dataIndex: "material",
-        key: "material"
-      },
-      {
-        title: "年代",
-        dataIndex: "years",
-        key: "years",
-        render: text => {
-          for (let item of relicsYears) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
+        title: '审批',
+        dataIndex: '',
+        key: 'approval',
+        render:(text, value, idx) => {
+          return (<div>
+              <Button type="primary" onClick={this.clickApprove.bind(this, text.outboundNum )} disabled={text.ReceivingPermissions === 0}>
+                同意
+              </Button>
+              <Button type="danger" onClick={this.clickApproveReject.bind(this, text.outboundNum)} disabled={text.DeniedPermission === 0} style={{ marginLeft: "10px" }}>
+                拒绝
+              </Button>
+          </div>);
         }
-      },
-      {
-        title: "完整程度",
-        dataIndex: "howComplete",
-        key: "howComplete",
-        render: text => {
-          if (Number(text) === 0) {
-            return <span>完整</span>;
-          } else if (Number(text) === 1) {
-            return <span>破损</span>;
-          }
-        }
-      },
-      {
-        title: "状态",
-        dataIndex: "state",
-        key: "state"
-      },
-      {
-        title: "类别",
-        dataIndex: "category",
-        key: "category",
-        render: text => {
-          for (let item of relicsCategory) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "尺寸",
-        dataIndex: "size",
-        key: "size"
-      },
-      {
-        title: "重量",
-        dataIndex: "weight",
-        key: "weight"
       }
+      
+      
     ];
 
     return (
