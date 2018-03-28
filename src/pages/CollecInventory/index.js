@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, DatePicker, Input, Button, Form, Table } from 'antd';
+import { Row, Col, Select, DatePicker, Input, Button, Form, Table, message } from 'antd';
 import './index.less';
 import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
 import { RangePickerDefault } from '../../assets/js/commonFun';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { ApprovalPassed, ApprovalDenied } from "../../axios";
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
@@ -55,8 +56,8 @@ class CollecInventory extends Component {
     InventallApi(params).then(res => {
       console.log(res);
       if (res.length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          res[i].key = i;
+        for (let item of res) {
+          item.key = item.Inventory_Odd;
         }
         this.setState({
           inventoryDataList: res,
@@ -97,14 +98,17 @@ class CollecInventory extends Component {
     );
   };
   // 分页改变
-  paginationChange = (page) => {
-    this.setState({
-      pageIndex: page
-    }, () => {
-      this.getInventoryList();
-      this.props.changePageIndex(page)
-    })
-  }
+  paginationChange = page => {
+    this.setState(
+      {
+        pageIndex: page
+      },
+      () => {
+        this.getInventoryList();
+        this.props.changePageIndex(page);
+      }
+    );
+  };
   selectChange = value => {
     this.setState({
       storeName: value
@@ -118,8 +122,38 @@ class CollecInventory extends Component {
       date: [date[0].format(format), date[1].format(format)]
     });
   };
-
-
+  // 点击通过
+  clickApprove = item => {
+    let params = {
+      orderNumber: item,
+      flag: 4
+    };
+    let _this = this;
+    ApprovalPassed(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getInventoryList();
+      } else {
+        message.error("操作失败");
+      }
+    });
+  };
+  // 拒绝
+  clickApproveReject = item => {
+    let params = {
+      orderNumber: item,
+      flag: 4
+    };
+    let _this = this;
+    ApprovalDenied(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getInventoryList();
+      } else {
+        message.error("操作失败");
+      }
+    });
+  };
 
   render() {
     const {
@@ -137,9 +171,9 @@ class CollecInventory extends Component {
         key: "Inventory_Odd"
       },
       {
-        title: '盘点名称',
-        dataIndex: 'Inventory_Name',
-        key: 'Inventory_Name'
+        title: "盘点名称",
+        dataIndex: "Inventory_Name",
+        key: "Inventory_Name"
       },
       {
         title: "时间",
@@ -182,28 +216,52 @@ class CollecInventory extends Component {
         key: "Inventory_State"
       },
       {
-        title: '操作',
-        dataIndex: '',
-        key: 'operation',
+        title: "操作",
+        dataIndex: "",
+        key: "operation",
         render: (text, croed, idx) => {
           // console.log(text)
-          return <Link to={`/App/ShowDetails/${text.Inventory_Odd}`}>
-              详情
-            </Link>;
+          return (
+            <Link to={`/App/ShowDetails/${text.Inventory_Odd}`}>详情</Link>
+          );
+        }
+      },
+      {
+        title: "审批",
+        dataIndex: "",
+        key: "approval",
+        render: (text, value, idx) => {
+          return <div>
+              <Button type="primary" onClick={this.clickApprove.bind(this, text.Inventory_Odd)} disabled={Number(text.ReceivingPermissions) === 0}>
+                同意
+              </Button>
+              <Button type="danger" onClick={this.clickApproveReject.bind(this, text.Inventory_Odd)} disabled={Number(text.DeniedPermission) === 0} style={{ marginLeft: "10px" }}>
+                拒绝
+              </Button>
+            </div>;
         }
       }
     ];
 
-    return <Row className="main-content">
+    return (
+      <Row className="main-content">
         <Col span={24} className="title">
           藏品盘点列表
         </Col>
-        <Col span={24} className="inventory-container" style={{ padding: "20px 40px 20px 20px" }}>
+        <Col
+          span={24}
+          className="inventory-container"
+          style={{ padding: "20px 40px 20px 20px" }}
+        >
           <Col span={24} style={{ marginBottom: "20px" }}>
             <Col span={24} style={{ paddingBottom: "20px" }}>
-              <Button type="primary" icon="plus" onClick={() => {
+              <Button
+                type="primary"
+                icon="plus"
+                onClick={() => {
                   this.props.history.push("/App/NewInventory");
-                }}>
+                }}
+              >
                 新建盘点单
               </Button>
             </Col>
@@ -223,7 +281,11 @@ class CollecInventory extends Component {
                   </Select>
                 </FormItem>
                 <FormItem>
-                  <RangePicker onChange={this.datePickerChange} defaultValue={RangePickerDefault} format="YYYY-MM-DD" />
+                  <RangePicker
+                    onChange={this.datePickerChange}
+                    defaultValue={RangePickerDefault}
+                    format="YYYY-MM-DD"
+                  />
                 </FormItem>
                 <FormItem>
                   <Button onClick={this.queryInventData} type="primary">
@@ -233,14 +295,29 @@ class CollecInventory extends Component {
               </Form>
             </Col>
             <Col span={6}>
-              <Search placeholder="请输入盘点单号" enterButton onSearch={this.searchData} />
+              <Search
+                placeholder="请输入盘点单号"
+                enterButton
+                onSearch={this.searchData}
+              />
             </Col>
           </Col>
           <Col span={24}>
-            <Table columns={inventoryColumns} dataSource={inventoryDataList} bordered pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} />
+            <Table
+              columns={inventoryColumns}
+              dataSource={inventoryDataList}
+              bordered
+              pagination={{
+                current: pageIndex,
+                pageSize: pageSize,
+                total: total,
+                onChange: this.paginationChange
+              }}
+            />
           </Col>
         </Col>
-      </Row>;
+      </Row>
+    );
   }
 }
 // INVENTORYPAGE

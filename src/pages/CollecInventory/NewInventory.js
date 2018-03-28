@@ -153,7 +153,7 @@ class NewInventoryApp extends Component {
                   rules: [{ required: true, message: "请输入盘点人" }]
                 })(<Input placeholder="请输入盘点人" />)}
               </FormItem>
-              <FormItem
+              {/* <FormItem
                 label="盘点单号:"
                 labelCol={{ span: 8 }}
                 className="form-width50"
@@ -161,7 +161,7 @@ class NewInventoryApp extends Component {
                 {getFieldDecorator("inventNum", {
                   rules: [{ required: true, message: "请输入盘点单号" }]
                 })(<Input placeholder="请输入盘点单号" />)}
-              </FormItem>
+              </FormItem> */}
               <FormItem
                 label="盘点名称:"
                 labelCol={{ span: 8 }}
