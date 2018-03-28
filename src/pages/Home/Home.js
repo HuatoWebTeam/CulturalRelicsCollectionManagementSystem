@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Radio } from 'antd';
+import { Row, Col, Radio, Carousel } from 'antd';
 // import classnames from 'classnames';
 import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
 // import Cookie from 'js-cookie';
 import { Link } from 'react-router-dom'; 
+import { GetToNotice, GetFineDisplayData } from "./api";
+import { relative } from 'path';
 const RadioGroup  = Radio.Group;
 const RadioButton = Radio.Button;
 
@@ -50,11 +52,7 @@ const myMattersData = {
   ]
 };
 
-// 新通知
-const newNotice = [
-  { count: 1, detail: '111111111', date: '2018-12-13' },
-  { count: 2, detail: '222222', date: '2018-03-05' }
-]
+
 
 // 快捷操作
 const shortcuts = [
@@ -74,11 +72,14 @@ class Home extends Component {
     myMatters: {
       type: 'todo',
       data: null
-    }
+    },
+    newNotice: [],  // 最新通知
+    productsList: [], // 精品展示
+
    }
   componentWillMount () {
     let userMenuList = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
-    console.log(userMenuList);
+    // console.log(userMenuList);
     for(let item of userMenuList) {
       for(let value of shortcuts) {
         if(item.subnode.length > 0) {
@@ -97,6 +98,33 @@ class Home extends Component {
         type: 'todo',
         data: myMattersData[this.state.myMatters.type]
       }
+    });
+    this.getnewNotice();
+  }
+
+  // 获取数据
+  getnewNotice() {
+    // 最新通知
+    GetToNotice().then(res =>{
+      console.log(res);
+      this.setState({
+        newNotice: res.Data
+      })
+    });
+
+    // 精品展示
+    GetFineDisplayData().then(res =>{
+      console.log(res);
+      let imgArr = [];
+      for(let item of res.Data) {
+        imgArr.push({
+          relicsImgUrl: item.Collectionimg1,
+          relicsName: item.CollectionName
+        });
+      };
+      this.setState({
+        productsList: imgArr
+      })
     })
   }
   radioButtonChange (value) {
@@ -113,7 +141,7 @@ class Home extends Component {
   }
   render() {
     console.log(this.state);
-    const { collection, myMatters } = this.state;
+    const { collection, myMatters, newNotice, productsList } = this.state;
     return <Row className="home-container">
         <Col span={24} className="home-content">
           <Col span={24} className="home-title back-color-white">
@@ -176,18 +204,16 @@ class Home extends Component {
           <Col span={24} className="home-title back-color-white">
             <Col span={20}>最新通知</Col>
             <Col span={4} style={{ fontSize: "16px", color: "#666" }}>
-              更多>
+              <span onClick={() => { this.props.history.push("/App/LatestNotice"); }} style={{display: 'inline-block', height: '20px', cursor: 'pointer' }} >更多>></span>
             </Col>
           </Col>
           <Col span={24} className="back-color-white new-notice" style={{ height: "276px" }}>
             {newNotice.map((item, idx) => <Col span={24} key={idx}>
                 <Col span={19} className="notice-title">
-                  {" "}
-                  {item.detail}{" "}
+                  {item.Notice_Desc}
                 </Col>
                 <Col span={5} className="notice-date">
-                  {" "}
-                  {item.date}{" "}
+                  {item.Notice_Time}
                 </Col>
               </Col>)}
           </Col>
@@ -196,24 +222,38 @@ class Home extends Component {
           <Col span={24} className="home-title back-color-white">
             快捷操作
           </Col>
-          <Col span={24} className="back-color-white shortcuts">
-            {shortcuts.map((item, idx) => !item.isHidden && <Col style={{ textAlign: 'center', marginBottom: '20px' }} span={6} key={idx}>
-                <Link to={item.url} >
-                  <div className='background' >
-                    <span className={item.icon} />
-                  </div>
-                  <div className='short-title' >{item.title}</div>
-                </Link>
-                
-              </Col>)}
+          <Col span={24} className="back-color-white shortcuts" style={{height: '305px'}} >
+            {shortcuts.map((item, idx) => !item.isHidden && <Col style={{ textAlign: "center", marginBottom: "20px" }} span={6} key={idx}>
+                    <Link to={item.url}>
+                      <div className="background">
+                        <span className={item.icon} />
+                      </div>
+                      <div className="short-title">{item.title}</div>
+                    </Link>
+                  </Col>)}
           </Col>
         </Col>
         <Col span={12} className="home-content" style={{ paddingLeft: "10px" }}>
           <Col span={24} className="home-title back-color-white">
             精品展示
           </Col>
-          <Col span={24} className="back-color-white" style={{ height: '305px' }}>
-            1
+          <Col span={24} className="back-color-white products-content" style={{ height: "305px" }}>
+            <Carousel autoplay>
+              {productsList.map((item, idx) => (
+                <div
+                  key={item.relicsName + idx}
+                  style={{ position: "relative" }}
+                >
+                  <div className="carousel-content">
+                    <img
+                      className="carousel-img"
+                      src={item.relicsImgUrl}
+                      alt={item.relicsName}
+                    />
+                  </div>
+                </div>
+              ))}
+            </Carousel>
           </Col>
         </Col>
       </Row>;
