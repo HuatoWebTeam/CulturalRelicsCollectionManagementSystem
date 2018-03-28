@@ -44,16 +44,45 @@ class RelicsInfoDialogApp extends Component {
         levelInfo: Number(formData.levelInfo),
         date: moment(formData.libraryTime),
         material: formData.material,
-        numer: formData.number,
+        number: Number(formData.number),
         relicsName: formData.relicsName,
         relicsNum: formData.relicsNum,
         size: formData.size,
         relicsState: Number(formData.state),
         weight: formData.weight,
         relicsYears: Number(formData.years)
+      };
+      let fielList = [
+        {
+          uid: -1,
+          name: '',
+          status: 'done',
+          url: formData.relicsImg1
+        },
+        {
+          uid: -2,
+          name: '',
+          status: 'done',
+          url: formData.relicsImg2
+        },
+        {
+          uid: -3,
+          name: '',
+          status: 'done',
+          url: formData.relicsImg3
+        }
+      ];
+      for(let i = 0; i < fielList.length; i++) {
+        if(fielList[i].url === "") {
+          fielList.splice(i, 1);
+          i--;
+        }
       }
       this.setState({
-        formData: data
+        formData: data,
+        fielList: fielList
+      }, () => {
+        console.log(this.state)
       })
     }
   }
@@ -160,17 +189,22 @@ class RelicsInfoDialogApp extends Component {
 
   componentDidUpdate() {
     const { reset } = this.props;
+    const { state } = this.props.componentState;
     console.log(this.props);
     if (reset === true) {
-      this.setState(
-        {
-          fileList: [],
-          reset: false
-        },
-        () => {
-          this.props.onReset();
-        }
-      );
+      if(state !== '编辑藏品') {
+        this.setState(
+          {
+            fileList: [],
+            reset: false
+          },
+          () => {
+            this.props.form.resetFields();
+            this.props.onReset();
+          }
+        );
+      }
+      
     }
   }
 

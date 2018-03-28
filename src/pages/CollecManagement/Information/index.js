@@ -38,7 +38,9 @@ class ComplexGeneric extends Component {
             for(let item of res.Data) {
                 data.push({
                   relicsNum: item.CollectionNumber,
-                  relicsImg: item.Collectionimg1,
+                  relicsImg1: item.Collectionimg1,
+                  relicsImg2: item.Collectionimg2,
+                  relicsImg3: item.Collectionimg3,
                   relicsName: item.CollectionName,
                   libraryTime: item.CollectionTime,
                   number: item.Number,
@@ -90,8 +92,8 @@ class ComplexGeneric extends Component {
             },
             {
                 title: '文物图片',
-                dataIndex: 'relicsImg',
-                key: 'relicsImg',
+                dataIndex: 'relicsImg1',
+                key: 'relicsImg1',
                 render: (text, record, index) => {
                     // console.log(text,record, index)
                     return (

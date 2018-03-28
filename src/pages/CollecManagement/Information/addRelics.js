@@ -20,7 +20,7 @@ class AddRelics extends Component {
   }
   formSubmit = (value) => {
     console.log(value);
-    let params = {
+      let params = {
         collection: {
           CollectionName: value.relicsName,
           ReservoirType: value.type,
@@ -51,8 +51,8 @@ class AddRelics extends Component {
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
             _this.setState({ reset: true });
-            console.log(this.relicsInfo);
-            _this.refs.relicsInfo.resetFields();
+            console.log(_this.refs);
+            // _this.refs.relicsInfo.resetFields();
           } else {
             message.error("操作失败");
           }
@@ -63,7 +63,8 @@ class AddRelics extends Component {
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
             _this.setState({ reset: true });
-            _this.refs.relicsInfo.resetFields();
+            // console.log(_this.refs)
+            // _this.refs.relicsInfo.resetFields();
           } else {
             message.error("操作失败");
           }
