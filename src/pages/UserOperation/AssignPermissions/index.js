@@ -38,7 +38,7 @@ class AssignPermissions extends Component {
         userList: res
       });
     });
-    let UserInfo = sessionStorage.getItem("UserInfo");
+    let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
     console.log(UserInfo);
     let LoginName = UserInfo.UserName;
     let UserPageALL = UserInfo.UserMenuItem;
@@ -120,7 +120,7 @@ class AssignPermissions extends Component {
         if(userName === loginName) {
           this.showConfirm();
         } else {
-          message.success("添加成功");
+          message.success("添加成功, 请通知用户重新登录");
         }
         
       } else {
