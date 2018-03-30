@@ -54,9 +54,9 @@ class LoginForm extends Component {
           console.log(res);
           // console.log(value);
           this.setState({loading:false});
-          if(res.length > 0) {
+          if(res !== false) {
             // let Token = res[0].Ticket;
-            let UserMenuItem = res[0].MyProperty;
+            let UserMenuItem = res.MyProperty;
             let UserName = value.userName;
             // Cookie.set("UserInfo", { 
             //     UserMenuItem: UserMenuItem, UserName: UserName }, { expires: 0.5 });
