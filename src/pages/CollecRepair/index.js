@@ -113,11 +113,14 @@ class CollecRepair extends Component {
                 title: '修复状态',
                 dataIndex: 'Repair_State',
                 key: 'Repair_State',
-                render:(text) => {
-                    return <span style={{
-                        color: text === '待修复' ? '#e15d05' : ( text === '修复中' ? '#3065bf' : (text === '已修复' ? '#666' : 'red'))
-                    }} > {text} </span>
-                }
+                render: (text) => {
+                    return <span 
+                    style={{
+                        color: Number(text) === 2 ? 'red' : '#666'
+                    }} >
+                        {Number(text) === 0 ? "待修复" : (Number(text) === 1 ? '修复完成' : '修复异常')}
+                        </span>;
+                    }
             },
             {
                 title: '操作',
