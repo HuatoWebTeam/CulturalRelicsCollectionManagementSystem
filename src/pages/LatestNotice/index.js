@@ -82,7 +82,19 @@ class LatestNoticeApp extends Component {
               }
               console.log(values);
               NoticeAdd(values).then(res => {
-                  console.log(res)
+                  console.log(res);
+                  if(res === true) {
+                    this.setState({
+                      visible: false,
+                    }, () => {
+                      this.props.form.resetFields();
+                      message.success("添加成功");
+                      this.getNoticeList();
+                    })
+                    
+                  } else {
+                    message.error('添加失败')
+                  }
               })
               this.setState({ visible: false });
           }
@@ -93,6 +105,7 @@ class LatestNoticeApp extends Component {
   handleCancel = () =>{
       console.log('cancel');
       this.setState({ visible: false });
+      this.props.form.resetFields();
   }
 
   render() {
