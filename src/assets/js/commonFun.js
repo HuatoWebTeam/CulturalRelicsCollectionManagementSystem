@@ -50,7 +50,14 @@ export const relicsCategory = [
 
 // 入库类型
 export const putInCategory = [
-    { value: '新增入库', key: 1 }
+    { value: '发掘', key: 1 },
+    { value: '采集', key: 2 },
+    { value: '收购', key: 3 },
+    { value: '拨交', key: 4 },
+    { value: '交换', key: 5 },
+    { value: '拣选', key: 6 },
+    { value: '捐赠', key: 7 },
+    { value: '旧藏', key: 8 }
 ];
 
 // 分级信息
