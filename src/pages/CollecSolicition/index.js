@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Table } from 'antd';
+import { Row, Col, Button, Input, Table, message } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
 import { levelInfo, relicsCategory } from "../../assets/js/commonFun";
 import { connect } from 'react-redux';
+import { ApprovalPassed, ApprovalDenied } from "../../axios";
 const Search = Input.Search;
 
 class CollecSolicition extends Component {
@@ -16,12 +17,14 @@ class CollecSolicition extends Component {
   };
 
   componentWillMount() {
-    this.setState({
-      pageIndex: this.props.pageIndex
-    }, () => {
-      this.getSolicitionlist();
-    })
-    
+    this.setState(
+      {
+        pageIndex: this.props.pageIndex
+      },
+      () => {
+        this.getSolicitionlist();
+      }
+    );
   }
   // 获取征集列表
   getSolicitionlist() {
@@ -51,13 +54,16 @@ class CollecSolicition extends Component {
   }
 
   // 搜索框
-  searchQueryData = (value) => {
-      this.setState({
-          relicsName: value
-      }, () => {
-          this.getSolicitionlist();
-      })
-  }
+  searchQueryData = value => {
+    this.setState(
+      {
+        relicsName: value
+      },
+      () => {
+        this.getSolicitionlist();
+      }
+    );
+  };
   // 分页改变
   paginationChange = page => {
     this.setState(
@@ -66,9 +72,42 @@ class CollecSolicition extends Component {
       },
       () => {
         this.getSolicitionlist();
-        this.props.changePageIndex(page)
+        this.props.changePageIndex(page);
       }
     );
+  };
+
+  // 点击通过
+  clickApprove = item => {
+    let params = {
+      orderNumber: item,
+      flag: 4
+    };
+    let _this = this;
+    ApprovalPassed(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getInventoryList();
+      } else {
+        message.error("操作失败");
+      }
+    });
+  };
+  // 拒绝
+  clickApproveReject = item => {
+    let params = {
+      orderNumber: item,
+      flag: 4
+    };
+    let _this = this;
+    ApprovalDenied(params).then(res => {
+      console.log(res);
+      if (res === true) {
+        _this.getInventoryList();
+      } else {
+        message.error("操作失败");
+      }
+    });
   };
 
   render() {
@@ -107,12 +146,12 @@ class CollecSolicition extends Component {
         title: "分级信息",
         dataIndex: "Grade",
         key: "Grade",
-        render:(text) => {
-            for(let item of levelInfo) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
+        render: text => {
+          for (let item of levelInfo) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
+          }
         }
       },
       {
@@ -124,12 +163,12 @@ class CollecSolicition extends Component {
         title: "类别",
         dataIndex: "Solicitation_State",
         key: "Solicitation_State",
-        render:(text) => {
-            for(let item of relicsCategory) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
+        render: text => {
+          for (let item of relicsCategory) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
+          }
         }
       },
       {
@@ -146,6 +185,36 @@ class CollecSolicition extends Component {
         title: "出土信息",
         dataIndex: "BeUnearthed",
         key: "BeUnearthed"
+      },
+      ,
+      {
+        title: "审批",
+        dataIndex: "",
+        key: "approval",
+        render: (text, value, idx) => {
+          return (
+            <div>
+              <Button
+                type="primary"
+                onClick={this.clickApprove.bind(this, text.Collection_Number)}
+                disabled={Number(text.ReceivingPermissions) === 0}
+              >
+                同意
+              </Button>
+              <Button
+                type="danger"
+                onClick={this.clickApproveReject.bind(
+                  this,
+                  text.Collection_Number
+                )}
+                disabled={Number(text.DeniedPermission) === 0}
+                style={{ marginLeft: "10px" }}
+              >
+                拒绝
+              </Button>
+            </div>
+          );
+        }
       }
     ];
 
