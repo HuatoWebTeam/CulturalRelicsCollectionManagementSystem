@@ -162,9 +162,18 @@ class ComplexGeneric extends Component {
                 }
             },
             {
-                title: '状态',
+                title: '文物状态',
                 dataIndex: 'state',
-                key: 'state'
+                key: 'state',
+                render: (text) => {
+                    return (
+                        <span
+                            style={{
+                                color: Number(text) === 3 ? 'red' : '#666'
+                            }}
+                        >{ Number(text) === 0 ? '新增入库' : (Number(text) === 1 ? '新增出库' : (Number(text) === 2 ? '在库' : '异常')) }</span>
+                    )
+                }
             },
             {
                 title: '类别',
