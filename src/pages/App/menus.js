@@ -22,13 +22,13 @@ export  const menus = [
     { key: '/App/ShowDetails', title: '盘点单详情', isHidden: true, fatherName: '/App/Inventory', sub: [] },
     { key: '/App/Solicition', title: '藏品征集', icon: 'iconBack solicition', sub: [] },
     { key: '/App/AddSolicition', title: '添加征集', isHidden: true, fatherName: '/App/Solicition', sub: [] },
-    { key: 'ComplexGeneric', title: '复仿制管理', icon: 'iconBack complexgeneric', sub: [
-        { key: '/App/ComplexInfo', title: '信息登记', icon: 'nullIcon' },
-        { key: '/App/AddComplexInfo', title: '复仿制管理 > 信息登记 > 添加信息', isHidden: true, fatherName: '/App/ComplexInfo' },
-        { key: '/App/ComplexPutIn', title: '藏品入库', icon: 'nullIcon' },
-        { key: '/App/ComplexOutbound', title: '藏品出库', icon: 'nullIcon' },
-        { key: '/App/NewComplexOutbound', title: '复仿制管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/ComplexOutbound' }
-    ]},
+    // { key: 'ComplexGeneric', title: '复仿制管理', icon: 'iconBack complexgeneric', sub: [
+    //     { key: '/App/ComplexInfo', title: '信息登记', icon: 'nullIcon' },
+    //     { key: '/App/AddComplexInfo', title: '复仿制管理 > 信息登记 > 添加信息', isHidden: true, fatherName: '/App/ComplexInfo' },
+    //     { key: '/App/ComplexPutIn', title: '藏品入库', icon: 'nullIcon' },
+    //     { key: '/App/ComplexOutbound', title: '藏品出库', icon: 'nullIcon' },
+    //     { key: '/App/NewComplexOutbound', title: '复仿制管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/ComplexOutbound' }
+    // ]},
     { key: '/App/ImageManagement', title: '影像管理', icon: 'iconBack image', sub: [], isHidden: false },
     { key: 'WarehouseManagement', title: '库房管理', icon: 'iconBack warehouse', sub: [
         { key: '/App/WarehouseInfo', title: '库房信息维护', icon: 'nullIcon' },
