@@ -211,9 +211,17 @@ class CollecInventory extends Component {
         key: "InventoryMan"
       },
       {
-        title: "状态",
+        title: "盘点状态",
         dataIndex: "Inventory_State",
-        key: "Inventory_State"
+        key: "Inventory_State",
+        render: (text) => {
+          return <span 
+          style={{
+            color: Number(text) === 2 ? 'red' : '#666'
+          }} >
+              {Number(text) === 0 ? "待盘点" : (Number(text) === 1 ? '盘点完成' : '盘点异常')}
+            </span>;
+        }
       },
       {
         title: "操作",
