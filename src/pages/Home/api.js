@@ -11,3 +11,9 @@ export const GetToNotice = () => {
 export const GetFineDisplayData = () => {
     return axios.post("/HomeManage/GetFineDisplayData").then(res => res.data)
 }
+
+
+// // 数据展示
+// export const GetFineDisplayData = () => {
+//     return axios.post('/HomeManage/GetFineDisplayData').then(res => res.data)
+// }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Radio, Carousel } from 'antd';
+import { Row, Col, Radio, Carousel, Modal, Button } from 'antd';
 // import classnames from 'classnames';
 import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
@@ -8,6 +8,7 @@ import './Home.less';
 import { Link } from 'react-router-dom'; 
 import { GetToNotice, GetFineDisplayData } from "./api";
 import { relative } from 'path';
+import LanternSlide from "./Scroller";
 const RadioGroup  = Radio.Group;
 const RadioButton = Radio.Button;
 
@@ -75,7 +76,9 @@ class Home extends Component {
     },
     newNotice: [],  // 最新通知
     productsList: [], // 精品展示
-
+    slideWidth: null,
+    noticeVisible: false,
+    noticeDetail: null,
    }
   componentWillMount () {
     let userMenuList = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
@@ -100,6 +103,15 @@ class Home extends Component {
       }
     });
     this.getnewNotice();
+    let _this = this;
+    // console.log(this.props.location.pathname === "/App/Home");
+    window.onresize = () => {
+      console.log(this.props)
+      console.log(this.props.history.location.pathname === "/App/Home");
+      if (this.props.history.location.pathname === "/App/Home") {
+        _this.getSlideWidth();
+      };
+    }
   }
 
   // 获取数据
@@ -119,13 +131,42 @@ class Home extends Component {
       for(let item of res.Data) {
         imgArr.push({
           relicsImgUrl: item.Collectionimg1,
-          relicsName: item.CollectionName
+          relicsName: item.CollectionName,
+          key: item.CollectionNumber
         });
       };
       this.setState({
         productsList: imgArr
       })
     })
+    // 数据统计
+    // GetFineDisplayData().then(res => {
+    //   console.log('-------')
+    //   console.log(res)
+    // })
+  }
+  componentDidMount() {
+    this.getSlideWidth();
+  }
+  getSlideWidth = () => {
+    console.log('width')
+    console.log(this.refs.slideWidth.clientWidth);
+    this.setState({ slideWidth: this.refs.slideWidth.clientWidth - 41 });
+  }
+
+  // 通知详情
+
+  showNoticeDetail= (value) => {
+    this.setState({
+      noticeVisible: true,
+      noticeDetail: value
+    }, () => {
+
+    })
+  }
+  // 关闭通知弹窗
+  closeNoticeDetail = () => {
+    this.setState({noticeDetail: null,noticeVisible: false})
   }
   radioButtonChange (value) {
     console.log(value);
@@ -141,7 +182,7 @@ class Home extends Component {
   }
   render() {
     console.log(this.state);
-    const { collection, myMatters, newNotice, productsList } = this.state;
+    const { collection, myMatters, newNotice, productsList, slideWidth, noticeVisible, noticeDetail } = this.state;
     return <Row className="home-container">
         <Col span={24} className="home-content">
           <Col span={24} className="home-title back-color-white">
@@ -204,25 +245,51 @@ class Home extends Component {
           <Col span={24} className="home-title back-color-white">
             <Col span={20}>最新通知</Col>
             <Col span={4} style={{ fontSize: "16px", color: "#666" }}>
-              <span onClick={() => { this.props.history.push("/App/LatestNotice"); }} style={{display: 'inline-block', height: '20px', cursor: 'pointer' }} >更多>></span>
+              <span onClick={() => {
+                  this.props.history.push("/App/LatestNotice");
+                }} style={{ display: "inline-block", height: "20px", cursor: "pointer" }}>
+                更多>>
+              </span>
             </Col>
           </Col>
           <Col span={24} className="back-color-white new-notice" style={{ height: "276px" }}>
-            {newNotice.map((item, idx) => <Col span={24} key={idx}>
-                <Col span={19} className="notice-title">
-                  {item.Notice_Desc}
+            {newNotice.map((item, idx) => (
+              <Col
+                onClick={this.showNoticeDetail.bind(this, item)}
+                span={24}
+                key={idx}
+              >
+                <Col span={17} className="notice-title">
+                  {item.Notice_Title}
                 </Col>
-                <Col span={5} className="notice-date">
+                <Col span={6} className="notice-date">
                   {item.Notice_Time}
                 </Col>
-              </Col>)}
+              </Col>
+            ))}
+            <Modal visible={noticeVisible} footer={<Button
+                  onClick={this.closeNoticeDetail}
+                  type='primary'
+                >
+                  关闭
+                </Button>} >
+              {noticeDetail && <Col span={24}>
+                  <Col span={24} className="notice-detail-title">
+                    <h1>{noticeDetail.Notice_Title}</h1>
+                    <span>{noticeDetail.Notice_Time}</span>
+                  </Col>
+                  <Col span={24} style={{ fontSize: "18px", marginTop: "15px" }}>
+                    {noticeDetail.Notice_Desc}
+                  </Col>
+                </Col>}
+            </Modal>
           </Col>
         </Col>
         <Col span={12} className="home-content" style={{ paddingRight: "10px" }}>
           <Col span={24} className="home-title back-color-white">
             快捷操作
           </Col>
-          <Col span={24} className="back-color-white shortcuts" style={{height: '305px'}} >
+          <Col span={24} className="back-color-white shortcuts" style={{ height: "305px" }}>
             {shortcuts.map((item, idx) => !item.isHidden && <Col style={{ textAlign: "center", marginBottom: "20px" }} span={6} key={idx}>
                     <Link to={item.url}>
                       <div className="background">
@@ -234,15 +301,15 @@ class Home extends Component {
           </Col>
         </Col>
         <Col span={12} className="home-content" style={{ paddingLeft: "10px" }}>
-          <Col span={24} className="home-title back-color-white">
+          <div span={24} style={{ width: "100%" }} className="home-title back-color-white">
             精品展示
-          </Col>
-          <Col span={24} className="back-color-white products-content" style={{ height: "305px" }}>
-            <Carousel autoplay>
+          </div>
+          <div ref="slideWidth" className="back-color-white products-content" style={{ height: "305px", padding: "10px 20px" }}>
+            {/* <Carousel autoplay>
               {productsList.map((item, idx) => (
                 <div
                   key={item.relicsName + idx}
-                  style={{ position: "relative" }}
+                  style={{ position: "relative", width: '210px' }}
                 >
                   <div className="carousel-content">
                     <img
@@ -253,8 +320,9 @@ class Home extends Component {
                   </div>
                 </div>
               ))}
-            </Carousel>
-          </Col>
+            </Carousel> */}
+            <LanternSlide width={slideWidth} list={productsList} />
+          </div>
         </Col>
       </Row>;
       // <div>
