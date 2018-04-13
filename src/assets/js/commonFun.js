@@ -74,3 +74,9 @@ export const relicsState = [
     { value: '在库', key: 1 },
     { value: '出库', key: 2 }
 ]
+
+// 完整程度
+export const howComplete = [
+    { value: '完整', key: 0 },
+    { value: '破损', key: 1 }
+]

@@ -233,7 +233,7 @@ class CollecExhibition extends Component {
               format="YYYY-MM-DD"
             />
             <Button
-              type="primrary"
+              type="primary"
               className=" search-btn"
               onClick={this.dateSearch}
             >

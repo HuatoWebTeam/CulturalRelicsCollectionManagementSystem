@@ -3,7 +3,7 @@ import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { GetCollectionCertificationData } from "./api";
 import { connect } from 'react-redux';
-import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsCategory, howComplete } from "../../../assets/js/commonFun";
 
 const Search = Input.Search;
 
@@ -134,10 +134,10 @@ class ComplexGeneric extends Component {
                 dataIndex: 'Integrity',
                 key: 'Integrity',
                 render: (text) => {
-                    if(Number(text) === 0) {
-                        return (<span>完整</span>)
-                    } else if (Number(text) === 1) {
-                        return (<span>破损</span>)
+                    for(let item of howComplete) {
+                        if(Number((text)) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
                     }
                 }
             },

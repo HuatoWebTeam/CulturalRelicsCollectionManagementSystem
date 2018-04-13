@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Row, Col, Button, Input, Table, Modal } from 'antd';
 import { GetCollectionData } from './api';
-import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsCategory, howComplete } from "../../../assets/js/commonFun";
 import RelicsInfoDialog from './component';
 import { connect } from 'react-redux';
 const Search = Input.Search;
@@ -154,10 +154,10 @@ class ComplexGeneric extends Component {
                 dataIndex: 'howComplete',
                 key: 'howComplete',
                 render: (text) => {
-                    if(Number(text) === 0) {
-                        return (<span>完整</span>)
-                    } else if(Number(text) === 1) {
-                        return (<span>破损</span>)
+                    for(let item of howComplete) {
+                        if(Number(text) === item.key) {
+                            return (<span>{item.value}</span>)
+                        }
                     }
                 }
             },

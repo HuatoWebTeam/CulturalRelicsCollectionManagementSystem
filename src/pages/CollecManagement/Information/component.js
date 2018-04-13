@@ -3,7 +3,7 @@ import { Row, Col, Form, Input, Upload, Select, Button, message, Modal, Icon, Da
 import { CollectionImgUpload } from './api';
 import moment from "moment";
 import { connect } from 'react-redux';
-import { relicsYears, relicsCategory, putInCategory, levelInfo, relicsState } from '../../../assets/js/commonFun';
+import { relicsYears, relicsCategory, putInCategory, levelInfo, relicsState, howComplete } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -439,8 +439,11 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择完整程度" }]
               })(
                 <Select>
-                  <Option value={0}>完整</Option>
-                  <Option value={1}>破损</Option>
+                  {
+                    howComplete.map((item) => 
+                      <Option value={item.key}>{item.value}</Option>
+                    )
+                  }
                 </Select>
               )}
             </FormItem>

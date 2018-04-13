@@ -4,12 +4,14 @@ import { Row, Col, Table } from 'antd';
 import './index.less';
 import { ExhibitionDetailsApi } from './api';
 import { levelInfo, relicsYears } from '../../assets/js/commonFun';
+import ApproveComponent from '../Components/ApproveComponent';
+
 
 class ExhibitionDetails extends Component {
   state = {
     id: null,
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: 100,
     total: 0,
     data: []
   };
@@ -168,7 +170,7 @@ class ExhibitionDetails extends Component {
         dataIndex: "years",
         key: "years",
         render: (text) => {
-          console.log(text);
+          // console.log(text);
           for(let item of relicsYears) {
             if(Number(text) === item.key) {
               return (<span>{item.value}</span>);
@@ -227,16 +229,17 @@ class ExhibitionDetails extends Component {
         }
       }
     ];
-    return (
-      <Row className="exhibition-container main-content">
+    return <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
-          藏品展览详情 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+          藏品展览详情 <div className="go-back" onClick={() => {
+              this.props.history.goBack();
+            }} />
         </Col>
-        <Col span={24} className="exhibition-content" style={{marginTop: '20px'}} >
-          <Table pagination={{ total: total, pageSize: pageSize, current: pageIndex, onChange: this.paginationChange }} bordered columns={relicDetails} dataSource={data} />
+        <Col span={24} className="exhibition-content" style={{ marginTop: "20px" }}>
+          <Table pagination={false} bordered columns={relicDetails} dataSource={data} />
         </Col>
-      </Row>
-    );
+        <ApproveComponent  />
+      </Row>;
   }
 }
 
