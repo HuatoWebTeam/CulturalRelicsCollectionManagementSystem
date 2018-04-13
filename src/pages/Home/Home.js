@@ -139,6 +139,7 @@ class Home extends Component {
         productsList: imgArr
       })
     })
+    
     // 数据统计
     // GetFineDisplayData().then(res => {
     //   console.log('-------')
@@ -151,7 +152,7 @@ class Home extends Component {
   getSlideWidth = () => {
     console.log('width')
     console.log(this.refs.slideWidth.clientWidth);
-    this.setState({ slideWidth: this.refs.slideWidth.clientWidth - 41 });
+    this.setState({ slideWidth: this.refs.slideWidth.clientWidth - 121 });
   }
 
   // 通知详情
@@ -304,7 +305,7 @@ class Home extends Component {
           <div span={24} style={{ width: "100%" }} className="home-title back-color-white">
             精品展示
           </div>
-          <div ref="slideWidth" className="back-color-white products-content" style={{ height: "305px", padding: "10px 20px" }}>
+          <div ref="slideWidth" className="back-color-white products-content" style={{ height: "305px", padding: "20px 60px" }}>
             {/* <Carousel autoplay>
               {productsList.map((item, idx) => (
                 <div

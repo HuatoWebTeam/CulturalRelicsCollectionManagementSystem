@@ -4,9 +4,9 @@ class LanternSlide extends Component {
   state = {
     setting: {
       width: 600, //幻灯片的宽度
-      height: 300, //幻灯片的高度
-      posterWidth: 300, //幻灯片第一帧的宽度
-      posterHeight: 280, //幻灯片第一帧的高度
+      height: 280, //幻灯片的高度
+      posterWidth: 250, //幻灯片第一帧的宽度
+      posterHeight: 250, //幻灯片第一帧的高度
       scale: 0.9,
       topValue: "", //这个为可变参数
       autoplay: "true",
@@ -143,6 +143,7 @@ class LanternSlide extends Component {
     posterList.children[0].style.width = setting.posterWidth.toString() + "px";
     posterList.children[0].style.height = setting.posterHeight.toString() + "px";
     posterList.children[0].style.top = null;
+    posterList.children[0].style.opacity = null;
     // 计算层级关系
     var rightLevel = Math.floor(itemCount / 2);
     var leftLevel = Math.floor(itemCount / 2);
@@ -186,7 +187,6 @@ class LanternSlide extends Component {
           {
             this.setTopValue(rightHeight);
           }
-
           var style = posterList.children[number].style;
           style.zIndex = --rightLevel;
           style.height = rightHeight.toString() + "px";
