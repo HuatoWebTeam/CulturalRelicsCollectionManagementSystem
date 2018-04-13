@@ -140,7 +140,17 @@ class RelicsDialog extends Component {
       {
         title: "文物图片",
         dataIndex: "relicsImg",
-        key: "relicsImg"
+        key: "relicsImg",
+        render: (text, record, index) => {
+          // console.log(text,record, index)
+          return (
+            <img
+              style={{ width: "55px", height: "55px" }}
+              src={text}
+              alt={index}
+            />
+          );
+        }
       },
       {
         title: "文物名称",
