@@ -68,6 +68,7 @@ class PeopleManagementApp extends Component {
     this.setState({
       visible: true,
       isAdd: true,
+      modalTitle: '添加成员',
       peopleForm: {
         position: roleList.length > 0 ? roleList[0].RoleId : null,
         username: "",
@@ -84,6 +85,7 @@ class PeopleManagementApp extends Component {
     this.setState({
       visible: true,
       userId: value.UserId,
+      modalTitle: '编辑成员',
       peopleForm: {
         username: value.UserName,
         position: value.RoleId,
