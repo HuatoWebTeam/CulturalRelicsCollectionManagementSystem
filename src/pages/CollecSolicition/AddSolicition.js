@@ -4,6 +4,7 @@ import './index.less';
 import moment from 'moment';
 import { CollectionImgUpload } from '../CollecManagement/Information/api';
 import { SolicAddApi } from './api';
+import { levelInfo, relicsCategory, relicsYears, howComplete } from "../../assets/js/commonFun";
 const FormItem = Form.Item;
 const Option = Select.Option;
 const {TextArea} = Input;
@@ -89,6 +90,12 @@ class AddSilicitionApp extends Component {
         console.log(fieldsValue);
         if(fileList.length > 0) {
           const value = {
+            Solicitation_Name: fieldsValue.solicitionPeople,
+            IdentityCard: fieldsValue.peopleId,
+            Site: fieldsValue.peopleLocation,
+            Phone: fieldsValue.phone,
+            AmountPrize: fieldsValue.amountPrize,
+            Identification: fieldsValue.identification,
             Collection_Number: fieldsValue.relicsNum,
             Collection_Name: fieldsValue.relicsName,
             Grade: fieldsValue.levelInfo,
@@ -137,7 +144,9 @@ class AddSilicitionApp extends Component {
 
     return <Row className="main-content">
         <Col span={24} className="title">
-          添加征集信息 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+          添加征集信息 <div className="go-back" onClick={() => {
+              this.props.history.goBack();
+            }} />
         </Col>
         <Col span={24} className="addSolicition-container">
           <Form layout="inline" onSubmit={this.handleFormSubmit} style={{ width: "100%" }}>
@@ -149,7 +158,37 @@ class AddSilicitionApp extends Component {
                 <img alt="upload" src={previewImage} style={{ width: "100%" }} />
               </Modal>
             </FormItem>
-            <FormItem label="文物名称" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+            <FormItem label="征集人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("solicitionPeople", {
+                rules: [{ required: true, message: "请输入征集人" }]
+              })(<Input placeholder="请输入征集人" />)}
+            </FormItem>
+            <FormItem label="身份证号码:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("peopleId", {
+                rules: [{ required: true, message: "请输入身份证号码" }]
+              })(<Input placeholder="请输入身份证号码" />)}
+            </FormItem>
+            <FormItem label="联系电话:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("phone", {
+                rules: [{ required: true, message: "请输入联系电话" }]
+              })(<Input placeholder="请输入联系电话" />)}
+            </FormItem>
+            <FormItem label="联系地址:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("peopleLocation", {
+                rules: [{ required: true, message: "请输入联系地址" }]
+              })(<Input placeholder="请输入联系地址" />)}
+            </FormItem>
+            <FormItem label="鉴定结果:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("identification", {
+                rules: [{ required: true, message: "请输入鉴定结果" }]
+              })(<Input placeholder="请输入鉴定结果" />)}
+            </FormItem>
+            <FormItem label="奖金数额:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
+              {getFieldDecorator("amountPrize", {
+                rules: [{ required: true, message: "请输入奖金数额" }]
+              })(<Input placeholder="请输入奖金数额" />)}
+            </FormItem>
+            <FormItem label="文物名称:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("relicsName", {
                 rules: [{ required: true, message: "请输入文物名称" }]
               })(<Input placeholder="请输入文物名称" />)}
@@ -171,32 +210,40 @@ class AddSilicitionApp extends Component {
             </FormItem>
             <FormItem label="分级信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("levelInfo", {
-                initialValue: 0,
+                initialValue: levelInfo[0].key,
                 rules: [{ required: true, message: "请选择分级信息" }]
               })(<Select>
-                  <Option value={0}>一级文物</Option>
+                  {levelInfo.map(item => (
+                    <Option value={item.key}>{item.value}</Option>
+                  ))}
                 </Select>)}
             </FormItem>
             <FormItem label="文物年代:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("years", {
-                initialValue: 0,
+                initialValue: relicsYears[0].key,
                 rules: [{ required: true, message: "请输入文物年代" }]
               })(<Select>
-                  <Option value={0}>清</Option>
+                  {relicsYears.map(item => (
+                    <Option value={item.key}>{item.value}</Option>
+                  ))}
                 </Select>)}
             </FormItem>
             <FormItem label="完整程度:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("howComplete", {
-                initialValue: 0,
+                initialValue: howComplete[0].key,
                 rules: [{ required: true, message: "请输入完整程度" }]
               })(<Select>
-                  <Option value={0}>完整</Option>
+                {
+                  howComplete.map((item) => 
+                    <Option value={item.key}>{item.value}</Option>
+                  )
+                }
                 </Select>)}
             </FormItem>
             <FormItem label="征集方式:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("solicitMethods", {
                 initialValue: 0,
-                rules: [{ required: true, message: "请祖安泽征集方式" }]
+                rules: [{ required: true, message: "请选择征集方式" }]
               })(<Select>
                   <Option value={0}>抢</Option>
                 </Select>)}
@@ -214,10 +261,14 @@ class AddSilicitionApp extends Component {
             </FormItem>
             <FormItem label="类别:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("category", {
-                initialValue: 0,
+                initialValue: relicsCategory[0].key,
                 rules: [{ required: true, message: "请选择类别" }]
               })(<Select>
-                  <Option value={0}>青铜器</Option>
+                  {relicsCategory.map((item, idx) => (
+                    <Option value={item.key} key={item.key}>
+                      {item.value}
+                    </Option>
+                  ))}
                 </Select>)}
             </FormItem>
             <FormItem label="材质:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">

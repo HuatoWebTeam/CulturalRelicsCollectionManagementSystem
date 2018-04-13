@@ -47,7 +47,7 @@ class CollecSolicition extends Component {
         }
         this.setState({
           solicitionRelicsList: data,
-          total: data[0].count
+          total: data[0].Count
         });
       }
     });
@@ -138,48 +138,35 @@ class CollecSolicition extends Component {
         key: "Solicitation_Time"
       },
       {
-        title: "数量",
-        dataIndex: "Number",
-        key: "Number"
+        title: "征集人",
+        dataIndex: "Solicitation_Name",
+        key: "Solicitation_Name"
       },
       {
-        title: "分级信息",
-        dataIndex: "Grade",
-        key: "Grade",
-        render: text => {
-          for (let item of levelInfo) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
+        title: "身份证号",
+        dataIndex: "IdentityCard",
+        key: "IdentityCard",
+        
       },
       {
-        title: "材质",
-        dataIndex: "MaterialQuality",
-        key: "MaterialQuality"
+        title: "联系方式",
+        dataIndex: "Phone",
+        key: "Phone"
       },
       {
-        title: "类别",
-        dataIndex: "Solicitation_State",
-        key: "Solicitation_State",
-        render: text => {
-          for (let item of relicsCategory) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
+        title: "联系地址",
+        dataIndex: "Site",
+        key: "Site",
       },
       {
-        title: "尺寸",
-        dataIndex: "Size",
-        key: "Size"
+        title: "奖金数额",
+        dataIndex: "AmountPrize",
+        key: "AmountPrize"
       },
       {
-        title: "重量",
-        dataIndex: "Weight",
-        key: "Weight"
+        title: "鉴定结果",
+        dataIndex: "Identification",
+        key: "Identification"
       },
       {
         title: "出土信息",
@@ -247,11 +234,49 @@ class CollecSolicition extends Component {
                 current: pageIndex,
                 pageSize: pageSize,
                 total: total,
-                onchenge: this.paginationChange
+                onChange: this.paginationChange
               }}
               columns={solicitionColumns}
               dataSource={solicitionRelicsList}
               bordered
+              expandedRowRender={
+                record => (
+                  <Row>
+                    <Col span={4} >
+                      <span>分级信息：</span>
+                      {
+                        levelInfo.map((item, key) => 
+                          Number(record.Grade) === item.key && <span key={item.key} >{item.value}</span>
+                        )
+                      }
+                    </Col>
+                    <Col span={4} >
+                      <span>材质：</span>
+                      <span>{record.MaterialQuality}</span>
+                    </Col>
+                    <Col span={4} >
+                      <span>类别：</span>
+                      {
+                        relicsCategory.map((item) => 
+                          Number(record.Solicitation_State) === item.key && <span key={item.key} >{item.value}</span>
+                        )
+                      }
+                    </Col>
+                    <Col span={4} >
+                      <span>尺寸：</span>
+                      <span>{record.Size}</span>
+                    </Col>
+                    <Col span={4} >
+                      <span>重量：</span>
+                      <span>{record.Weight}</span>
+                    </Col>
+                    <Col span={4} >
+                      <span>数量：</span>
+                      <span>{record.Number}</span>
+                    </Col>
+                  </Row>
+                )
+              }
             />
           </Col>
         </Col>
