@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, Input, message } from "antd";
+import { Layout, Menu, Dropdown, Col, Icon, Modal, Form, message } from "antd";
 import Routes from '../../Router';
 import MenuItem from './MenuItem';
 import { menus } from './menus';
@@ -72,6 +72,7 @@ class AppContent extends Component {
     // console.log(this.props);
     // console.log(keys)
     const pathname = keys || this.props.location.pathname;
+    console.log(menus)
     for (let item of menus) {
       // console.log(item.key);
       // console.log(pathname);
@@ -87,8 +88,8 @@ class AppContent extends Component {
         }
         this.setState({ localtionName: item.title });
         break;
-      } else if (pathname.indexOf(item.key) !== -1) {
-        console.log(item);
+      } else if (pathname.indexOf(item.key) !== -1 ) {
+        // console.log(item);
         this.setState({
           localtionName: item.title,
           selectOpenKey: item.fatherName

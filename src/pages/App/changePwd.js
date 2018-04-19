@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, } from 'antd';
+import { Form, Input, } from 'antd';
 
 class ChangePwdApp extends Component {
   state = {
@@ -9,7 +9,6 @@ class ChangePwdApp extends Component {
     errorState: null, // 原始密码错误状态
     errorText: null,
     confirmState: null, // 确认密码错误
-    confirmState: null,
     confirmDirty: false
   };
 
@@ -34,7 +33,6 @@ class ChangePwdApp extends Component {
   };
 
   render() {
-    const { errorState, errorText, confirmState, confirmText } = this.state;
     // console.log(this.props);
     const { getFieldDecorator } = this.props.form;
     return (

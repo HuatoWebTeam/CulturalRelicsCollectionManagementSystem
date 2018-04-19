@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, DatePicker, Input, Table, message } from 'antd';
+import { Row, Col, Button, DatePicker, Input, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
 import { subStr, exhibitionType, approveState } from "../../assets/js/commonFun";
@@ -7,7 +7,6 @@ import moment from 'moment';
 import { ExhibitionAll } from './api';
 // import Cookie from 'js-cookie';
 import { connect } from 'react-redux';
-import { ApprovalPassed, ApprovalDenied } from "../../axios";
 // import { tableColumns, tableData } from './data';
 const { RangePicker } = DatePicker;
 const Search  = Input.Search;

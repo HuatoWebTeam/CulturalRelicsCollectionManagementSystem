@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Table, message, Button } from 'antd';
+import { Row, Col, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
 import { GetEntryTheLibraryData } from './api';
 import { connect } from 'react-redux';
-import { levelInfo, relicsYears, relicsCategory, approveState } from "../../../assets/js/commonFun";
-import { ApprovalPassed, ApprovalDenied } from "../../../axios";
+import { approveState } from "../../../assets/js/commonFun";
 
 class ComplexGeneric extends Component {
   state = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Icon, Input, Button  } from 'antd';
-import Cookie from 'js-cookie';
+// import Cookie from 'js-cookie';
 // import { connect } from 'react-redux';
 import VerifyCode from "../Components/VerificationCode";
 import './index.less';
@@ -27,7 +27,7 @@ class LoginForm extends Component {
     } else {
       getUserIp().then(res => {
         // console.log(res)
-        var reg = /[^\(\)]+(?=\))/g;
+        var reg = /[^()]+(?=\))/g;
         var result = res.match(reg)
         
         result = JSON.parse(result[0])
@@ -137,7 +137,6 @@ class LoginForm extends Component {
   }
 
   render() {
-    const { errorText, errorState } = this.state;
     const { getFieldDecorator } = this.props.form;
     return <Row className="login-container">
         <Col span={24} className="login-background" />

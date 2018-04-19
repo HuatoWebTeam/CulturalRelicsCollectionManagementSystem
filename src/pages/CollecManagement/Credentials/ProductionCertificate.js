@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Button, Select, message, Table } from 'antd';
+import { Row, Col, Form, Input, Button, message, Table } from 'antd';
 import './index.less';
 import { CollectionCertification } from './api';
-import { ColleApi } from '../../Components/RelicsDialog/api';
+// import { ColleApi } from '../../Components/RelicsDialog/api';
 import RelicsDialog from "../../Components/RelicsDialog";
-import { levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
+import { levelInfo, relicsYears } from '../../../assets/js/commonFun';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
+// const Option = Select.Option;
 
 class ProductionCertificateApp extends Component {
   state = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
-import { levelInfo, relicsYears } from "../../assets/js/commonFun";
+import { levelInfo } from "../../assets/js/commonFun";
 import { RepDatall } from './api';
 import ApproveComponent from "../Components/ApproveComponent";
 
@@ -68,7 +68,7 @@ class RepairDetails extends Component {
   };
 
   render() {
-    const { pageIndex, pageSize, total, repairDetailList, anthorityState, repairNum } = this.state;
+    const { repairDetailList, anthorityState, repairNum } = this.state;
     const repairColumns = [
       {
         title: "文物编号",

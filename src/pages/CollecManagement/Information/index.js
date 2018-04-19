@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-import { Row, Col, Button, Input, Table, Modal } from 'antd';
+import { Row, Col, Button, Input, Table } from 'antd';
 import { GetCollectionData } from './api';
-import { levelInfo, relicsYears, relicsCategory, howComplete, relicsState } from "../../../assets/js/commonFun";
-import RelicsInfoDialog from './component';
+import { levelInfo, relicsYears, howComplete, relicsState } from "../../../assets/js/commonFun";
+// import RelicsInfoDialog from './component';
 import { connect } from 'react-redux';
 const Search = Input.Search;
 

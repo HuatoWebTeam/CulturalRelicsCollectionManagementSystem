@@ -12,6 +12,7 @@ export  const menus = [
         { key: '/App/Credentials', title: '凭证制作', icon: 'nullIcon' },
         { key: '/App/ProductionCertificate', title: '藏品管理 > 凭证制作', isHidden: true, fatherName: '/App/Credentials' },
         { key: '/App/PutInStorage', title: '藏品入库', icon: 'nullIcon' },
+        { key: '/App/PutInDetails', title: '藏品入库 > 入库详情', isHidden: true, icon: 'nullIcon', fatherName: '/App/PutInStorage' },
         { key: '/App/Outbound', title: '藏品出库', icon: 'nullIcon' },
         { key: '/App/NewOutbound', title: '藏品管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/Outbound' },
         { key: "/App/OutboundDetails", title: '藏品管理 > 藏品出库 > 出库详情', isHidden: true, fatherName: '/App/Outbound' }
@@ -21,7 +22,8 @@ export  const menus = [
     { key: '/App/NewInventory', title: '新建盘点单', isHidden: true, fatherName: '/App/Inventory', sub: [] },
     { key: '/App/ShowDetails', title: '盘点单详情', isHidden: true, fatherName: '/App/Inventory', sub: [] },
     { key: '/App/Solicition', title: '藏品征集', icon: 'iconBack solicition', sub: [] },
-    { key: '/App/AddSolicition', title: '添加征集', isHidden: true, fatherName: '/App/Solicition', sub: [] },
+    { key: '/App/AddSolicition', title: '藏品征集 > 添加藏品征集', isHidden: true, fatherName: '/App/Solicition', sub: [] },
+    { key: '/App/ShowSolicitionDetail', title: '藏品征集 > 藏品征集详情', isHidden: true, fatherName: '/App/Solicition', sub: [] },
     // { key: 'ComplexGeneric', title: '复仿制管理', icon: 'iconBack complexgeneric', sub: [
     //     { key: '/App/ComplexInfo', title: '信息登记', icon: 'nullIcon' },
     //     { key: '/App/AddComplexInfo', title: '复仿制管理 > 信息登记 > 添加信息', isHidden: true, fatherName: '/App/ComplexInfo' },
@@ -39,7 +41,8 @@ export  const menus = [
         { key: '/App/OperationLog', title: '操作日志', icon: 'nullIcon' },
         { key: '/App/AssignPermisssions', title: '权限分配', icon: 'nullIcon' },
         { key: '/App/WorkflowConfig', title: '流程配置', icon: 'nullIcon' },
-        { key: "/App/PeopleManagement", title: '人员管理', icon: 'nullIcon' }
+        { key: "/App/PeopleManagement", title: '人员管理', icon: 'nullIcon' },
+        { key: '/App/PositionMessagement', title: '职位管理', icon: 'nullIcon' }
     ]},
     { key: "/App/LatestNotice", title: '通知管理', icon: 'notification', sub: [], isHidden: false }
 

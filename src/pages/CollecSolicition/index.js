@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Table, message } from 'antd';
+import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
 import { Link } from 'react-router-dom';
-import { levelInfo, relicsCategory, approveState } from "../../assets/js/commonFun";
+import { approveState } from "../../assets/js/commonFun";
 import { connect } from 'react-redux';
-import { ApprovalPassed, ApprovalDenied } from "../../axios";
 const Search = Input.Search;
 
 class CollecSolicition extends Component {

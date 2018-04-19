@@ -41,7 +41,7 @@ class AssignPermissions extends Component {
     let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
     console.log(UserInfo);
     let LoginName = UserInfo.UserName;
-    let UserPageALL = UserInfo.UserMenuItem;
+    // let UserPageALL = UserInfo.UserMenuItem;
     // let menuParams = {
     //   strUser: null,
     //   strPwd: null,

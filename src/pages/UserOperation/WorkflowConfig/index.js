@@ -211,7 +211,6 @@ class WorkflowConfig extends Component {
     const {
       workflowList,
       checkWork,
-      peopleCount,
       peopleArray,
       peopleList,
       selectCheckList

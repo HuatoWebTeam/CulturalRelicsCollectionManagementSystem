@@ -152,7 +152,7 @@ class PeopleManagementApp extends Component {
 
   // 弹窗取消
   handleCancel = () => {
-    const { roleList } = this.state;
+    // const { roleList } = this.state;
     this.setState({
       visible: false
     });

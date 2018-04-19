@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Radio, Carousel, Modal, Button } from 'antd';
+import { Row, Col, Radio, Modal, Button } from 'antd';
 // import classnames from 'classnames';
 import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
 // import Cookie from 'js-cookie';
 import { Link } from 'react-router-dom'; 
 import { GetToNotice, GetFineDisplayData } from "./api";
-import { relative } from 'path';
+// import { relative } from 'path';
 import LanternSlide from "./Scroller";
 const RadioGroup  = Radio.Group;
 const RadioButton = Radio.Button;
@@ -119,22 +119,26 @@ class Home extends Component {
     // 最新通知
     GetToNotice().then(res =>{
       console.log(res);
-      this.setState({
-        newNotice: res.Data
-      })
+      if(res.Data) {
+        this.setState({ newNotice: res.Data });
+      }
+      
     });
 
     // 精品展示
     GetFineDisplayData().then(res =>{
       console.log(res);
       let imgArr = [];
-      for(let item of res.Data) {
-        imgArr.push({
-          relicsImgUrl: item.Collectionimg1,
-          relicsName: item.CollectionName,
-          key: item.CollectionNumber
-        });
-      };
+      if(res.Data) {
+        for (let item of res.Data) {
+          imgArr.push({
+            relicsImgUrl: item.Collectionimg1,
+            relicsName: item.CollectionName,
+            key: item.CollectionNumber
+          });
+        }
+      }
+      
       this.setState({
         productsList: imgArr
       })
@@ -255,7 +259,7 @@ class Home extends Component {
           </Col>
           <Col span={24} className="back-color-white new-notice" style={{ height: "276px" }}>
             {newNotice.map((item, idx) => (
-              <Col
+              idx < 6 && <Col
                 onClick={this.showNoticeDetail.bind(this, item)}
                 span={24}
                 key={idx}

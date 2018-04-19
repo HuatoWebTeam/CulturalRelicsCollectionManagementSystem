@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, DatePicker, Table, message } from 'antd';
+import { Row, Col, Button, Input, DatePicker, Table } from 'antd';
 import './index.less';
 // import moment from 'moment';
-import { RangePickerDefault, levelInfo, relicsYears, relicsCategory, approveState } from '../../../assets/js/commonFun';
+import { RangePickerDefault, approveState } from '../../../assets/js/commonFun';
 import { GetOutTheLibraryData } from './api';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { ApprovalPassed, ApprovalDenied } from '../../../axios';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;

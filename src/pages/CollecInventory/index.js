@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, DatePicker, Input, Button, Form, Table, message } from 'antd';
+import { Row, Col, Select, DatePicker, Input, Button, Form, Table } from 'antd';
 import './index.less';
 import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
 import { RangePickerDefault, approveState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ApprovalPassed, ApprovalDenied } from "../../axios";
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
