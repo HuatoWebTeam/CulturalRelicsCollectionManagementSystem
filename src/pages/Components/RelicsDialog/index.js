@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Form, Select, Modal, Table, Input } from 'antd';
 import { StoreApi, ColleApi } from './api';
-import { levelInfo, relicsYears } from '../../../assets/js/commonFun';
+import { levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { Search } = Input;
@@ -41,8 +41,10 @@ class RelicsDialog extends Component {
     // console.log(value);
     this.setState({
       searchName: value
+    }, () => {
+      this.searchModalData();
     });
-    this.searchModalData();
+    
   };
 
   searchModalData = () => {
@@ -50,7 +52,8 @@ class RelicsDialog extends Component {
     let params = {
       StoreId: searchStore,
       Type: searchCategory,
-      CollName: searchName
+      CollName: searchName,
+      stat: this.props.stat
     };
     // console.log(params);
     ColleApi(params).then(res => {
@@ -124,8 +127,10 @@ class RelicsDialog extends Component {
     // checkbox
     const rowSelection = {
       selectedRowKeys,
+      type:this.props.radio ? 'radio' : 'checkbox',
       onChange: this.onSelectChange,
     };
+    console.log(this.props)
     const chooseRelicsColumns = [
       {
         title: "文物编号",
@@ -254,15 +259,15 @@ class RelicsDialog extends Component {
                 }}
               >
                 <Option value="全部">全部</Option>
-                {relicsStoreList.map((item, idx) => (
-                  <Option value={item.Storehouse_Name} key={item.Storehouse_Id}>
-                    {item.Storehouse_Name}
+                {relicsCategory.map((item, idx) => (
+                  <Option value={item.key} key={item.key}>
+                    {item.value}
                   </Option>
                 ))}
               </Select>
             </FormItem>
             <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-              <Search onSearch={this.chooseDataSearch} enterButton />
+              <Search placeholder='请输入文物名称' onSearch={this.chooseDataSearch} enterButton />
             </FormItem>
           </Form>
           <Col span={24}>
@@ -272,6 +277,18 @@ class RelicsDialog extends Component {
               columns={chooseRelicsColumns}
               pagination={false}
               bordered
+              onRow= {(record) => {
+                return {
+                  onClick:() => {
+                    console.log('---点击table')
+                    console.log(record)
+                  }
+                }
+                
+              }}
+              onSelect={(selectKey) => {
+                console.log(selectKey)
+              }}
             />
           </Col>
         </Col>
