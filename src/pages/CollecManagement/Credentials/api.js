@@ -12,3 +12,8 @@ export const GetCollectionCertificationData = (params) => {
 export const CollectionCertification = (params) => {
     return axios.post("/CollectionManage/CollectionCertification", params).then(res => res.data);
 }
+
+// 修改rfid
+export const UpdateCollectionRfId = (params) => {
+    return axios.post("/CollectionManage/UpdateCollectionRfId", params).then(res => res.data)
+}
