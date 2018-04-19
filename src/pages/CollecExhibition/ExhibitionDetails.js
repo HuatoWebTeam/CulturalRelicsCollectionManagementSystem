@@ -11,22 +11,29 @@ class ExhibitionDetails extends Component {
   state = {
     id: null,
     pageIndex: 1,
-    pageSize: 100,
+    pageSize: 1000,
     total: 0,
-    data: []
+    data: [],
+    anthorityState: null
   };
 
   componentWillMount() {
-    console.log(this.props);
+    // console.log(this.props);
+
     this.setState({
       id: this.props.match.params.id
     });
   }
   componentDidMount() {
     this.getDetailsList();
-
+    let state = sessionStorage.getItem("anthoityState");
+    // console.log(state);
+    this.setState({
+        anthorityState: Number(state)
+    });
   }
-  getDetailsList () {
+
+  getDetailsList() {
     const { pageIndex, id, pageSize } = this.state;
     let params = {
       pageIndex: pageIndex,
@@ -57,65 +64,23 @@ class ExhibitionDetails extends Component {
       } else {
         this.setState({ total: 0 });
       }
-      
-      
-      
+    });
+  }
 
-
-    })
-    
-  };
-
-  paginationChange (page) {
+  paginationChange(page) {
     this.setState({
       pageIndex: page
     });
-    this.getDetailsList()
+    this.getDetailsList();
   }
-  dataSoure = [
-    {
-      serialNum: "CPOhkjfg213",
-      img: require("../../assets/img/描金彩观音像.jpg"),
-      name: "描金彩观音像",
-      number: 1,
-      levelInfo: "普通藏品",
-      material: "陶器",
-      years: "唐",
-      howComplete: "破损",
-      relicState: "在库",
-      exhibitionState: "待展览",
-      key: 0
-    },
-    {
-      serialNum: "CPOhkjfg213",
-      img: require("../../assets/img/描金彩观音像.jpg"),
-      name: "描金彩观音像",
-      number: 1,
-      levelInfo: "普通藏品",
-      material: "陶器",
-      years: "唐",
-      howComplete: "破损",
-      relicState: "出库",
-      exhibitionState: "展览中",
-      key: 2
-    },
-    {
-      serialNum: "CPOhkjfg213",
-      img: require("../../assets/img/描金彩观音像.jpg"),
-      name: "描金彩观音像",
-      number: 1,
-      levelInfo: "普通藏品",
-      material: "陶器",
-      years: "唐",
-      howComplete: "破损",
-      relicState: "入库",
-      exhibitionState: "展览结束",
-      key: 1
-    }
-  ];
+  // 改变审批条件状态
+  changeAnthority = () => {
+    sessionStorage.setItem("anthoityState", 0);
+    this.setState({ anthorityState: 0 });
+  }
 
   render() {
-    const { total, pageSize, pageIndex, data } = this.state;
+    const { total, pageSize, pageIndex, data, id, anthorityState } = this.state;
     const relicDetails = [
       {
         title: "文物编号",
@@ -151,11 +116,11 @@ class ExhibitionDetails extends Component {
         title: "分级信息",
         dataIndex: "levelInfo",
         key: "lavelInfo",
-        render: (text) => {
+        render: text => {
           // console.log(text);
-          for(let item of levelInfo) {
-            if(Number(text) === item.key) {
-              return (<span>{item.value}</span>);
+          for (let item of levelInfo) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
           }
         }
@@ -169,11 +134,11 @@ class ExhibitionDetails extends Component {
         title: "年代",
         dataIndex: "years",
         key: "years",
-        render: (text) => {
+        render: text => {
           // console.log(text);
-          for(let item of relicsYears) {
-            if(Number(text) === item.key) {
-              return (<span>{item.value}</span>);
+          for (let item of relicsYears) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
           }
         }
@@ -182,11 +147,11 @@ class ExhibitionDetails extends Component {
         title: "完整程度",
         dataIndex: "howComplete",
         key: "howComplete",
-        render:(text) => {
-          if(text === 0) {
-            return (<span>完整</span>)
-          } else if(text === 1) {
-            return (<span>破损</span>)
+        render: text => {
+          if (text === 0) {
+            return <span>完整</span>;
+          } else if (text === 1) {
+            return <span>破损</span>;
           }
         }
       },
@@ -201,7 +166,9 @@ class ExhibitionDetails extends Component {
                 color:
                   text === "在库"
                     ? "#da6214"
-                    : text === "出库" ? "#3065bf" : "#666"
+                    : text === "出库"
+                      ? "#3065bf"
+                      : "#666"
               }}
             >
               {text}
@@ -218,28 +185,51 @@ class ExhibitionDetails extends Component {
             <span
               style={{
                 color:
-                  text === "待展览"
+                  text === 0
                     ? "#da6214"
-                    : text === "展览中" ? "#3065bf" : "#666"
+                    : text === 1
+                      ? "#3065bf"
+                      : "#666"
               }}
             >
-              {text}
+              {text === 0 ? '待展览' : (text === 1 ? '展览完成' : '展览异常')}
             </span>
           );
         }
       }
     ];
-    return <Row className="exhibition-container main-content">
+    return (
+      <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
-          藏品展览详情 <div className="go-back" onClick={() => {
+          藏品展览详情{" "}
+          <div
+            className="go-back"
+            onClick={() => {
               this.props.history.goBack();
-            }} />
+            }}
+          />
         </Col>
-        <Col span={24} className="exhibition-content" style={{ marginTop: "20px" }}>
-          <Table pagination={false} bordered columns={relicDetails} dataSource={data} />
+        <Col
+          span={24}
+          className="exhibition-content"
+          style={{ marginTop: "20px" }}
+        >
+          <Table
+            pagination={false}
+            bordered
+            columns={relicDetails}
+            dataSource={data}
+          />
         </Col>
-        <ApproveComponent  />
-      </Row>;
+        {anthorityState === 1 && (
+          <ApproveComponent
+            paramsId={id}
+            flag={5}
+            changeAnthorityState={this.changeAnthority}
+          />
+        )}
+      </Row>
+    );
   }
 }
 

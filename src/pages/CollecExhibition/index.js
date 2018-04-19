@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, DatePicker, Input, Table, message } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
-import { subStr } from '../../assets/js/commonFun';
+import { subStr, exhibitionType, approveState } from "../../assets/js/commonFun";
 import moment from 'moment';
 import { ExhibitionAll } from './api';
 // import Cookie from 'js-cookie';
@@ -68,7 +68,8 @@ class CollecExhibition extends Component {
             date: subStr(item.StartTine) + " ~ " + subStr(item.EndTime),
             head: item.Person_liable,
             ReceivingPermissions: Number(item.ReceivingPermissions),
-            DeniedPermission: Number(item.DeniedPermission)
+            DeniedPermission: Number(item.DeniedPermission),
+            StepState: item.StepState
           });
           this.setState({
             data: dataSource
@@ -107,38 +108,6 @@ class CollecExhibition extends Component {
     this.getExhibitionList();
   };
 
-  // 点击通过
-  clickApprove = item => {
-    let params = {
-      orderNumber: item,
-      flag: 5
-    };
-    let _this = this;
-    ApprovalPassed(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getExhibitionList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
-  // 拒绝
-  clickApproveReject = item => {
-    let params = {
-      orderNumber: item,
-      flag: 5
-    };
-    let _this = this;
-    ApprovalDenied(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getExhibitionList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
 
 
 
@@ -164,7 +133,14 @@ class CollecExhibition extends Component {
       {
         title: "展览类型",
         dataIndex: "type",
-        key: "type"
+        key: "type",
+        render:(text) => {
+          for(let item of exhibitionType) {
+            if(item.key === Number(text)) {
+              return <span>{item.value}</span>
+            }
+          }
+        }
       },
       {
         title: "负责人",
@@ -172,41 +148,32 @@ class CollecExhibition extends Component {
         key: "head"
       },
       {
+        title: "审批状态",
+        dataIndex: "",
+        key: "approval",
+        render: (text, value, idx) => {
+          for(let item of approveState) {
+            if(Number(text.StepState) === item.key) {
+              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+            }
+          }
+        }
+      },
+      
+      {
         title: "操作",
         dataIndex: "",
         key: "action",
         render: (text, record, index) => {
-          // console.log(text);
+          console.log(record);
+          
           // return <a href='javascripts:;' name='details'  onClick={_this.checkDetails(index)} >详情+{index}</a>;
-          return <Link to={`/App/ExhibitionDetails/${text.id}`}>详情</Link>;
+          return <Link onClick={() => {
+            let state = Number(record.DeniedPermission);
+            sessionStorage.setItem('anthoityState', state);
+          }} to={`/App/ExhibitionDetails/${text.id}`}>详情</Link>;
         }
       },
-      {
-        title: "审批",
-        dataIndex: "",
-        key: "approval",
-        render: (text, value, idx) => {
-          return (
-            <div>
-              <Button
-                type="primary"
-                onClick={this.clickApprove.bind(this, text.id)}
-                disabled={text.ReceivingPermissions === 0}
-              >
-                同意
-              </Button>
-              <Button
-                type="danger"
-                onClick={this.clickApproveReject.bind(this, text.id)}
-                disabled={text.DeniedPermission === 0}
-                style={{ marginLeft: "10px" }}
-              >
-                拒绝
-              </Button>
-            </div>
-          );
-        }
-      }
     ];
     return (
       <Row className="exhibition-container main-content">
@@ -273,7 +240,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    changePageIndex: (args) => dispatch({type: 'EXHIBITIONPAGE', payload: args})
+    changePageIndex: (args) => dispatch({type: 'EXHIBITIONPAGE', payload: args}),
+    changeAuthority: (args) => dispatch({type: 'AUTHORITYSTATE', payload: args})
   }
 }
 

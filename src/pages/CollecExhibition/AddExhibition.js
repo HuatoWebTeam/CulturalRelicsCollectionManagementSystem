@@ -4,7 +4,7 @@ import { Row, Col, Form, Input, Select, DatePicker, Button, Table, message } fro
 import './index.less';
 import { ExDataAddApp, } from "./api";
 import RelicsDialog from '../Components/RelicsDialog';
-import { RangePickerDefault, levelInfo, relicsYears } from "../../assets/js/commonFun";
+import { RangePickerDefault, levelInfo, relicsYears, exhibitionType } from "../../assets/js/commonFun";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -12,21 +12,12 @@ const { RangePicker } = DatePicker;
 
 class AddExhibitionForm extends Component {
   state = {
-    typeMenu: [
-      {
-        key: 0,
-        value: "内展"
-      },
-      {
-        key: 1,
-        value: "外展"
-      }
-    ],
-    addExhibitionData: [ ],
-    chooseRelicsNum: [],
+    typeMenu: exhibitionType,
+    addExhibitionData: [],
+    chooseRelicsNum: []
   };
 
-  componentWillMount(){
+  componentWillMount() {
     // console.log(RangePickerDefault);
   }
 
@@ -44,47 +35,55 @@ class AddExhibitionForm extends Component {
             rangeValue[0].format("YYYY-MM-DD"),
             rangeValue[1].format("YYYY-MM-DD")
           ],
-          exhibitionType: typeof fieldsValue['exhibitionType'] === 'number' ? fieldsValue['exhibitionType'] : fieldsValue['exhibitionType'][0]
+          exhibitionType:
+            typeof fieldsValue["exhibitionType"] === "number"
+              ? fieldsValue["exhibitionType"]
+              : fieldsValue["exhibitionType"][0]
         };
         console.log(values);
         console.log(chooseRelicsNum);
-        if(chooseRelicsNum.length === 0) {
-          message.error('请选择展览文物')
-        };
-        let thisRelicsNum = chooseRelicsNum.join(',')
+        if (chooseRelicsNum.length === 0) {
+          message.error("请选择展览文物");
+        }
+        let thisRelicsNum = chooseRelicsNum.join(",");
         let params = {
           // Exhibition_Odd: values['exhibitionNum'],
-          Exhibition_Theme: values['exhibitionTheme'],
-          Exhibition_Type: values['exhibitionType'],
-          StartTine: values['date'][0],
-          EndTime: values['date'][1],
-          Person_liable: values['head'],
+          Exhibition_Theme: values["exhibitionTheme"],
+          Exhibition_Type: values["exhibitionType"],
+          StartTine: values["date"][0],
+          EndTime: values["date"][1],
+          Person_liable: values["head"],
           Collection_Number: thisRelicsNum
         };
         console.log(params);
         ExDataAddApp(params).then(res => {
           console.log(res);
-          if(res === true) {
-            message.success('添加展览清单成功')
+          if (res === true) {
+            message.success("添加展览清单成功");
+            this.props.form.resetFields();
+            this.props.history.goBack();
+            this.setState({
+              addExhibitionData: []
+            })
           } else {
-            message.error('添加展览清单失败')
+            message.error("添加展览清单失败");
           }
-        })
+        });
       }
     });
   }
 
-  chooseData = (item) => {
+  chooseData = item => {
     // console.log(item);
     let keys = [];
-    for(let value of item ){
+    for (let value of item) {
       keys.push(value.key);
     }
     this.setState({
       addExhibitionData: item,
       chooseRelicsNum: keys
     });
-  }
+  };
 
   // 选择时间
   // changeDate (dates, dateString) {
@@ -93,11 +92,7 @@ class AddExhibitionForm extends Component {
   // }
   render() {
     // console.log(this.props);
-    const {
-      typeMenu,
-      addExhibitionData,
-      
-    } = this.state;
+    const { typeMenu, addExhibitionData } = this.state;
     const { getFieldDecorator } = this.props.form;
     const chooseRelicsData = [
       // {
@@ -149,12 +144,12 @@ class AddExhibitionForm extends Component {
         title: "分级信息",
         dataIndex: "levelInfo",
         key: "lavelInfo",
-        render:(text) => {
-            for(let item of levelInfo) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
+        render: text => {
+          for (let item of levelInfo) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
+          }
         }
       },
       {
@@ -166,42 +161,61 @@ class AddExhibitionForm extends Component {
         title: "年代",
         dataIndex: "years",
         key: "years",
-        render:(text) => {
-            for(let item of relicsYears) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
+        render: text => {
+          for (let item of relicsYears) {
+            if (Number(text) === item.key) {
+              return <span>{item.value}</span>;
             }
+          }
         }
       },
       {
         title: "完整程度",
         dataIndex: "howComplete",
         key: "howComplete",
-        render: (text) => {
-            if(Number(text) === 0) {
-                return (<span>完整</span>)
-            } else if(Number(text) === 1) {
-                return (<span>破损</span>)
-            }
+        render: text => {
+          if (Number(text) === 0) {
+            return <span>完整</span>;
+          } else if (Number(text) === 1) {
+            return <span>破损</span>;
+          }
         }
-      },
+      }
       // {
       //   title: "负责人",
       //   dataIndex: "head",
       //   key: "head"
       // }
     ];
-    
-    return <Row className="exhibition-container main-content">
+
+    return (
+      <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
-          添加展览清单 <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
+          添加展览清单{" "}
+          <div
+            className="go-back"
+            onClick={() => {
+              this.props.history.goBack();
+            }}
+          />
         </Col>
-        <Col span={24} className="exhibition-content" style={{ marginTop: "20px" }}>
+        <Col
+          span={24}
+          className="exhibition-content"
+          style={{ marginTop: "20px" }}
+        >
           <Col className="exhibition-form-content">
-            <Form onSubmit={this.handleSubmit.bind(this)} layout="inline" className="addexhibition-form">
+            <Form
+              onSubmit={this.handleSubmit.bind(this)}
+              layout="inline"
+              className="addexhibition-form"
+            >
               <Col span={24} style={{ width: "800px" }}>
-                <FormItem label="展览主题:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                <FormItem
+                  label="展览主题:"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                >
                   {getFieldDecorator("exhibitionTheme", {
                     rules: [{ required: true, message: "请输入展览主题" }]
                   })(<Input placeholder="请输入展览主题" />)}
@@ -211,19 +225,29 @@ class AddExhibitionForm extends Component {
                     rules: [{ required: true, message: "请输入展览单号" }]
                   })(<Input placeholder="请输入展览单号" />)}
                 </FormItem> */}
-                <FormItem label="展览类型:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                <FormItem
+                  label="展览类型:"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                >
                   {getFieldDecorator("exhibitionType", {
                     initialValue: [typeMenu[0].key],
                     rules: [{ required: true, message: "请输入展览主题" }]
-                  })(<Select>
+                  })(
+                    <Select>
                       {typeMenu.map((item, idx) => (
                         <Option key={item.key} value={item.key}>
                           {item.value}
                         </Option>
                       ))}
-                    </Select>)}
+                    </Select>
+                  )}
                 </FormItem>
-                <FormItem label="起止时间:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                <FormItem
+                  label="起止时间:"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                >
                   {getFieldDecorator("date", {
                     initialValue: RangePickerDefault,
                     rules: [
@@ -235,25 +259,40 @@ class AddExhibitionForm extends Component {
                     ]
                   })(<RangePicker format="YYYY-MM-DD" />)}
                 </FormItem>
-                <FormItem label="负责人:" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
+                <FormItem
+                  label="负责人:"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                >
                   {getFieldDecorator("head", {
                     rules: [{ required: true, message: "请输入负责人" }]
                   })(<Input placeholder="请输入负责人" />)}
                 </FormItem>
               </Col>
               <Col span={24} style={{ padding: "20px 0 20px 95px" }}>
-                <Button type="primary" onClick={() => {
+                <Button
+                  type="primary"
+                  onClick={() => {
                     this.refs.relicsDialog.openModal();
                     console.log(this.refs.relicsDialog);
-                  }}>
+                  }}
+                >
                   选择展览文物
                 </Button>
               </Col>
               <Col span={24}>
-                <Table pagination={false} bordered columns={chooseRelicsData} dataSource={addExhibitionData} />
+                <Table
+                  pagination={false}
+                  bordered
+                  columns={chooseRelicsData}
+                  dataSource={addExhibitionData}
+                />
               </Col>
               <Col span={24} style={{ padding: "30px 50px" }}>
-                <FormItem style={{ float: "right" }} className="right-form-item">
+                <FormItem
+                  style={{ float: "right" }}
+                  className="right-form-item"
+                >
                   <Button htmlType="submit" type="primary">
                     提交展览清单
                   </Button>
@@ -261,10 +300,16 @@ class AddExhibitionForm extends Component {
               </Col>
             </Form>
           </Col>
-          <RelicsDialog chooseData={this.chooseData} title="选择展览文物" ref="relicsDialog" />
+          <RelicsDialog
+            stat={0}
+            chooseData={this.chooseData}
+            title="选择展览文物"
+            ref="relicsDialog"
+          />
           {/* <Table bordered columns={relicDetails} dataSource={this.dataSoure} /> */}
         </Col>
-      </Row>;
+      </Row>
+    );
   }
 }
 const AddExhibition = Form.create()(AddExhibitionForm);
