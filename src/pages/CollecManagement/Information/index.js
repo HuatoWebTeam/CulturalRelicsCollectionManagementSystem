@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Row, Col, Button, Input, Table, Modal } from 'antd';
 import { GetCollectionData } from './api';
-import { levelInfo, relicsYears, relicsCategory, howComplete } from "../../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsCategory, howComplete, relicsState } from "../../../assets/js/commonFun";
 import RelicsInfoDialog from './component';
 import { connect } from 'react-redux';
 const Search = Input.Search;
@@ -35,31 +35,41 @@ class ComplexGeneric extends Component {
         GetCollectionData(params).then(res => {
             console.log(res);
             let data = [];
-            for(let item of res.Data) {
-                data.push({
-                  relicsNum: item.CollectionNumber,
-                  relicsImg1: item.Collectionimg1,
-                  relicsImg2: item.Collectionimg2,
-                  relicsImg3: item.Collectionimg3,
-                  relicsName: item.CollectionName,
-                  libraryTime: item.CollectionTime,
-                  number: item.Number,
-                  levelInfo: item.Grade,
-                  material: item.MaterialQuality,
-                  years: item.CollectionYears,
-                  howComplete: item.Integrity,
-                  state: item.CollectionState,
-                  category: item.Category,
-                  size: item.Size,
-                  weight: item.Weight,
-                  key: item.CollectionNumber,
-                  localtion: null
+            if(res.Data) {
+                for(let item of res.Data) {
+                    data.push({
+                      relicsNum: item.CollectionNumber,
+                      relicsImg1: item.Collectionimg1,
+                      relicsImg2: item.Collectionimg2,
+                      relicsImg3: item.Collectionimg3,
+                      relicsName: item.CollectionName,
+                      libraryTime: item.CollectionTime,
+                      number: item.Number,
+                      levelInfo: item.Grade,
+                      material: item.MaterialQuality,
+                      years: item.CollectionYears,
+                      howComplete: item.Integrity,
+                      state: item.CollectionState,
+                      category: item.Category,
+                      size: item.Size,
+                      weight: item.Weight,
+                      key: item.CollectionNumber,
+                      type: item.ReservoirType,
+                      carton: item.StorageId.split('-'),
+                      localtion: item.CollectionPosition
+                    });
+                }
+                this.setState({
+                    relicsInfoData: data,
+                    total: res.Total
+                })
+            } else {
+                this.setState({
+                  relicsInfoData: [],
+                  total: 0
                 });
             }
-            this.setState({
-                relicsInfoData: data,
-                total: res.Total
-            })
+            
         })
     }
     // 点击搜索
@@ -166,26 +176,17 @@ class ComplexGeneric extends Component {
                 dataIndex: 'state',
                 key: 'state',
                 render: (text) => {
-                    return (
-                        <span
-                            style={{
-                                color: Number(text) === 3 ? 'red' : '#666'
-                            }}
-                        >{ Number(text) === 0 ? '新增入库' : (Number(text) === 1 ? '新增出库' : (Number(text) === 2 ? '在库' : '异常')) }</span>
-                    )
-                }
-            },
-            {
-                title: '类别',
-                dataIndex: 'category',
-                key: 'category',
-                render:(text) => {
-                    for(let item of relicsCategory) {
+                    for(let item of relicsState) {
                         if(Number(text) === item.key) {
-                            return (<span>{item.value}</span>)
+                            return (<span style={{color: Number(text) === 5 ? 'red' : '#666'}} >{item.value}</span>)
                         }
                     }
                 }
+            },
+            {
+                title: '文物类别',
+                dataIndex: 'category',
+                key: 'category',
             },
             {
                 title: '尺寸',

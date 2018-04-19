@@ -24,10 +24,10 @@ class AddRelics extends Component {
         collection: {
           CollectionName: value.relicsName,
           ReservoirType: value.type,
-          StorageId: value.carton,
+          StorageId: value.carton[1],
           CollectionNumber: value.relicsNum,
           Grade: value.levelInfo,
-          CollectionYears: Number(value.years),
+          CollectionYears: Number(value.relicsYears),
           Number: Number(value.number),
           CollectionState: value.relicsState,
           CollectionTime: value.date,
@@ -36,7 +36,7 @@ class AddRelics extends Component {
           Weight: value.weight,
           Integrity: value.howComplete,
           Size: value.size,
-          StoreId: Number(value.localtion),
+          CollectionPosition: value.localtion,
           Collectionimg1: value.Collectionimg1,
           Collectionimg2: value.Collectionimg2,
           Collectionimg3: value.Collectionimg3
@@ -52,6 +52,7 @@ class AddRelics extends Component {
             message.success("操作成功");
             _this.setState({ reset: true });
             console.log(_this.refs);
+            this.props.history.goBack();
             // _this.refs.relicsInfo.resetFields();
           } else {
             message.error("操作失败");
@@ -63,6 +64,7 @@ class AddRelics extends Component {
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
             _this.setState({ reset: true });
+            this.props.history.goBack();
             // console.log(_this.refs)
             // _this.refs.relicsInfo.resetFields();
           } else {

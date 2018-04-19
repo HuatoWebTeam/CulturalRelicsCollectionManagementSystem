@@ -23,3 +23,8 @@ export const CollectionImgUpload = (params) => {
 export const UpdateCollection = (params) => {
     return axios.post("/CollectionManage/UpdateCollection", params).then(res => res.data)
 }
+
+// 获取 存储柜 级联信息
+export const GetStorehouseAndStorage = () => {
+    return axios.post("/WarehouseManage/GetStorehouseAndStorage").then(res => res.data)
+}
