@@ -203,6 +203,7 @@ class NewInventoryApp extends Component {
           <RelicsDialog
             chooseData={this.chooseData}
             title="选择盘点文物"
+            stat={0}
             ref="relicsDialog"
           />
         </Col>

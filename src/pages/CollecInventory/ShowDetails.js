@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import { InvenDataAll } from './api';
-import { levelInfo, relicsYears } from "../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsState } from "../../assets/js/commonFun";
+import ApproveComponent from "../Components/ApproveComponent";
 
 class ShowDetails extends Component {
   state = {
     inventDetailsList: [],
     inventNum: "",
     pageIndex: 1,
-    pageSize: 10,
-    total: 0
+    pageSize: 1000,
+    total: 0,
+    anthorityState: null
   };
   componentWillMount() {
     console.log(this.props);
+    let state = sessionStorage.getItem("anthoityState");
     this.setState(
       {
-        inventNum: this.props.match.params.id
+        inventNum: this.props.match.params.id,
+        anthorityState: Number(state)
       },
       () => {
         this.getInventDetailsList();
@@ -49,16 +53,25 @@ class ShowDetails extends Component {
   }
 
   // 分页改变
-  paginationChange = (page) => {
-      this.setState({
-          pageIndex: page
-      }, () => {
-          this.getInventDetailsList();
-      })
-  }
+  paginationChange = page => {
+    this.setState(
+      {
+        pageIndex: page
+      },
+      () => {
+        this.getInventDetailsList();
+      }
+    );
+  };
+
+  // 改变审批条件状态
+  changeAnthority = () => {
+    sessionStorage.setItem("anthoityState", 0);
+    this.setState({ anthorityState: 0 });
+  };
 
   render() {
-    const { inventDetailsList, pageIndex, pageSize, total } = this.state;
+    const { inventDetailsList, pageIndex, pageSize, total, inventNum, anthorityState } = this.state;
     const inventDetailsColumns = [
       {
         title: "文物编号",
@@ -137,19 +150,12 @@ class ShowDetails extends Component {
         title: "文物状态",
         dataIndex: "Collection_State",
         key: "Collection_State",
-        render: text => {
-          return (
-            <span
-              style={{
-                color:
-                  text === "在库"
-                    ? "#da6214"
-                    : text === "出库" ? "#3065bf" : "#666"
-              }}
-            >
-              {text}
-            </span>
-          );
+        render: (text) => {
+          for(let item of relicsState) {
+              if(Number(text) === item.key) {
+                  return (<span style={{color: Number(text) === 5 ? 'red' : '#666'}} >{item.value}</span>)
+              }
+          }
         }
       },
       {
@@ -161,12 +167,14 @@ class ShowDetails extends Component {
             <span
               style={{
                 color:
-                  text === "待盘点"
+                  text === 0
                     ? "#da6214"
-                    : text === "盘点中" ? "#3065bf" : "#666"
+                    : text === 1
+                      ? "#3065bf"
+                      : "#666"
               }}
             >
-              {text}
+              {text === 0 ? '待盘点' : (text === 1 ? '盘点完成' : '盘点异常')}
             </span>
           );
         }
@@ -183,19 +191,22 @@ class ShowDetails extends Component {
             }}
           />
         </Col>
-        <Col className="" span={24}>
+        <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
           <Table
-            pagination={{
-              current: pageIndex,
-              pageSize: pageSize,
-              total: total,
-              onChange: this.paginationChange
-            }}
+            //
+            pagination={false}
             dataSource={inventDetailsList}
             columns={inventDetailsColumns}
             bordered
           />
         </Col>
+        {anthorityState === 1 && (
+          <ApproveComponent
+            paramsId={inventNum}
+            flag={4}
+            changeAnthorityState={this.changeAnthority}
+          />
+        )}
       </Row>
     );
   }

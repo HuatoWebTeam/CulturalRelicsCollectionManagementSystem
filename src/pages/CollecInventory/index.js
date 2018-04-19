@@ -3,7 +3,7 @@ import { Row, Col, Select, DatePicker, Input, Button, Form, Table, message } fro
 import './index.less';
 import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
-import { RangePickerDefault } from '../../assets/js/commonFun';
+import { RangePickerDefault, approveState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApprovalPassed, ApprovalDenied } from "../../axios";
@@ -122,38 +122,7 @@ class CollecInventory extends Component {
       date: [date[0].format(format), date[1].format(format)]
     });
   };
-  // 点击通过
-  clickApprove = item => {
-    let params = {
-      orderNumber: item,
-      flag: 4
-    };
-    let _this = this;
-    ApprovalPassed(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getInventoryList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
-  // 拒绝
-  clickApproveReject = item => {
-    let params = {
-      orderNumber: item,
-      flag: 4
-    };
-    let _this = this;
-    ApprovalDenied(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getInventoryList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
+
 
   render() {
     const {
@@ -224,31 +193,31 @@ class CollecInventory extends Component {
         }
       },
       {
-        title: "操作",
-        dataIndex: "",
-        key: "operation",
-        render: (text, croed, idx) => {
-          // console.log(text)
-          return (
-            <Link to={`/App/ShowDetails/${text.Inventory_Odd}`}>详情</Link>
-          );
-        }
-      },
-      {
-        title: "审批",
+        title: "审批状态",
         dataIndex: "",
         key: "approval",
         render: (text, value, idx) => {
-          return <div>
-              <Button type="primary" onClick={this.clickApprove.bind(this, text.Inventory_Odd)} disabled={Number(text.ReceivingPermissions) === 0}>
-                同意
-              </Button>
-              <Button type="danger" onClick={this.clickApproveReject.bind(this, text.Inventory_Odd)} disabled={Number(text.DeniedPermission) === 0} style={{ marginLeft: "10px" }}>
-                拒绝
-              </Button>
-            </div>;
+          for(let item of approveState) {
+            if(Number(text.StepState) === item.key) {
+              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+            }
+          }
         }
-      }
+      },
+      {
+        title: "操作",
+        dataIndex: "",
+        key: "operation",
+        render: (text, record, idx) => {
+          // console.log(text)
+          return <Link onClick={() => {
+                let state = Number(text.DeniedPermission);
+                sessionStorage.setItem("anthoityState", state);
+              }} to={`/App/ShowDetails/${text.Inventory_Odd}`}>
+              详情
+            </Link>;
+        }
+      },
     ];
 
     return (
