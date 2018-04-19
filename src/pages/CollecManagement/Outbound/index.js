@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, DatePicker, Table, message } from 'antd';
 import './index.less';
 // import moment from 'moment';
-import { RangePickerDefault, levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
+import { RangePickerDefault, levelInfo, relicsYears, relicsCategory, approveState } from '../../../assets/js/commonFun';
 import { GetOutTheLibraryData } from './api';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -56,7 +56,8 @@ class ComplexGeneric extends Component {
           number: item.TheLibraryNumber,
           operationPeople: item.Operator,
           ReceivingPermissions: item.ReceivingPermissions,
-          DeniedPermission: item.DeniedPermission
+          DeniedPermission: item.DeniedPermission,
+          StepState: item.StepState
         });
       }
       this.setState({
@@ -97,38 +98,6 @@ class ComplexGeneric extends Component {
       })
   }
 
-  // 点击通过
-  clickApprove = (item) => {
-    let params = {
-      orderNumber: item,
-      flag: 3
-    };
-    let _this = this;
-    ApprovalPassed(params).then(res => {
-      console.log(res);
-      if(res === true) {
-        _this.getOutboundList();
-      } else {
-        message.error('操作失败');
-      }
-    })
-  }
-  // 拒绝
-  clickApproveReject = (item) => {
-    let params = {
-      orderNumber: item,
-      flag: 3
-    }
-    let _this = this;
-    ApprovalDenied(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getOutboundList();
-      } else {
-        message.error("操作失败");
-      }
-    })
-  }
 
   render() {
     const { outboundData, pageIndex, pageSize, total } = this.state;
@@ -158,34 +127,37 @@ class ComplexGeneric extends Component {
         dataIndex: 'operationPeople',
         key: 'operationPeople'
       },
+      // {
+      //   title: '出库单状态',
+      //   dataIndex: ''
+      // }
+      {
+        title: '审批状态',
+        dataIndex: '',
+        key: 'approval',
+        render:(text, value, idx) => {
+          // console.log(text)
+          for(let item of approveState) {
+            if(Number(text.StepState) === item.key) {
+              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+            }
+          }
+        }
+      },
       {
         title: '操作',
         dataIndex:'',
         key: 'operation',
         render:(text, value) => {
           
-          return <Link
-              to={`/App/OutboundDetails/${text.outboundNum}`}
-            >
+          return <Link onClick={() => {
+                let state = Number(text.DeniedPermission);
+                sessionStorage.setItem("anthoityState", state);
+              }} to={`/App/OutboundDetails/${text.outboundNum}`}>
               详情
             </Link>;
         }
       },
-      {
-        title: '审批',
-        dataIndex: '',
-        key: 'approval',
-        render:(text, value, idx) => {
-          return (<div>
-              <Button type="primary" onClick={this.clickApprove.bind(this, text.outboundNum )} disabled={text.ReceivingPermissions === 0}>
-                同意
-              </Button>
-              <Button type="danger" onClick={this.clickApproveReject.bind(this, text.outboundNum)} disabled={text.DeniedPermission === 0} style={{ marginLeft: "10px" }}>
-                拒绝
-              </Button>
-          </div>);
-        }
-      }
       
       
     ];

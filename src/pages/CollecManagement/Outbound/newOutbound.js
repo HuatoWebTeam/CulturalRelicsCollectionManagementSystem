@@ -78,6 +78,16 @@ class NewOutboundApp extends Component {
   render() {
     const { newOutboundData } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const OutboundType = [
+      {
+        key: 4,
+        value: '外借'
+      },
+      {
+        key: 7,
+        value: '退还'
+      }
+    ]
     const newOutboundColumns = [
       {
         title: "文物RFID",
@@ -181,8 +191,11 @@ class NewOutboundApp extends Component {
                 className="form-item50"
               >
                 {getFieldDecorator("outboundPurposes", {
+                  initialValue: null,
                   rules: [{ required: true, message: "请输入出库用途" }]
-                })(<Input placeholder="请输入出库用途" />)}
+                })(
+                  <Input  />
+                )}
               </FormItem>
               <FormItem
                 label="出库类型:"
@@ -190,11 +203,15 @@ class NewOutboundApp extends Component {
                 className="form-item50"
               >
                 {getFieldDecorator("outboundType", {
-                  initialValue: [0],
+                  initialValue: [4],
                   rules: [{ required: true, message: "请选择出库类型" }]
                 })(
                   <Select>
-                    <Option value={0}>陈列</Option>
+                    {
+                      OutboundType.map((item) => 
+                        <Option key={item.key} value={item.key} >{item.value}</Option>
+                      )
+                    }
                   </Select>
                 )}
               </FormItem>
@@ -250,6 +267,7 @@ class NewOutboundApp extends Component {
             chooseData={this.chooseDataList}
             title="新建出库单"
             ref="relicsDialog"
+            stat={0}
           />
         </Col>
       </Row>

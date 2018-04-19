@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Row, Col, Table, message, Button } from 'antd';
+import { Link } from 'react-router-dom';
 import './index.less';
 import { GetEntryTheLibraryData } from './api';
 import { connect } from 'react-redux';
-import { levelInfo, relicsYears, relicsCategory } from "../../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsCategory, approveState } from "../../../assets/js/commonFun";
 import { ApprovalPassed, ApprovalDenied } from "../../../axios";
 
 class ComplexGeneric extends Component {
@@ -61,38 +62,6 @@ class ComplexGeneric extends Component {
     );
   };
 
-  // 点击通过
-  clickApprove = item => {
-    let params = {
-      orderNumber: item,
-      flag: 2
-    };
-    let _this = this;
-    ApprovalPassed(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getPutInList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
-  // 拒绝
-  clickApproveReject = item => {
-    let params = {
-      orderNumber: item,
-      flag: 2
-    };
-    let _this = this;
-    ApprovalDenied(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getPutInList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
 
   render() {
     const { putinData, pageIndex, pageSize, total } = this.state;
@@ -123,31 +92,33 @@ class ComplexGeneric extends Component {
         key: "Operator"
       },
       {
-        title: "审批",
+        title: "审批状态",
         dataIndex: "",
         key: "approval",
         render: (text, value, idx) => {
-          return (
-            <div>
-              <Button
-                type="primary"
-                onClick={this.clickApprove.bind(this, text.TheLibraryOdd)}
-                disabled={text.ReceivingPermissions === 0}
-              >
-                同意
-              </Button>
-              <Button
-                type="danger"
-                onClick={this.clickApproveReject.bind(this, text.TheLibraryOdd)}
-                disabled={text.DeniedPermission === 0}
-                style={{ marginLeft: "10px" }}
-              >
-                拒绝
-              </Button>
-            </div>
-          );
+          for(let item of approveState) {
+            if(Number(text.StepState) === item.key) {
+              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+            }
+          }
         }
-      }
+      },
+      {
+        title: "操作",
+        dataIndex: "",
+        key: "action",
+        render: (text, record, index) => {
+          // console.log(record);
+          
+          // return <a href='javascripts:;' name='details'  onClick={_this.checkDetails(index)} >详情+{index}</a>;
+          return <Link onClick={() => {
+                let state = Number(record.DeniedPermission);
+                sessionStorage.setItem("anthoityState", state);
+              }} to={`/App/PutInDetails/${text.TheLibraryOdd}`}>
+              详情
+            </Link>;
+        }
+      },
     ];
     return (
       <Row className="main-content">
