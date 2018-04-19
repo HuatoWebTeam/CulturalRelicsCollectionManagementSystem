@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table, message } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
-import { levelInfo, relicsCategory } from "../../assets/js/commonFun";
+import { Link } from 'react-router-dom';
+import { levelInfo, relicsCategory, approveState } from "../../assets/js/commonFun";
 import { connect } from 'react-redux';
 import { ApprovalPassed, ApprovalDenied } from "../../axios";
 const Search = Input.Search;
@@ -76,40 +77,6 @@ class CollecSolicition extends Component {
       }
     );
   };
-
-  // 点击通过
-  clickApprove = item => {
-    let params = {
-      orderNumber: item,
-      flag: 4
-    };
-    let _this = this;
-    ApprovalPassed(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getInventoryList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
-  // 拒绝
-  clickApproveReject = item => {
-    let params = {
-      orderNumber: item,
-      flag: 4
-    };
-    let _this = this;
-    ApprovalDenied(params).then(res => {
-      console.log(res);
-      if (res === true) {
-        _this.getInventoryList();
-      } else {
-        message.error("操作失败");
-      }
-    });
-  };
-
   render() {
     const { solicitionRelicsList, pageIndex, pageSize, total } = this.state;
     const solicitionColumns = [
@@ -173,36 +140,33 @@ class CollecSolicition extends Component {
         dataIndex: "BeUnearthed",
         key: "BeUnearthed"
       },
-      ,
       {
-        title: "审批",
+        title: "审批状态",
         dataIndex: "",
         key: "approval",
         render: (text, value, idx) => {
-          return (
-            <div>
-              <Button
-                type="primary"
-                onClick={this.clickApprove.bind(this, text.Collection_Number)}
-                disabled={Number(text.ReceivingPermissions) === 0}
-              >
-                同意
-              </Button>
-              <Button
-                type="danger"
-                onClick={this.clickApproveReject.bind(
-                  this,
-                  text.Collection_Number
-                )}
-                disabled={Number(text.DeniedPermission) === 0}
-                style={{ marginLeft: "10px" }}
-              >
-                拒绝
-              </Button>
-            </div>
-          );
+          for(let item of approveState) {
+            if(Number(text.StepState) === item.key) {
+              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+            }
+          }
         }
-      }
+      },
+      {
+        title: "操作",
+        dataIndex: "",
+        key: "operation",
+        render: (text, record, idx) => {
+          // console.log(text)
+          return <Link onClick={() => {
+                let state = Number(text.DeniedPermission);
+                sessionStorage.setItem("solicitionText", JSON.stringify(text));
+                sessionStorage.setItem("anthoityState", state);
+              }} to={`/App/ShowSolicitionDetail`}>
+              详情
+            </Link>;
+        }
+      },
     ];
 
     return (
@@ -239,44 +203,6 @@ class CollecSolicition extends Component {
               columns={solicitionColumns}
               dataSource={solicitionRelicsList}
               bordered
-              expandedRowRender={
-                record => (
-                  <Row>
-                    <Col span={4} >
-                      <span>分级信息：</span>
-                      {
-                        levelInfo.map((item, key) => 
-                          Number(record.Grade) === item.key && <span key={item.key} >{item.value}</span>
-                        )
-                      }
-                    </Col>
-                    <Col span={4} >
-                      <span>材质：</span>
-                      <span>{record.MaterialQuality}</span>
-                    </Col>
-                    <Col span={4} >
-                      <span>类别：</span>
-                      {
-                        relicsCategory.map((item) => 
-                          Number(record.Solicitation_State) === item.key && <span key={item.key} >{item.value}</span>
-                        )
-                      }
-                    </Col>
-                    <Col span={4} >
-                      <span>尺寸：</span>
-                      <span>{record.Size}</span>
-                    </Col>
-                    <Col span={4} >
-                      <span>重量：</span>
-                      <span>{record.Weight}</span>
-                    </Col>
-                    <Col span={4} >
-                      <span>数量：</span>
-                      <span>{record.Number}</span>
-                    </Col>
-                  </Row>
-                )
-              }
             />
           </Col>
         </Col>
