@@ -85,13 +85,18 @@ class TankInfoApp extends Component {
       console.log(res);
       
       let data = res.Data;
-      for(let item of data) {
-        item.key = item.StorageId;
+      if(data.length) {
+        for (let item of data) {
+          item.key = item.StorageId;
+        }
+        this.setState({
+          tnakInfoList: data,
+          total: res.Total
+        });
+      } else {
+        this.setState({ tnakInfoList: [], total: 0 });
       }
-      this.setState({
-        tnakInfoList: data,
-        total: res.Total
-      })
+      
       
     })
   }
@@ -114,7 +119,10 @@ class TankInfoApp extends Component {
               if (res.Msg === "操作成功!") {
                 message.success("新增成功");
                 this.setState({ tankVisible: false });
+                this.props.form.resetFields();
                 this.getStoageList();
+              } else if (res.Msg === "存在重复的序列号,操作终止!") {
+                message.error("存储柜编号重复");
               } else {
                 message.error("新增失败");
               }
@@ -134,6 +142,7 @@ class TankInfoApp extends Component {
               if (res.Msg === "操作成功!") {
                 message.success("编辑成功");
                 this.setState({ tankVisible: false });
+                this.props.form.resetFields();
                 this.getStoageList();
               } else {
                 message.error("编辑失败");
