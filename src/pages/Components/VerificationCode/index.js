@@ -127,7 +127,7 @@ export default class VerifyCode extends Component {
     }
 
     render(){
-        console.log(this.props);
+        // console.log(this.props);
         const props = this.props;
         return(
             <div style={{display: 'inline-block'}} >

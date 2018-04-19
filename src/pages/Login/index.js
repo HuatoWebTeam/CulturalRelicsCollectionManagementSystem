@@ -75,10 +75,16 @@ class LoginForm extends Component {
               _this.props.history.push(pushPath);
             }, 500);
           } else {
-            this.setState({
-              errorState: 'error',
-              errorText: '用户名或密码错误'
-            })
+            this.props.form.setFields({
+              userName: {
+                value: value.userName,
+                errors: [new Error("用户名或密码错误")]
+              },
+              password: {
+                value: value.password,
+                errors: [new Error("用户名或密码错误")]
+              }
+            });
           }
           
           
@@ -93,19 +99,20 @@ class LoginForm extends Component {
   }
 
   componentDidMount () {
-    console.log(this.refs);
+    // console.log(this.refs);
     
   }
 
   handleVerifyCode = (rule, value, callback) => {
-    console.log(rule, value);
+    // console.log(rule, value);
+    // console.log(value.length)
     // const { getFieldValue } = this.props.form;
     if(!value) {
       callback('请输入验证码')
-    }else if (value.toLowerCase() !== this.state.verCode) {
+    }else if (value && value.toLowerCase() !== this.state.verCode && value.length >= 4) {
       callback('验证码输入错误');
     }else {
-      callback();
+      callback()
     }
     
   }
@@ -130,7 +137,6 @@ class LoginForm extends Component {
   }
 
   render() {
-    // console.log(this.props);
     const { errorText, errorState } = this.state;
     const { getFieldDecorator } = this.props.form;
     return <Row className="login-container">
@@ -145,12 +151,12 @@ class LoginForm extends Component {
                 <h2 style={{ textAlign: "center" }}>用户登录</h2>
               </Col>
             </FormItem>
-            <FormItem validateStatus={errorState} help={errorText}>
+            <FormItem >
               {getFieldDecorator("userName", {
                 rules: [{ validator: this.handleUserInfo }]
               })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
             </FormItem>
-            <FormItem validateStatus={errorState} help={errorText}>
+            <FormItem >
               {getFieldDecorator("password", {
                 rules: [{ validator: this.handleUserPwdInfo }]
               })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} type="password" placeholder="请输入密码" />)}
