@@ -15,7 +15,8 @@ import {
   SOLICITIONPAGE,
   WAREHOUSEPAGE,
   TANKINFOPAGE,
-  OPERATIONPAGE
+  OPERATIONPAGE,
+  AUTHORITYSTATE
 } from "../actions";
 
 export let initialState = {
@@ -40,7 +41,8 @@ export let initialState = {
         solicitionPage: 1,
         warehousePage:1,
         tankInfoPage: 1,
-        operationPage: 1
+        operationPage: 1,
+        authorityState: null  // 是否能操作审批
     }
 };
 
@@ -77,6 +79,8 @@ let reducers = combineReducers({
                 return {...state, tankInfoPage: action.payload}
             case OPERATIONPAGE:
                 return {...state, operationPage: action.payload}
+            case AUTHORITYSTATE:
+                return {...state, authorityState: action.payload}
             default:
                 return state;
         }
