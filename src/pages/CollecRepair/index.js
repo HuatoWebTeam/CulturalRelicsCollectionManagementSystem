@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Button, Input, Table } from 'antd';
 import './index.less';
 import { RepairApi } from './api';
-import { levelInfo } from '../../assets/js/commonFun';
+import { levelInfo, approveState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 const Search = Input.Search;
@@ -123,16 +123,31 @@ class CollecRepair extends Component {
                     }
             },
             {
+                title: "审批状态",
+                dataIndex: "",
+                key: "approval",
+                render: (text, value, idx) => {
+                for(let item of approveState) {
+                    if(Number(text.StepState) === item.key) {
+                    return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+                    }
+                }
+                }
+            },
+            {
                 title: '操作',
                 dataIndex: '',
                 key: 'operation',
-                render: (text, croed, idx) => {
+                render: (text, record, idx) => {
                 // console.log(text)
-                return <Link to={`/App/RepairDetails/${text.Repair_Id}`}>
-                    详情
+                return <Link onClick={() => {
+                            let state = Number(record.DeniedPermission);
+                            sessionStorage.setItem('anthoityState', state);}} 
+                            to={`/App/RepairDetails/${text.Repair_Id}`}>
+                        详情
                     </Link>;
                 }
-            }
+            },
         ]
         // console.log(this.state)
         return <Row className="main-content">

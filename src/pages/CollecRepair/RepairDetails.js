@@ -2,25 +2,28 @@ import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import { levelInfo, relicsYears } from "../../assets/js/commonFun";
 import { RepDatall } from './api';
+import ApproveComponent from "../Components/ApproveComponent";
+
 
 class RepairDetails extends Component {
   state = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: 1000,
     total: 0,
     repairNum: "",
-    repairDetailList: []
+    repairDetailList: [],
+    anthorityState: null
   };
 
   componentWillMount() {
-    this.setState(
-      {
-        repairNum: this.props.match.params.id
-      },
-      () => {
-        this.getRepairDetailList();
-      }
-    );
+    let state = sessionStorage.getItem("anthoityState");
+    // console.log(state);
+    this.setState({
+      repairNum: this.props.match.params.id,
+      anthorityState: Number(state)
+    }, () => {
+      this.getRepairDetailList()
+    });
   }
 
   getRepairDetailList() {
@@ -48,16 +51,24 @@ class RepairDetails extends Component {
     });
   }
   // 分页改变
-  paginationChange = (page) => {
-      this.setState({
-          pageIndex: page
-      }, () => {
-          this.getRepairDetailList();
-      })
-  }
+  paginationChange = page => {
+    this.setState(
+      {
+        pageIndex: page
+      },
+      () => {
+        this.getRepairDetailList();
+      }
+    );
+  };
+  // 改变审批条件状态
+  changeAnthority = () => {
+    sessionStorage.setItem("anthoityState", 0);
+    this.setState({ anthorityState: 0 });
+  };
 
   render() {
-    const { pageIndex, pageSize, total, repairDetailList } = this.state;
+    const { pageIndex, pageSize, total, repairDetailList, anthorityState, repairNum } = this.state;
     const repairColumns = [
       {
         title: "文物编号",
@@ -117,11 +128,12 @@ class RepairDetails extends Component {
                 color:
                   text === "在库"
                     ? "#e15d05"
-                    : text === "出库" ? "#3065bf" : "#666"
+                    : text === "出库"
+                      ? "#3065bf"
+                      : "#666"
               }}
             >
-              {" "}
-              {text}{" "}
+              {text}
             </span>
           );
         }
@@ -130,7 +142,7 @@ class RepairDetails extends Component {
     return (
       <Row className="main-content">
         <Col span={24} className="title">
-          修复单详情{" "}
+          修复单详情
           <div
             className="go-back"
             onClick={() => {
@@ -140,17 +152,25 @@ class RepairDetails extends Component {
         </Col>
         <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
           <Table
-            pagination={{
-              current: pageIndex,
-              pageSize: pageSize,
-              total: total,
-              onChange: this.paginationChange
-            }}
+            // pagination={{
+            //   current: pageIndex,
+            //   pageSize: pageSize,
+            //   total: total,
+            //   onChange: this.paginationChange
+            // }}
+            pagination={false}
             dataSource={repairDetailList}
             columns={repairColumns}
             bordered
           />
         </Col>
+        {anthorityState === 1 && (
+          <ApproveComponent
+            paramsId={repairNum}
+            flag={6}
+            changeAnthorityState={this.changeAnthority}
+          />
+        )}
       </Row>
     );
   }

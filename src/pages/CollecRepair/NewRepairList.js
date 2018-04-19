@@ -21,13 +21,12 @@ class NewRepairListApp extends Component {
             if(!err) {
                 const values = {
                     ...fieldsValue,
-                    'date': fieldsValue['date'].format('YYYY-MM-DD')
+                    'date': fieldsValue['date'].format('YYYY-MM-DD HH:mm:ss')
                 }
                 console.log(values);
                 console.log(this.state.chooseRelicsNum);
                 const { chooseRelicsNum } = this.state;
                 let params = {
-                  Repair_Id: values.repairNumber,
                   Repair_Time: values.date,
                   Repair_Applicant: values.head,
                   Repair_Method: values.repairPlan,
@@ -169,13 +168,6 @@ class NewRepairListApp extends Component {
                       ]
                     })(<Input placeholder="请输入申请人" />)}
                   </FormItem>
-                  <FormItem label="修复单号:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
-                    {getFieldDecorator("repairNumber", {
-                      rules: [
-                        { required: true, message: "请输入修复编号" }
-                      ]
-                    })(<Input placeholder="请输入修复编号" />)}
-                  </FormItem>
                   <FormItem label="修复方案:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
                     {getFieldDecorator("repairPlan", {
                       rules: [
@@ -224,7 +216,7 @@ class NewRepairListApp extends Component {
                   </Button>
                 </Col>
               </Form>
-              <RelicsDialog chooseData={this.chooseData} title="选择修复文物" ref="relicsDialog" />
+              <RelicsDialog stat={0} chooseData={this.chooseData} title="选择修复文物" ref="relicsDialog" />
             </Col>
           </Row>;
     }
