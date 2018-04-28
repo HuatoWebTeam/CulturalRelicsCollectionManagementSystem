@@ -3,8 +3,9 @@ import { Row, Col, Select, DatePicker, Input, Button, Form, Table } from 'antd';
 import './index.less';
 import { InventallApi } from './api';
 import { StoreApi } from '../Components/RelicsDialog/api';
-import { RangePickerDefault, approveState } from "../../assets/js/commonFun";
+import { RangePickerDefault, approveState, subStr, inventState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 import { connect } from 'react-redux';
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -18,19 +19,19 @@ class CollecInventory extends Component {
     pageSize: 10,
     total: 0,
     storeList: [],
-    storeName: 0,
+    storeName: 10,
     date: [],
     format: "YYYY-MM-DD",
     inventNum: ""
   };
 
   componentWillMount() {
-    this.getStoreList();
+    // this.getStoreList();
     const { format } = this.state;
     console.log(RangePickerDefault);
     let defaultDate = [
-      RangePickerDefault[0].format(format),
-      RangePickerDefault[1].format(format)
+      RangePickerDefault[0].hour(0).minute(0).second(0).format(),
+      RangePickerDefault[1].hour(23).minute(59).second(59).format()
     ];
     this.setState(
       {
@@ -44,11 +45,13 @@ class CollecInventory extends Component {
   }
 
   getInventoryList() {
-    const { pageIndex, pageSize, inventNum, date } = this.state;
+    const { pageIndex, pageSize, inventNum, date, storeName } = this.state;
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
+      Inventory_State: storeName,
       Inventory_Odd: inventNum,
+      datetime: moment().format(),
       beginTime: date[0],
       endTime: date[1]
     };
@@ -71,14 +74,14 @@ class CollecInventory extends Component {
   }
 
   // 获取库房
-  getStoreList() {
-    StoreApi().then(res => {
-      console.log(res);
-      this.setState({
-        storeList: res
-      });
-    });
-  }
+  // getStoreList() {
+  //   StoreApi().then(res => {
+  //     console.log(res);
+  //     this.setState({
+  //       storeList: res
+  //     });
+  //   });
+  // }
   // 点击搜索
   queryInventData = () => {
     this.getInventoryList();
@@ -88,7 +91,7 @@ class CollecInventory extends Component {
   searchData = value => {
     this.setState(
       {
-        storeName: value,
+        inventNum: value,
         pageIndex: 1
       },
       () => {
@@ -118,7 +121,10 @@ class CollecInventory extends Component {
     console.log(date);
     const { format } = this.state;
     this.setState({
-      date: [date[0].format(format), date[1].format(format)]
+      date: [
+        date[0].hour(0).minute(0).second(0).format(), 
+        date[1].hour(23).minute(59).second(59).format()
+      ]
     });
   };
 
@@ -136,23 +142,25 @@ class CollecInventory extends Component {
       {
         title: "盘点单号",
         dataIndex: "Inventory_Odd",
-        key: "Inventory_Odd"
       },
       {
         title: "盘点名称",
         dataIndex: "Inventory_Name",
-        key: "Inventory_Name"
       },
       {
-        title: "时间",
+        title: "盘点日期",
         dataIndex: "Inventory_Time",
-        key: "Inventory_Time"
+        render: (text, recond) => {
+          return <span>{subStr(recond.Inventory_BegTime) +' ~ ' +  subStr(recond.Inventory_EndTime)}</span>;
+        }
       },
-      // {
-      //   title: "文物库房",
-      //   dataIndex: "Storehouse_Name",
-      //   key: "Storehouse_Name"
-      // },
+      {
+        title: "盘点周期",
+        dataIndex: "Inventory_Cycle",
+        render: (text) =>{
+          return <span>{text + '天'}</span>
+        }
+      },
       // {
       //   title: "文物名称",
       //   dataIndex: "Collection_Name",
@@ -187,7 +195,15 @@ class CollecInventory extends Component {
           style={{
             color: Number(text) === 2 ? 'red' : '#666'
           }} >
-              {Number(text) === 0 ? "待盘点" : (Number(text) === 1 ? '盘点完成' : '盘点异常')}
+              {
+                inventState.map((item) => {
+                  if (Number(text) === item.key) {
+                    return item.value;
+                  }
+                }
+                  
+                )
+              }
             </span>;
         }
       },
@@ -209,91 +225,69 @@ class CollecInventory extends Component {
         key: "operation",
         render: (text, record, idx) => {
           // console.log(text)
-          return <Link onClick={() => {
-                let state = Number(text.DeniedPermission);
-                sessionStorage.setItem("anthoityState", state);
-              }} to={`/App/ShowDetails/${text.Inventory_Odd}`}>
-              详情
-            </Link>;
+          return <span>
+              <Link onClick={() => {
+                  let state = Number(text.DeniedPermission);
+                  sessionStorage.setItem("anthoityState", state);
+                }} to={`/App/ShowDetails/${text.Inventory_Odd}`}>
+                详情
+              </Link>
+              <Button 
+                style={{ border: 'none', marginLeft: '10px' }} 
+                onClick={() => {
+                  this.props.changeFormData({
+                    state: "编辑盘点单",
+                    formData: record.Inventory_Odd
+                  });
+                  this.props.history.push("/App/NewInventory");
+                }}
+              >
+                编辑
+              </Button>
+            </span>; 
         }
       },
     ];
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           藏品盘点列表
         </Col>
-        <Col
-          span={24}
-          className="inventory-container"
-          style={{ padding: "20px 40px 20px 20px" }}
-        >
+        <Col span={24} className="inventory-container" style={{ padding: "20px 40px 20px 20px" }}>
           <Col span={24} style={{ marginBottom: "20px" }}>
-            <Col span={24} style={{ paddingBottom: "20px" }}>
-              <Button
-                type="primary"
-                icon="plus"
-                onClick={() => {
+            <Col span={4} style={{ paddingBottom: "20px" }}>
+              <Button type="primary" icon="plus" onClick={() => {
                   this.props.history.push("/App/NewInventory");
-                }}
-              >
+                }}>
                 新建盘点单
               </Button>
             </Col>
-            <Col span={18}>
-              <Form layout="inline">
-                <FormItem label="文物库房:" className="select-form-item">
+            <Col span={20}>
+              <Form layout="inline" style={{float: 'right'}} >
+                <FormItem label="盘点状态:" className="select-form-item">
                   <Select defaultValue={storeName} onChange={this.selectChange}>
-                    <Option value={0}>全部</Option>
-                    {storeList.map((item, idx) => (
-                      <Option
-                        value={item.Storehouse_Id}
-                        key={item.Storehouse_Id}
-                      >
-                        {item.Storehouse_Name}
+                    <Option value={10}>全部</Option>
+                    {inventState.map((item, idx) => (
+                      <Option value={item.key} key={item.key}>
+                        {item.value}
                       </Option>
                     ))}
                   </Select>
                 </FormItem>
-                <FormItem>
-                  <RangePicker
-                    onChange={this.datePickerChange}
-                    defaultValue={RangePickerDefault}
-                    format="YYYY-MM-DD"
-                  />
+                <FormItem label="盘点单日期：">
+                  <RangePicker onChange={this.datePickerChange} defaultValue={RangePickerDefault} format="YYYY-MM-DD" />
                 </FormItem>
                 <FormItem>
-                  <Button onClick={this.queryInventData} type="primary">
-                    搜索
-                  </Button>
+                  <Search placeholder="请输入盘点单号" enterButton onSearch={this.searchData} />
                 </FormItem>
               </Form>
             </Col>
-            <Col span={6}>
-              <Search
-                placeholder="请输入盘点单号"
-                enterButton
-                onSearch={this.searchData}
-              />
-            </Col>
           </Col>
           <Col span={24}>
-            <Table
-              columns={inventoryColumns}
-              dataSource={inventoryDataList}
-              bordered
-              pagination={{
-                current: pageIndex,
-                pageSize: pageSize,
-                total: total,
-                onChange: this.paginationChange
-              }}
-            />
+            <Table columns={inventoryColumns} dataSource={inventoryDataList} bordered pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} />
           </Col>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 // INVENTORYPAGE
@@ -304,7 +298,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    changePageIndex: args => dispatch({ type: 'INVENTORYPAGE', payload: args })
+    changePageIndex: args => dispatch({ type: 'INVENTORYPAGE', payload: args }),
+    changeFormData: args => dispatch({ type: "COLLECINFO", payload: args })
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(CollecInventory);

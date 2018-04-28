@@ -17,3 +17,8 @@ export const InvenDataAll = (params) => {
       .post("/Inventory/InvenDataAll", params)
       .then(res => res.data);
 }
+
+// 编辑
+export const InventUpdate = (params) =>{
+    return axios.post("/Inventory/InventUpdate", params).then(res => res.data)
+}

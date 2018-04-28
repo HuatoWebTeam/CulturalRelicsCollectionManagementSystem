@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import { InvenDataAll } from './api';
-import { levelInfo, relicsYears, relicsState } from "../../assets/js/commonFun";
+import { levelInfo, relicsYears, relicsState, inventState, subStr } from "../../assets/js/commonFun";
 import ApproveComponent from "../Components/ApproveComponent";
+import CommonInfoTable from "../Components/CommonInfoTable";
 
 class ShowDetails extends Component {
   state = {
     inventDetailsList: [],
     inventNum: "",
+    inventDetail: null,
     pageIndex: 1,
     pageSize: 1000,
     total: 0,
@@ -36,17 +38,25 @@ class ShowDetails extends Component {
     };
     InvenDataAll(params).then(res => {
       console.log(res);
-      if (res.length === 0) {
-        this.setState({
-          total: 0
-        });
-      } else {
-        for (let item of res) {
+      if (res.length !== 0) {
+        let listData = res[0].exhibit;
+        for (let item of listData) {
           item.key = item.Collection_Number;
         }
+        let detailInfo = {
+          InventoryMan: res[0].InventoryMan,     // 盘点人
+          Inventory_Name: res[0].Inventory_Name,  // 盘点名称
+          Inventory_Number:res[0].Inventory_Number,  // 盘点数量
+          Inventory_Cycle: res[0].Inventory_Cycle,    // 盘点周期
+          Inventory_BegTime: subStr(res[0].Inventory_BegTime),  // 盘点开始日期
+          Inventory_EndTime: subStr(res[0].Inventory_EndTime),   // 盘点结束日期
+          Inventory_State: res[0].Inventory_State,      // 盘点状态
+
+        };
+
         this.setState({
-          total: res[0].Count,
-          inventDetailsList: res
+          inventDetail: detailInfo,
+          inventDetailsList: listData
         });
       }
     });
@@ -71,144 +81,64 @@ class ShowDetails extends Component {
   };
 
   render() {
-    const { inventDetailsList, pageIndex, pageSize, total, inventNum, anthorityState } = this.state;
-    const inventDetailsColumns = [
-      {
-        title: "文物编号",
-        dataIndex: "Collection_Number",
-        key: "Collection_Number"
-      },
-      {
-        title: "文物图片",
-        dataIndex: "Collection_img",
-        key: "Collection_img",
-        render: (text, record, index) => {
-          // console.log(text,record, index)
-          return (
-            <img
-              style={{ width: "55px", height: "55px" }}
-              src={text}
-              alt={index}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "Collection_Name",
-        key: "Collection_Name"
-      },
-      {
-        title: "数量",
-        dataIndex: "Number",
-        key: "Number"
-      },
-      {
-        title: "分级信息",
-        dataIndex: "Grade",
-        key: "Grade",
-        render: text => {
-          // console.log(text);
-          for (let item of levelInfo) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "材质",
-        dataIndex: "MaterialQuality",
-        key: "MaterialQuality"
-      },
-      {
-        title: "年代",
-        dataIndex: "Collection_Years",
-        key: "Collection_Years",
-        render: text => {
-          // console.log(text);
-          for (let item of relicsYears) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "完整程度",
-        dataIndex: "Integrity",
-        key: "Integrity",
-        render: text => {
-          if (text === 0) {
-            return <span>完整</span>;
-          } else if (text === 1) {
-            return <span>破损</span>;
-          }
-        }
-      },
-      {
-        title: "文物状态",
-        dataIndex: "Collection_State",
-        key: "Collection_State",
-        render: (text) => {
-          for(let item of relicsState) {
-              if(Number(text) === item.key) {
-                  return (<span style={{color: Number(text) === 5 ? 'red' : '#666'}} >{item.value}</span>)
-              }
-          }
-        }
-      },
-      {
-        title: "盘点状态",
-        dataIndex: "ExhibitionState",
-        key: "ExhibitionState",
-        render: text => {
-          return (
-            <span
-              style={{
-                color:
-                  text === 0
-                    ? "#da6214"
-                    : text === 1
-                      ? "#3065bf"
-                      : "#666"
-              }}
-            >
-              {text === 0 ? '待盘点' : (text === 1 ? '盘点完成' : '盘点异常')}
-            </span>
-          );
-        }
-      }
-    ];
-    return (
-      <Row className="main-content">
+    const { inventDetail, inventDetailsList, inventNum, anthorityState } = this.state;
+
+    return <Row className="main-content">
         <Col className="title" span={24}>
-          盘点单详情{" "}
-          <div
-            className="go-back"
-            onClick={() => {
+          盘点单详情 <div className="go-back" onClick={() => {
               this.props.history.goBack();
-            }}
-          />
+            }} />
         </Col>
         <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
-          <Table
-            //
-            pagination={false}
-            dataSource={inventDetailsList}
-            columns={inventDetailsColumns}
-            bordered
-          />
+          {inventDetail && <Col span={24} className="number-details">
+              <Col className="text" span={7}>
+                盘点名称：{inventDetail.Inventory_Name}
+              </Col>
+              <Col className="text" span={7}>
+                盘点人：{inventDetail.InventoryMan}
+              </Col>
+              <Col className="text" span={7}>
+                盘点数量：{inventDetail.Inventory_Number}
+              </Col>
+              <Col className="text" span={7}>
+                盘点周期：{inventDetail.Inventory_Cycle} 天
+              </Col>
+              <Col className="text" span={7}>
+                盘点开始日期：{inventDetail.Inventory_BegTime}
+              </Col>
+              <Col className="text" span={7}>
+                盘点结束日期：{inventDetail.Inventory_EndTime}
+              </Col>
+              <Col className="text" span={7}>
+                盘点状态：{inventState.map(item => {
+                  if (item.key === Number(inventDetail.Inventory_State)) {
+                    return <span
+                        style={{
+                          color:
+                            Number(inventDetail.Inventory_State) === 2
+                              ? "red"
+                              : "#333"
+                        }}
+                      >
+                        {item.value}
+                      </span>;
+                  }
+                })}
+              </Col>
+            </Col>}
+          <Col span={24}>
+          <CommonInfoTable data={inventDetailsList} />
+            {/* <Table pagination={false //
+              } dataSource={inventDetailsList} columns={inventDetailsColumns} bordered /> */}
+          </Col>
         </Col>
-        {anthorityState === 1 && (
-          <ApproveComponent
-            paramsId={inventNum}
-            flag={4}
-            changeAnthorityState={this.changeAnthority}
-          />
-        )}
-      </Row>
-    );
+        <ApproveComponent 
+          anthorityState={anthorityState} 
+          paramsId={inventNum} 
+          flag={4} 
+          changeAnthorityState={this.changeAnthority} 
+        />
+      </Row>;
   }
 }
 
