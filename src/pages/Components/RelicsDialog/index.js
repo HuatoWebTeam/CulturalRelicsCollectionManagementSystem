@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Col, Form, Select, Modal, Table, Input } from 'antd';
 import { StoreApi, ColleApi } from './api';
-import { levelInfo, relicsYears, relicsCategory } from '../../../assets/js/commonFun';
+import { levelInfo, relicsYears, relicsCategory, relicsState } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { Search } = Input;
@@ -20,7 +20,7 @@ class RelicsDialog extends Component {
   };
 
   componentWillMount() {
-    // console.log(this.props);
+    console.log(this.props);
     this.setState({ modalTitle: this.props.title });
     StoreApi().then(res => {
       // console.log(res);
@@ -29,6 +29,31 @@ class RelicsDialog extends Component {
       });
     });
     this.searchModalData();
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    const { searchRelicsData } = this.state;
+    // console.log(searchRelicsData)
+    let item = nextProps.checkedItem;
+    // console.log(item)
+    let keys = [];
+    for(let value of item) {
+      keys.push(value.Collection_Number);
+    }
+    let data = searchRelicsData.concat(item);
+    // console.log(data)
+    this.setState({
+      searchRelicsData: data,
+      selectedRowKeys: keys,
+    }, () => {
+      console.log(this.state)
+    })
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      searchRelicsData: []
+    })
   }
 
   // 打开弹框
@@ -58,24 +83,15 @@ class RelicsDialog extends Component {
     // console.log(params);
     ColleApi(params).then(res => {
       console.log(res);
+      const { searchRelicsData } = this.state;
       let data = [];
       for (let item of res) {
-        data.push({
-          key: item.Collection_Number,
-          relicsNum: item.Collection_Number,
-          cabinet: item.Storage_RFID,
-          relicsImg: item.Collection_img,
-          relicsName: item.Collection_Name,
-          localtion: item.Storage_Position,
-          number: item.Number,
-          levelInfo: item.Grade,
-          material: item.MaterialQuality,
-          years: item.Collection_Years,
-          howComplete: item.Integrity
-        });
+        
+          item.key = item.Collection_Number;
+        
       }
       this.setState({
-        searchRelicsData: data
+        searchRelicsData: res.concat(searchRelicsData)
       });
     });
   };
@@ -111,6 +127,7 @@ class RelicsDialog extends Component {
   };
 
   onSelectChange = selectedRowKeys => {
+    
     this.setState({ selectedRowKeys });
   }
 
@@ -127,25 +144,24 @@ class RelicsDialog extends Component {
     // checkbox
     const rowSelection = {
       selectedRowKeys,
-      type:this.props.radio ? 'radio' : 'checkbox',
+      type: this.props.radio ? 'radio' : 'checkbox',
       onChange: this.onSelectChange,
     };
-    console.log(this.props)
+    // console.log(this.props)
     const chooseRelicsColumns = [
       {
         title: "文物编号",
-        dataIndex: "relicsNum",
-        key: "relicsNum"
+        dataIndex: "Collection_Number",
+        width: 118
       },
       {
         title: "储柜RFID",
-        dataIndex: "cabinet",
-        key: "cabinet"
+        dataIndex: "Storage_RFID",
+        width: 230
       },
       {
         title: "文物图片",
-        dataIndex: "relicsImg",
-        key: "relicsImg",
+        dataIndex: "Collection_img",
         render: (text, record, index) => {
           // console.log(text,record, index)
           return (
@@ -155,64 +171,63 @@ class RelicsDialog extends Component {
               alt={index}
             />
           );
-        }
+        },
+        width: 94
       },
       {
         title: "文物名称",
-        dataIndex: "relicsName",
-        key: "relicsName"
+        dataIndex: "Collection_Name",
+        width: 156
       },
       {
         title: "储存位置",
-        dataIndex: "localtion",
-        key: "localtion"
+        dataIndex: "Storage_Position",
       },
       {
         title: "数量",
-        dataIndex: "number",
-        key: "number"
+        dataIndex: "Number",
+        width: 52
       },
       {
         title: "分级信息",
-        dataIndex: "levelInfo",
-        key: "levelInfo",
-        render: (text) => {
-            for(let item of levelInfo) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
-            }
-        }
+        dataIndex: "GradeName",
+        width: 99
       },
       {
         title: "材质",
-        dataIndex: "material",
-        key: "material"
+        dataIndex: "MaterialQuality",
+        width: 66
       },
       {
         title: "年代",
-        dataIndex: "years",
-        key: "years",
-        render:(text) => {
-            for(let item of relicsYears) {
-                if(Number(text) === item.key) {
-                    return (<span>{item.value}</span>)
-                }
-            } 
-        }
+        dataIndex: "YearsName",
+        width: 66
       },
       {
         title: "完整程度",
-        dataIndex: "howComplete",
-        key: "howComplete",
+        dataIndex: "Integrity",
         render: (text) => {
             if(Number(text) === 0) {
                 return (<span>完整</span>)
             } else if(Number(text) === 1) {
                 return (<span>破损</span>)
             }
-        }
-      }
+        },
+        width: 66
+      },
+      {
+          title: '文物状态',
+          dataIndex: 'Collection_State',
+          key: 'Collection_State',
+          render: (text) => {
+              for(let item of relicsState) {
+                  if(Number(text) === item.key) {
+                      return (<span style={{color: Number(text) === 5 ? 'red' : '#666'}} >{item.value}</span>)
+                  }
+              }
+          },
+          width: 66
+      },
     ];
     return (
       <Modal
@@ -222,8 +237,8 @@ class RelicsDialog extends Component {
         onOk={this.handleOk}
         width="1260px"
         bodyStyle={{
-          height: "540px",
-          overflowY: "auto"
+          height: "570px",
+          overflowY: "hidden"
         }}
       >
         <Col span={24} className="chooseRelics-modal">
@@ -248,10 +263,17 @@ class RelicsDialog extends Component {
               </Select>
             </FormItem>
             <FormItem
-              label="文物分类:"
+              label="文物类别:"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
             >
+            {/* <Input placeholder='请输入文物类别' 
+              value={searchCategory} 
+              onChange={(e) => {
+                this.setState({
+                  searchCategory: e.target.value
+                })
+              }} /> */}
               <Select
                 defaultValue={searchCategory}
                 onSelect={value => {
@@ -277,18 +299,7 @@ class RelicsDialog extends Component {
               columns={chooseRelicsColumns}
               pagination={false}
               bordered
-              onRow= {(record) => {
-                return {
-                  onClick:() => {
-                    console.log('---点击table')
-                    console.log(record)
-                  }
-                }
-                
-              }}
-              onSelect={(selectKey) => {
-                console.log(selectKey)
-              }}
+              scroll={{ x: 1150, y: 407}}
             />
           </Col>
         </Col>
