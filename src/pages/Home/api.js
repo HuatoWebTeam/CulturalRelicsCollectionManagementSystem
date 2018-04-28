@@ -13,8 +13,8 @@ export const GetFineDisplayData = () => {
 }
 
 
-// // 数据统计展示
-// export const GetFineDisplayData = () => {
-//     return axios.post('/HomeManage/GetFineDisplayData').then(res => res.data)
-// }
+// 数据统计展示
+export const GetStatisticsData = () => {
+    return axios.post('/HomeManage/GetStatisticsData').then(res => res.data)
+}
 

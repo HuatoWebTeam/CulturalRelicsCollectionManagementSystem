@@ -6,7 +6,7 @@ import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
 // import Cookie from 'js-cookie';
 import { Link } from 'react-router-dom'; 
-import { GetToNotice, GetFineDisplayData } from "./api";
+import { GetToNotice, GetFineDisplayData, GetStatisticsData } from "./api";
 // import { relative } from 'path';
 import LanternSlide from "./Scroller";
 const RadioGroup  = Radio.Group;
@@ -15,14 +15,14 @@ const RadioButton = Radio.Button;
 
 // 藏品统计
 const collStatic = [
-  { num: 548, title: '藏品数', icon: 'iconBack collection-num', backColor: '#289adb' },
-  { num: 63, title: '复仿制数', icon: 'iconBack generic', backColor: '#43b1bb' },
-  { num: 632, title: '外借数', icon: 'iconBack checked-out', backColor: '#6a8ed8' },
-  { num: 456, title: '待入账数', icon: 'iconBack enter-account',backColor: '#efa256' },
-  { num: 963, title: '待入库数', icon: 'iconBack putin-storage', backColor: '#43b1bb' },
-  { num: 1, title: '待排架数', icon: 'iconBack be-bent', backColor: '#289adb' },
-  { num: 0, title: '在库数', icon: 'iconBack in-libray', backColor: '#e6a05b' },
-  { num: 8, title: '待回库数', icon: 'iconBack back-library', backColor: '#6a8ed8' }
+  { num: 'NumberOfCollections', title: '藏品数', icon: 'iconBack collection-num', backColor: '#289adb' },
+  { num: 'NumberOfLibraries', title: '在库数', icon: 'iconBack in-libray', backColor: '#e6a05b' },
+  { num: 'NumberInRepair', title: '待修复数', icon: 'iconBack generic', backColor: '#43b1bb' },
+  { num: 'NumberBorrowing', title: '外借数', icon: 'iconBack checked-out', backColor: '#6a8ed8' },
+  { num: 'NumberToBeRecorded', title: '待入账数', icon: 'iconBack enter-account',backColor: '#efa256' },
+  { num: 'NumberOfLibrariesToBeEntered', title: '待入库数', icon: 'iconBack putin-storage', backColor: '#43b1bb' },
+  // { num: 1, title: '待排架数', icon: 'iconBack be-bent', backColor: '#289adb' },
+  // { num: 8, title: '待回库数', icon: 'iconBack back-library', backColor: '#6a8ed8' }
 ]
 
 // 我的事项
@@ -68,37 +68,46 @@ const shortcuts = [
 
 
 class Home extends Component {
-  state = { 
+  state = {
     collection: collStatic,
     myMatters: {
-      type: 'todo',
+      type: "todo",
       data: null
     },
-    newNotice: [],  // 最新通知
+    newNotice: [], // 最新通知
     productsList: [], // 精品展示
     slideWidth: null,
     noticeVisible: false,
     noticeDetail: null,
-   }
-  componentWillMount () {
-    let userMenuList = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
+    staticNumber: {
+      NumberBorrowing: 0,                // 外借数
+      NumberInRepair: 0,                 // 在修复数
+      NumberOfCollections: 0,            // 藏品数
+      NumberOfLibraries: 0,              // 在库数
+      NumberOfLibrariesToBeEntered: 0,   // 待入库数
+      NumberToBeRecorded: 0,             // 待入账数
+    }
+  };
+  componentWillMount() {
+    let userMenuList = JSON.parse(sessionStorage.getItem("UserInfo"))
+      .UserMenuItem;
     // console.log(userMenuList);
-    for(let item of userMenuList) {
-      for(let value of shortcuts) {
-        if(item.subnode.length > 0) {
-          for(let childItem of item.subnode) {
-            if(childItem.Functional__URl === value.url) {
+    for (let item of userMenuList) {
+      for (let value of shortcuts) {
+        if (item.subnode.length > 0) {
+          for (let childItem of item.subnode) {
+            if (childItem.Functional__URl === value.url) {
               value.isHidden = false;
             }
           }
         } else if (item.ProjectModule_URL === value.url) {
-          value.isHidden = false
+          value.isHidden = false;
         }
       }
     }
     this.setState({
-      myMatters:{
-        type: 'todo',
+      myMatters: {
+        type: "todo",
         data: myMattersData[this.state.myMatters.type]
       }
     });
@@ -106,30 +115,29 @@ class Home extends Component {
     let _this = this;
     // console.log(this.props.location.pathname === "/App/Home");
     window.onresize = () => {
-      console.log(this.props)
+      console.log(this.props);
       console.log(this.props.history.location.pathname === "/App/Home");
       if (this.props.history.location.pathname === "/App/Home") {
         _this.getSlideWidth();
-      };
-    }
+      }
+    };
   }
 
   // 获取数据
   getnewNotice() {
     // 最新通知
-    GetToNotice().then(res =>{
+    GetToNotice().then(res => {
       console.log(res);
-      if(res.Data) {
+      if (res.Data) {
         this.setState({ newNotice: res.Data });
       }
-      
     });
 
     // 精品展示
-    GetFineDisplayData().then(res =>{
+    GetFineDisplayData().then(res => {
       console.log(res);
       let imgArr = [];
-      if(res.Data) {
+      if (res.Data) {
         for (let item of res.Data) {
           imgArr.push({
             relicsImgUrl: item.Collectionimg1,
@@ -138,68 +146,84 @@ class Home extends Component {
           });
         }
       }
-      
+
       this.setState({
         productsList: imgArr
-      })
-    })
-    
+      });
+    });
+
     // 数据统计
-    // GetFineDisplayData().then(res => {
-    //   console.log('-------')
-    //   console.log(res)
-    // })
+    GetStatisticsData().then(res => {
+      console.log("-------");
+      console.log(res);
+      this.setState({
+        staticNumber: res.Data
+      })
+    });
   }
   componentDidMount() {
     this.getSlideWidth();
   }
   getSlideWidth = () => {
-    console.log('width')
+    // console.log('width')
     console.log(this.refs.slideWidth.clientWidth);
     this.setState({ slideWidth: this.refs.slideWidth.clientWidth - 121 });
-  }
+  };
 
   // 通知详情
 
-  showNoticeDetail= (value) => {
-    this.setState({
-      noticeVisible: true,
-      noticeDetail: value
-    }, () => {
-
-    })
-  }
+  showNoticeDetail = value => {
+    this.setState(
+      {
+        noticeVisible: true,
+        noticeDetail: value
+      },
+      () => {}
+    );
+  };
   // 关闭通知弹窗
   closeNoticeDetail = () => {
-    this.setState({noticeDetail: null,noticeVisible: false})
-  }
-  radioButtonChange (value) {
+    this.setState({ noticeDetail: null, noticeVisible: false });
+  };
+  radioButtonChange(value) {
     console.log(value);
     this.setState({
       myMatters: {
         type: value.target.value,
         data: myMattersData[value.target.value]
       }
-    })
+    });
   }
-  buttonCilck () {
-    this.props.changeButtonText('点击了我')
+  buttonCilck() {
+    this.props.changeButtonText("点击了我");
   }
   render() {
     console.log(this.state);
-    const { collection, myMatters, newNotice, productsList, slideWidth, noticeVisible, noticeDetail } = this.state;
+    const {
+      collection,
+      myMatters,
+      newNotice,
+      productsList,
+      slideWidth,
+      noticeVisible,
+      noticeDetail,
+      staticNumber
+    } = this.state;
     return <Row className="home-container">
         <Col span={24} className="home-content">
           <Col span={24} className="home-title back-color-white">
             藏品统计
           </Col>
           <Col span={24} className="collection-static back-color-white">
-            <Row type="flex" justify="space-around" gutter={20} style={{ textAlign: "center", padding: "0 20px" }}>
+            <Col span={24} style={{ textAlign: "center", padding: "0 20px" }}>
               {collection.map((item, idx) => (
                 <Col
                   span={24 / collection.length}
                   key={idx}
-                  style={{ textAlign: "center" }}
+                  style={{
+                    textAlign: "center",
+                    paddingRight: idx < collection.length - 1 ? "10px" : "0"
+                  }}
                 >
                   <Col
                     span={24}
@@ -208,13 +232,15 @@ class Home extends Component {
                   >
                     <span className={item.icon} />
                     <span className="static-num-title">
-                      <span className="static-num">{item.num}</span>
+                      <span className="static-num">
+                        {staticNumber[item.num]}
+                      </span>
                       <span className="static-title">{item.title}</span>
                     </span>
                   </Col>
                 </Col>
               ))}
-            </Row>
+            </Col>
           </Col>
         </Col>
         <Col span={12} className="home-content" style={{ paddingRight: "10px" }}>
@@ -258,26 +284,17 @@ class Home extends Component {
             </Col>
           </Col>
           <Col span={24} className="back-color-white new-notice" style={{ height: "276px" }}>
-            {newNotice.map((item, idx) => (
-              idx < 6 && <Col
-                onClick={this.showNoticeDetail.bind(this, item)}
-                span={24}
-                key={idx}
-              >
-                <Col span={17} className="notice-title">
-                  {item.Notice_Title}
-                </Col>
-                <Col span={6} className="notice-date">
-                  {item.Notice_Time}
-                </Col>
-              </Col>
-            ))}
-            <Modal visible={noticeVisible} footer={<Button
-                  onClick={this.closeNoticeDetail}
-                  type='primary'
-                >
+            {newNotice.map((item, idx) => idx < 6 && <Col onClick={this.showNoticeDetail.bind(this, item)} span={24} key={idx}>
+                    <Col span={17} className="notice-title">
+                      {item.Notice_Title}
+                    </Col>
+                    <Col span={6} className="notice-date">
+                      {item.Notice_Time}
+                    </Col>
+                  </Col>)}
+            <Modal visible={noticeVisible} onCancel={this.closeNoticeDetail} footer={<Button onClick={this.closeNoticeDetail} type="primary">
                   关闭
-                </Button>} >
+                </Button>}>
               {noticeDetail && <Col span={24}>
                   <Col span={24} className="notice-detail-title">
                     <h1>{noticeDetail.Notice_Title}</h1>
@@ -330,9 +347,9 @@ class Home extends Component {
           </div>
         </Col>
       </Row>;
-      // <div>
-      //   <Button type='primary' onClick={this.buttonCilck.bind(this)} >{ this.props.buttonText }</Button>
-      // </div>
+    // <div>
+    //   <Button type='primary' onClick={this.buttonCilck.bind(this)} >{ this.props.buttonText }</Button>
+    // </div>
   }
 }
 
