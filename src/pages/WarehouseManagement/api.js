@@ -16,6 +16,11 @@ export const InsertStorehouse = (params) => {
     return axios.post("/WarehouseManage/InsertStorehouse", params).then(res => res.data)
 }
 
+// 库房删除
+export const DeteleStorehouse = (params) => {
+    return axios.post("/WarehouseManage/DeteleStorehouse", params).then(res => res.data)
+}
+
 
 // 存储柜信息
 // 存储柜信息列表
@@ -34,4 +39,9 @@ export const UpdateStorage = (params) => {
 
 export const InsertStorage = (params) => {
     return axios.post("/WarehouseManage/InsertStorage", params).then(res => res.data);
+}
+
+// 删除存储柜
+export const DeleteStorage = (params) => {
+    return axios.post("/WarehouseManage/DeleteStorage", params).then(res =>res.data)
 }

@@ -4,7 +4,8 @@ import './index.less';
 import {
   GetStorehouseManageData,
   UpdateStorehouse,
-  InsertStorehouse
+  InsertStorehouse,
+  DeteleStorehouse
 } from "../api";
 import { connect } from 'react-redux';
 const FormItem = Form.Item;
@@ -12,38 +13,49 @@ const { TextArea } = Input;
 
 class WarehouseManageApp extends Component {
   state = {
-    warehouseList: [ ],
+    warehouseList: [],
     modalVisible: false,
     modalTitle: "新增库房",
     isAdd: false,
     chooseWarehouseId: null,
     warehouseNameValue: "",
     describeValue: "",
-    searchName: '',
+    searchName: "",
     pageIndex: 1,
     pageSize: 10,
     total: 0
   };
 
   componentWillMount() {
-    this.setState({
-      pageIndex: this.props.pageIndex
-    }, () => {
-      this.getWraehousrList();
-    })
-    
+    this.setState(
+      {
+        pageIndex: this.props.pageIndex
+      },
+      () => {
+        this.getWraehousrList();
+      }
+    );
   }
 
   handleOk = () => {
-    const { isAdd, warehouseNameValue, describeValue, chooseWarehouseId } = this.state;
+    const {
+      isAdd,
+      warehouseNameValue,
+      describeValue,
+      chooseWarehouseId
+    } = this.state;
     console.log(this.state);
     // console.log(e.target)
     this.props.form.validateFields((err, fieldsValue) => {
       // console.log(err)
-      if(!err) {
+      if (!err) {
         if (!isAdd) {
           console.log(fieldsValue);
-          let params = { StorehouseId: chooseWarehouseId, StorehouseName: warehouseNameValue, StorehouseDescribe: describeValue };
+          let params = {
+            StorehouseId: chooseWarehouseId,
+            StorehouseName: warehouseNameValue,
+            StorehouseDescribe: describeValue
+          };
           UpdateStorehouse(params).then(res => {
             console.log(res);
             if (res.Msg === "操作成功!") {
@@ -68,21 +80,13 @@ class WarehouseManageApp extends Component {
             } else {
               message.error("新增失败");
             }
-          })
-
+          });
         }
       }
-      
-    })
-    
-    
-    
-
+    });
   };
 
   handleCancel = e => {
-    
-    
     this.setState({
       modalVisible: false
     });
@@ -99,14 +103,17 @@ class WarehouseManageApp extends Component {
     });
   };
   // 分页改变
-  paginationChange = (page) => {
-    this.setState({
-      pageIndex: page
-    }, () => {
-      this.getWraehousrList();
-      this.props.changePageIndex(page)
-    })
-  }
+  paginationChange = page => {
+    this.setState(
+      {
+        pageIndex: page
+      },
+      () => {
+        this.getWraehousrList();
+        this.props.changePageIndex(page);
+      }
+    );
+  };
 
   getWraehousrList = () => {
     const { pageIndex, pageSize, searchName } = this.state;
@@ -114,11 +121,11 @@ class WarehouseManageApp extends Component {
       Condition: searchName,
       PageIndex: pageIndex,
       PageSize: pageSize
-    }
+    };
     GetStorehouseManageData(params).then(res => {
       console.log(res);
       let data = [];
-      for(let item of res.Data) {
+      for (let item of res.Data) {
         data.push({
           key: item.StorehouseId,
           number: item.StorehouseId,
@@ -127,11 +134,10 @@ class WarehouseManageApp extends Component {
         });
       }
       this.setState({ warehouseList: data, total: res.Total });
-    })
-  }
+    });
+  };
 
   editorWarehouse = record => {
-    
     this.props.form.resetFields();
     console.log(record);
     this.setState({
@@ -142,10 +148,29 @@ class WarehouseManageApp extends Component {
       isAdd: false
     });
   };
+  //删除库房
+  deleteStroage = (record) => {
+    console.log(record);
+    let params = {
+      parameters:{
+        Condition: Number(record.number)
+      }
+    };
+    DeteleStorehouse(params).then(res => {
+      console.log(res);
+      if (res.Msg === "操作成功!") {
+        message.success("删除成功");
+        this.getWraehousrList();
+      } else {
+        message.error("删除失败");
+      }
+    })
+    
+  }
 
   render() {
     const {
-        isAdd,
+      isAdd,
       warehouseList,
       modalVisible,
       modalTitle,
@@ -155,7 +180,7 @@ class WarehouseManageApp extends Component {
       pageSize,
       total
     } = this.state;
-    
+
     const { getFieldDecorator } = this.props.form;
     const warehousColumns = [
       {
@@ -178,14 +203,31 @@ class WarehouseManageApp extends Component {
         dataIndex: "",
         key: "operation",
         render: (text, record, idx) => {
-          return <Button onClick={(event) => {event.persist(); this.setState({chooseWarehouseId: record.number }); this.editorWarehouse(record)}} style={{ color: "#3065bf" }}>
-              编辑
-            </Button>;
+          return (
+            <span>
+              <Button
+                onClick={event => {
+                  event.persist();
+                  this.setState({ chooseWarehouseId: record.number });
+                  this.editorWarehouse(record);
+                }}
+                style={{ color: "#3065bf" }}
+              >
+                编辑
+              </Button>
+              <Button style={{marginLeft: '20px'}} 
+                type="primary" 
+                onClick={this.deleteStroage.bind(this, record)}>
+                  删除
+              </Button>
+            </span>
+          );
         }
       }
     ];
 
-    return <Row className="main-content">
+    return (
+      <Row className="main-content">
         <Col span={24} className="title">
           库房管理列表
         </Col>
@@ -196,28 +238,60 @@ class WarehouseManageApp extends Component {
             </Button>
           </Col>
           <Col span={24}>
-            <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={warehousColumns} dataSource={warehouseList} bordered />
+            <Table
+              pagination={{
+                current: pageIndex,
+                pageSize: pageSize,
+                total: total,
+                onChange: this.paginationChange
+              }}
+              columns={warehousColumns}
+              dataSource={warehouseList}
+              bordered
+            />
           </Col>
           <Col span={24}>
-            <Modal className="warehouse-modal" title={modalTitle} onOk={this.handleOk} onCancel={this.handleCancel} visible={modalVisible}>
+            <Modal
+              className="warehouse-modal"
+              title={modalTitle}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+              visible={modalVisible}
+            >
               <Form layout="inline">
-                <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="库房名称:">
+                <FormItem
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 16 }}
+                  label="库房名称:"
+                >
                   {getFieldDecorator("warehouseName", {
                     initialValue: isAdd ? "" : warehouseNameValue,
                     rules: [{ required: true, message: "请输入库房名称" }]
-                  })(<Input  onChange={value => {
+                  })(
+                    <Input
+                      onChange={value => {
                         this.setState({
                           warehouseNameValue: value.target.value
                         });
-                      }} />)}
+                      }}
+                    />
+                  )}
                 </FormItem>
-                <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="描述:">
+                <FormItem
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 16 }}
+                  label="描述:"
+                >
                   {getFieldDecorator("warehousrDescribe", {
-                    initialValue:  isAdd ? "" : describeValue ,
+                    initialValue: isAdd ? "" : describeValue,
                     rules: [{ required: true, message: "请输入库房描述" }]
-                  })(<TextArea  onChange={value => this.setState(
-                          { describeValue: value.target.value }
-                        )} />)}
+                  })(
+                    <TextArea
+                      onChange={value =>
+                        this.setState({ describeValue: value.target.value })
+                      }
+                    />
+                  )}
                 </FormItem>
                 {/* <FormItem wrapperCol={{ offset: 4 }} >
                   <Button type='primary' >提交</Button>
@@ -226,7 +300,8 @@ class WarehouseManageApp extends Component {
             </Modal>
           </Col>
         </Col>
-      </Row>;
+      </Row>
+    );
   }
 }
 const WarehouseManage = Form.create()(WarehouseManageApp);
