@@ -11,7 +11,8 @@ class ApproveComponent extends Component {
     approveText: "",
     approveSteps: [], // 步骤条
     currentState: null, // 当前步骤
-    approveRemark: []  // 审批备注
+    approveRemark: [],  // 审批备注
+    isShowFlow: false,  // 是否显示流程
   };
 
   componentWillMount() {
@@ -30,17 +31,21 @@ class ApproveComponent extends Component {
       if (res.Data) {
         let data = res.Data;
         let appData = [];
-        for (let item of data.ListWfProcessStep) {
-          appData.push({
-            key: item.ProcessStepSequence,
-            value: item.ApprovalPerson
+        if(data.ListWfProcessStep) {
+          for (let item of data.ListWfProcessStep) {
+            appData.push({
+              key: item.ProcessStepSequence,
+              value: item.ApprovalPerson
+            });
+          }
+          this.setState({
+            isShowFlow: Number(data.ViewPermissions) === 1 ? true : false,
+            approveSteps: appData,
+            currentState: Number(data.Step),
+            approveRemark: data.ListWfAddRemark.reverse()
           });
         }
-        this.setState({
-          approveSteps: appData,
-          currentState: Number(data.Step),
-          approveRemark: data.ListWfAddRemark.reverse()
-        });
+        
       }
     });
   }
@@ -73,8 +78,9 @@ class ApproveComponent extends Component {
       ApprovalPassed(params).then(res => {
         console.log(res)
         if (res === true) {
-          message.success('操作成功！')
-          console.log(this.props)
+          message.success('操作成功！');
+          this.getApproveState();
+          console.log(this.props);
           this.props.changeAnthorityState();
         } else {
           message.error("操作失败");
@@ -84,7 +90,8 @@ class ApproveComponent extends Component {
       ApprovalDenied(params).then(res => {
         console.log(res)
         if (res === true) {
-          message.success('操作成功！')
+          message.success('操作成功！');
+          this.getApproveState();
           console.log(this.props)
           this.props.changeAnthorityState();
         } else {
@@ -95,10 +102,9 @@ class ApproveComponent extends Component {
   }
 
   render() {
-    const { radioValue, approveText, approveSteps, currentState, approveRemark } = this.state;
-    return <Row>
-        <Col span={24} className="approve-container">
-          <Col span={24} className="approve-detail">
+    const { radioValue, approveText, approveSteps, currentState, approveRemark, isShowFlow } = this.state;
+    return <Col span={24} className="approve-container">
+        {isShowFlow && <Col span={24} className="approve-detail">
             <Col span={24} className="approve-title">
               审批详情
             </Col>
@@ -120,13 +126,15 @@ class ApproveComponent extends Component {
                       <Col span={15}>
                         {item.UserCode + "  " + item.Description}
                       </Col>
-                      <Col style={{color: '#666'}} span={9}>{item.AddTime}</Col>
+                      <Col style={{ color: "#666" }} span={9}>
+                        {item.AddTime}
+                      </Col>
                     </Col>)}
                 </Col>
               </Col>
             </Col>
-          </Col>
-          <Col span={24} className="approve-detail" style={{ marginTop: "20px" }}>
+          </Col>}
+        {this.props.anthorityState === 1 && <Col span={24} className="approve-detail" style={{ marginTop: "20px" }}>
             <Col span={24} className="approve-title">
               审批操作
             </Col>
@@ -147,9 +155,8 @@ class ApproveComponent extends Component {
                 </Col>
               </Col>
             </Col>
-          </Col>
-        </Col>
-      </Row>;
+          </Col>}
+      </Col>;
   }
 }
 
