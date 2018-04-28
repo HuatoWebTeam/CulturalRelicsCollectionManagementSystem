@@ -190,7 +190,6 @@ class WorkflowConfig extends Component {
         if(res.Msg === "操作成功!") {
           message.success('提交成功');
           this.setState({
-            workflowList: [],
             allWorkList: [],
             checkWork: "",
             peopleCount: 1,
