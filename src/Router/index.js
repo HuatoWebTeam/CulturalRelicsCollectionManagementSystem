@@ -10,7 +10,7 @@ import asyncComponent from '../pages/Components/AsyncComponent';
 // import About from '../pages/About/About';
 
 const Home = asyncComponent(() => import('../pages/Home/Home'));              // 首页
-const About = asyncComponent(() => import('../pages/About/About'));           // 关于
+// const About = asyncComponent(() => import('../pages/About/About'));           // 关于
 const CollecExhibition = asyncComponent(() => import('../pages/CollecExhibition'));                         // 藏品展览
 const ExhibitionDetails = asyncComponent(() => import('../pages/CollecExhibition/ExhibitionDetails'));     // 藏品展览详情
 const AddExhibition = asyncComponent(() => import('../pages/CollecExhibition/AddExhibition'));              // 添加展览    
@@ -24,6 +24,8 @@ const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Informa
 const Credentials = asyncComponent(() => import('../pages/CollecManagement/Credentials'));                  // 凭证信息列表
 const ProductionCertificate = asyncComponent(() => import('../pages/CollecManagement/Credentials/ProductionCertificate'));   // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
+const NewPutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage/NewPutInStroage'));                // 新增入库
+const PutInDetails = asyncComponent(() => import('../pages/CollecManagement/PutInStroage/PutInDetails'));                // 入库详情
 const Outbound = asyncComponent(() => import('../pages/CollecManagement/Outbound'));                        // 出库
 const NewOutbound = asyncComponent(() => import('../pages/CollecManagement/Outbound/newOutbound'));         // 新建出库
 const OutboundDetails = asyncComponent(() => import('../pages/CollecManagement/Outbound/OutboundDetails')); // 出库详情
@@ -32,7 +34,8 @@ const Inventory = asyncComponent(() => import('../pages/CollecInventory'));     
 const NewInventory = asyncComponent(() => import('../pages/CollecInventory/NewInventory'));                 // 新建盘点
 const ShowDetails = asyncComponent(() => import('../pages/CollecInventory/ShowDetails'));                   // 盘点详情
 const Solicition = asyncComponent(() => import('../pages/CollecSolicition'));                               // 藏品征集
-const AddSolicition = asyncComponent(() => import('../pages/CollecSolicition/AddSolicition'));                 // 藏品征集
+const AddSolicition = asyncComponent(() => import('../pages/CollecSolicition/AddSolicition'));                 // 添加藏品征集
+const SolicitionDetail = asyncComponent(() => import('../pages/CollecSolicition/solicitionDetail'));                 // 藏品征集详情
 const ComlexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo'));               // 复仿制---信息登记
 const AddComplexInfo = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexInfo/AddComplexInfo'));  // 复仿制---信息登记--添加信息
 const ComlexPutIn = asyncComponent(() => import('../pages/ComplexGenericManage/ComplexPutIn'));             // 入库
@@ -47,6 +50,7 @@ const AssignPermissions = asyncComponent(() => import('../pages/UserOperation/As
 const LatestNotice = asyncComponent(() => import('../pages/LatestNotice'));                     // 最新通知
 const WorkflowConfig = asyncComponent(() => import('../pages/UserOperation/WorkflowConfig'))  // 流程配置
 const PeopleManagement = asyncComponent(() => import('../pages/UserOperation/PeopleManagement'))  // 人员管理
+const PositionMessagement = asyncComponent(() => import('../pages/UserOperation/PositionMessagement'))  // 职位管理
 
 
 
@@ -67,6 +71,8 @@ class Routes extends Component {
             <Route exact path="/App/Credentials" component={Credentials} />
             <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
             <Route exact path="/App/PutInStorage" component={PutInStroage} />
+            <Route exact path="/App/NewPutInStroage" component={NewPutInStroage} />
+            <Route exact path="/App/PutInDetails/:id" component={PutInDetails} />
             <Route exact path="/App/Outbound" component={Outbound} />
             <Route exact path="/App/NewOutbound" component={NewOutbound} />
             <Route exact path="/App/OutboundDetails/:id" component={OutboundDetails} />
@@ -76,6 +82,7 @@ class Routes extends Component {
             <Route exact path="/App/ShowDetails/:id" component={ShowDetails} />
             <Route exact path="/App/Solicition" component={Solicition} />
             <Route exact path="/App/AddSolicition" component={AddSolicition} />
+            <Route exact path="/App/ShowSolicitionDetail" component={SolicitionDetail} />
             <Route exact path="/App/ComplexInfo" component={ComlexInfo} />
             <Route exact path="/App/AddComplexInfo" component={AddComplexInfo} />
             <Route exact path="/App/ComplexPutIn" component={ComlexPutIn} />
@@ -90,6 +97,7 @@ class Routes extends Component {
             <Route exact path="/App/PeopleManagement" component={PeopleManagement} />
             <Route exact path="/App/LatestNotice" component={LatestNotice} />
             <Route exact path="/App/WorkflowConfig" component={WorkflowConfig} />
+            <Route exact path="/App/PositionMessagement" component={PositionMessagement} />
             <Route render={() => <Redirect to="/App/Home" />} />
           </Switch>;
     }

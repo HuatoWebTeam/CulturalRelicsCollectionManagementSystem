@@ -7,6 +7,11 @@ import { menus } from './menus';
 import './App.less';
 import { UpdateUserPwd } from '../../axios';
 import ChangePwd from './changePwd';
+import {
+  GetBasicDataOfTheAge,
+  GetBasicDataOfTypeOfCulturalRelic,
+  GetGradedInformationBaseData
+} from "../../axios";
 const { Header, Content, Sider } = Layout;
 const confirm = Modal.confirm;
 
@@ -24,14 +29,18 @@ class AppContent extends Component {
     menuMode: "inline",
     openKeys: [],
     UserName: "",
-    UserMenu: []
+    UserMenu: [],
+    windowWidth: '',
+    windowHeight: ''
   };
   componentWillMount() {
-    console.log(this.props);
+    this.getRelicsInfo();
+    // console.log(this.props);
     let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
-
-    console.log(UserInfo);
+    // console.log(UserInfo);
     let menu = UserInfo.UserMenuItem;
+    let width = document.body.clientWidth;
+    let height = document.body.clientHeight - 40 - 60;
     for (let item of menu) {
       for (let value of menus) {
         if (item.ProjectModule_URL === value.key) {
@@ -42,9 +51,11 @@ class AppContent extends Component {
     }
     this.setState({
       UserName: UserInfo.UserName,
-      UserMenu: UserInfo.UserMenuItem
+      UserMenu: UserInfo.UserMenuItem,
+      windowWidth: width,
+      windowHeight: height
     });
-
+    this.eqitMinHeight(height);
     this.setMenuOpenKey(this.props);
     // this.getLocationName();
     for (let item of this.state.UserMenu) {
@@ -52,12 +63,76 @@ class AppContent extends Component {
         this.rootSubmenuKeys.push(item.key);
       }
     }
-
+    let _this = this;
+    window.onresize = function() {
+      console.log('resize');
+      let width = document.body.clientWidth;
+      let height = document.body.clientHeight - 40 - 60;
+      _this.setState({
+        windowWidth: width,
+        windowHeight: height
+      });
+      _this.eqitMinHeight(height);
+    }
     // console.log(this.rootSubmenuKeys)
+  }
+  // 修改minHeight
+  eqitMinHeight (height) {
+    let isMainHeightCss = document.getElementById('minHeight');
+    let styleStr = `.main-content { min-height: ${height - 40}px }`;
+    if(isMainHeightCss) {
+      if(isMainHeightCss.styleSheet) {
+        isMainHeightCss.styleSheet.cssText = styleStr;
+      } else {
+        isMainHeightCss.innerHTML = styleStr;
+      }
+      
+    } else {
+      const style = document.createElement("style");
+      style.setAttribute("id", "minHeight");
+      style.setAttribute('type', 'text/css');
+      if(style.styleSheet) {
+        style.styleSheet.cssText = styleStr;
+      } else {
+        style.innerText = styleStr;
+      }
+      
+      document.head.appendChild(style);
+    }
   }
   componentDidMount() {
     // console.log(this.props);
     // window.addEventListener("scroll", this.handleScroll);
+  }
+  // 获取文物年代、类别、分级信息并存储sessionstroage
+  getRelicsInfo = () => {
+    let relicsYears = sessionStorage.getItem('relicsYears');  // 文物年代
+    let relicsCateGory = sessionStorage.getItem("relicsCateGory");  // 文物类别
+    let relicsLevel = sessionStorage.getItem('relicsLevel');         // 文物分级信息
+    if(!relicsYears) {
+      GetBasicDataOfTheAge().then(res => {
+        console.log(res);
+        if(res.Data) {
+          sessionStorage.setItem("relicsYears", JSON.stringify(res.Data));
+        }
+      })
+    };
+    if(!relicsCateGory) {
+      GetBasicDataOfTypeOfCulturalRelic().then(res => {
+        console.log(res);
+        if (res.Data) {
+          sessionStorage.setItem("relicsCateGory", JSON.stringify(res.Data));
+        }
+      })
+    };
+    if (!relicsLevel) {
+      GetGradedInformationBaseData().then(res => {
+        console.log(res);
+        if (res.Data) {
+          sessionStorage.setItem("relicsLevel", JSON.stringify(res.Data));
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -72,7 +147,7 @@ class AppContent extends Component {
     // console.log(this.props);
     // console.log(keys)
     const pathname = keys || this.props.location.pathname;
-    console.log(menus)
+    // console.log(menus)
     for (let item of menus) {
       // console.log(item.key);
       // console.log(pathname);
@@ -230,7 +305,7 @@ class AppContent extends Component {
 
   render() {
     // console.log(this.props)
-    const { UserName, UserMenu, setPwdVisible } = this.state;
+    const { UserName, UserMenu, setPwdVisible, windowWidth, windowHeight } = this.state;
     // console.log(UserMenu);
     const dropdownMenu = (
       <Menu className="system-dropdown" onClick={this.dropdownChange}>
@@ -246,8 +321,8 @@ class AppContent extends Component {
       <Layout style={{ minHeight: "100%" }}>
         <Header>
           <div className="logoContainer">
-            <div className="logo iconBack" />
-            <div className="systemName iconBack" />
+            {/* <div className="logo iconBack" /> */}
+            {/* <div className="systemName iconBack" /> */}
           </div>
           <div className="systemDropdown">
             <div className="content">
@@ -287,13 +362,13 @@ class AppContent extends Component {
               onOpenChange={this.onOpenChange}
             />
           </Sider>
-          <Content>
+          <Content style={{width: (windowWidth - 200- 17) + 'px'}} >
             <Col span={24} className="localtion">
               <i className="iconBack localtion" />当前位置：{" "}
               <span className="localtionName">{this.state.localtionName}</span>
             </Col>
-            <Col span={24} className="main-container">
-              <Routes RouteChange={this.getLocationName} />
+            <Col span={24} className="main-container" style={{minHeight: windowHeight + 'px'}} >
+              <Routes  RouteChange={this.getLocationName} />
             </Col>
           </Content>
         </Layout>

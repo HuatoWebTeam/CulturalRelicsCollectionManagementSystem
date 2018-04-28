@@ -12,6 +12,7 @@ export  const menus = [
         { key: '/App/Credentials', title: '凭证制作', icon: 'nullIcon' },
         { key: '/App/ProductionCertificate', title: '藏品管理 > 凭证制作', isHidden: true, fatherName: '/App/Credentials' },
         { key: '/App/PutInStorage', title: '藏品入库', icon: 'nullIcon' },
+        { key: '/App/NewPutInStroage', title: '藏品入库 > 新建入库单', isHidden: true, icon: 'nullIcon', fatherName: '/App/PutInStorage' },
         { key: '/App/PutInDetails', title: '藏品入库 > 入库详情', isHidden: true, icon: 'nullIcon', fatherName: '/App/PutInStorage' },
         { key: '/App/Outbound', title: '藏品出库', icon: 'nullIcon' },
         { key: '/App/NewOutbound', title: '藏品管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/Outbound' },
