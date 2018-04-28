@@ -8,8 +8,10 @@ export const RangePickerDefault = [moment()
 
 // 截取时间，
 export const subStr = (str) => {
-    let date_before =  str.split('\n')[0];
+    // console.log(str)
+    let date_before =  str.split(' ')[0];
     // let date_after = str
+    // console.log(date_before)
     return date_before;
 }
 
@@ -71,12 +73,102 @@ export const levelInfo = [
 // 文物状态
 
 export const relicsState = [
+    { value: '待入库', key: 0 },
     { value: '在库', key: 1 },
-    { value: '出库', key: 2 }
+    { value: '修复中', key: 2 },
+    { value: '展览中', key: 3 },
+    { value: '外借出库', key: 4 },
+    { value: '盘点异常', key: 5 },
+    { value: '外借入库', key: 6 },
+    { value: '退还', key: 7 },
+    { value: '待盘点', key: 8 },
+    { value: '待展览', key: 9 },
+    { value: '待修复', key: 10 },
+    { value: '修复异常', key: 11 },
+    { value: '展览异常', key: 12 },
+    { value: '修复入库', key: 13 },
+    { value: '展览入库', key: 14 },
+    { value: '出库展览中', key: 15 },
+    { value: '出库修复中', key: 16 }
+
 ]
 
 // 完整程度
 export const howComplete = [
     { value: '完整', key: 0 },
     { value: '破损', key: 1 }
+]
+
+// 展览类型
+export const exhibitionType = [
+    {
+        key: 0,
+        value: "内展"
+      },
+      {
+        key: 1,
+        value: "外展"
+      }
+]
+
+export const exhibiState = [
+    { key: 0, value: '待展览' },
+    { key: 1, value: '出库中' },
+    { key: 2, value: '展览中' },
+    { key: 3, value: '入库中' },
+    { key: 4, value: '展览完成' }
+]
+
+// 审批状态
+export const approveState = [
+    { key: 1, value: '未结正常' },
+    { key: 2, value: '未结异常' },
+    { key: 3, value: '已结案' },
+    { key: 4, value: '拒绝' }
+]
+
+
+// 盘点状态
+export const inventState = [
+    { key: 0, value: '待盘点' },
+    { key: 4, value: '盘点中' },
+    { key: 1, value: '盘点完成' },
+    { key: 2, value: '盘点异常' },
+]
+
+
+// 修复状态
+export const repairState = [
+    { key: 0, value: '待修复' },
+    { key: 1, value: '修复中' },
+    { key: 2, value: '修复完成' },
+    { key: 3, value: '修复异常' },
+    { key: 4, value: '入库中' }
+]
+
+
+// 出库状态
+
+export const outboundState = [
+    { key: 0, value: '待出库' },
+    { key: 1, value: '出库完成' },
+    { key: 2, value: '出库异常' },
+    { key: 3, value: '删除' }
+]
+
+// 入库状态
+export const putinState = [
+    { key: 0, value: '待入库' },
+    { key: 1, value: '入库完成' },
+    { key: 2, value: '入库异常' },
+    { key: 3, value: '删除' }
+]
+
+// 入库类型
+export const putinType = [
+    { key: 2, value: '信息登记' },
+    { key: 1, value: '征集' }, 
+    { key: 3, value: '展览归还', isHidden: true },
+    { key: 4, value: '修复归还', isHidden: true },
+    { key: 5, value: '自定义归还' }
 ]
