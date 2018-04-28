@@ -44,54 +44,64 @@ class LoginForm extends Component {
     this.props.form.validateFields((err, value) => {
       // console.log(err)
       if(!err) {
-        // console.log(value);
-        this.setState({loading: true});
-        const { UserIp } = this.state;
-        // console.log(UserIp)
-        let userInfo = { strUser: value.userName, strPwd: value.password, ip: UserIp }
-        let _this = this;
-        LoginApi(userInfo).then(res => {
-          console.log(res);
-          // console.log(value);
-          this.setState({loading:false});
-          if(res !== false) {
-            // let Token = res[0].Ticket;
-            let UserMenuItem = res.MyProperty;
-            let UserName = value.userName;
-            // Cookie.set("UserInfo", { 
-            //     UserMenuItem: UserMenuItem, UserName: UserName }, { expires: 0.5 });
-            sessionStorage.setItem("UserInfo", JSON.stringify({
-                UserMenuItem: UserMenuItem,
-                UserName: UserName
-              }));
-              let pushPath = '';
-              if(UserMenuItem[0].subnode.length === 0) {
-                pushPath = UserMenuItem[0].ProjectModule_URL;
+        console.log(value);
+        if (value.verifyCode.toLowerCase() === this.state.verCode) {
+          this.setState({ loading: true });
+          const { UserIp } = this.state;
+          // console.log(UserIp)
+          let userInfo = { strUser: value.userName, strPwd: value.password, ip: UserIp };
+          let _this = this;
+          LoginApi(userInfo)
+            .then(res => {
+              console.log(res);
+              // console.log(value);
+              this.setState({ loading: false });
+              if (res !== false) {
+                // let Token = res[0].Ticket;
+                let UserMenuItem = res.MyProperty;
+                let UserName = value.userName;
+                // Cookie.set("UserInfo", {
+                //     UserMenuItem: UserMenuItem, UserName: UserName }, { expires: 0.5 });
+                sessionStorage.setItem("UserInfo", JSON.stringify({
+                    UserMenuItem: UserMenuItem,
+                    UserName: UserName
+                  }));
+                let pushPath = "";
+                if (UserMenuItem[0].subnode.length === 0) {
+                  pushPath = UserMenuItem[0].ProjectModule_URL;
+                } else {
+                  pushPath = UserMenuItem[0].subnode[0].Functional__URl;
+                }
+                setTimeout(() => {
+                  // console.log(Cookie.getJSON("UserInfo"));
+                  _this.props.history.push(pushPath);
+                }, 500);
               } else {
-                pushPath = UserMenuItem[0].subnode[0].Functional__URl;
+                this.props.form.setFields({
+                  userName: {
+                    value: value.userName,
+                    errors: [new Error("用户名或密码错误")]
+                  },
+                  password: {
+                    value: value.password,
+                    errors: [new Error("用户名或密码错误")]
+                  }
+                });
               }
-            setTimeout(() => {
-              // console.log(Cookie.getJSON("UserInfo"));
-              _this.props.history.push(pushPath);
-            }, 500);
-          } else {
-            this.props.form.setFields({
-              userName: {
-                value: value.userName,
-                errors: [new Error("用户名或密码错误")]
-              },
-              password: {
-                value: value.password,
-                errors: [new Error("用户名或密码错误")]
-              }
+            })
+            .catch(err => {
+              _this.setState({ loading: false });
+              console.log(err);
             });
-          }
-          
-          
-        }).catch(err => {
-          _this.setState({loading:false});
-          console.log(err);
-        })
+        } else {
+          this.props.form.setFields({
+            verifyCode: {
+              value: value.verifyCode,
+              errors: [new Error('请输入正确的验证码')]
+            }
+          });
+        }
+        
 
       }
 
@@ -111,7 +121,9 @@ class LoginForm extends Component {
       callback('请输入验证码')
     }else if (value && value.toLowerCase() !== this.state.verCode && value.length >= 4) {
       callback('验证码输入错误');
-    }else {
+    } else if (value && value.length < 4) {
+      callback('验证码输入错误')
+    } else {
       callback()
     }
     
@@ -150,23 +162,19 @@ class LoginForm extends Component {
                 <h2 style={{ textAlign: "center" }}>用户登录</h2>
               </Col>
             </FormItem>
-            <FormItem >
+            <FormItem>
               {getFieldDecorator("userName", {
                 rules: [{ validator: this.handleUserInfo }]
               })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
             </FormItem>
-            <FormItem >
+            <FormItem>
               {getFieldDecorator("password", {
                 rules: [{ validator: this.handleUserPwdInfo }]
               })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} type="password" placeholder="请输入密码" />)}
             </FormItem>
             <FormItem>
               {getFieldDecorator("verifyCode", {
-                rules: [
-                  {
-                    validator: this.handleVerifyCode
-                  }
-                ]
+                rules: [{ required: true, message: '请输入验证码' }]
               })(<Input placeholder="请输入验证码" prefix={<Icon type="safety" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} style={{ width: "50%", marginRight: "15px" }} />)}
 
               <VerifyCode onChange={value => {
