@@ -11,3 +11,13 @@ export const SolicallApi = (params) => {
 export const SolicAddApi = (params) => {
     return axios.post("/Solicitation/SolicAddApi", params).then(res => res.data)
 }
+
+// 编辑征集信息
+export const SolicitUpdate = (params) => {
+    return axios.post("Solicitation/SolicitUpdate",params).then(res => res.data)
+}
+
+// 删除征集
+export const SolicitDelete = (params) => {
+    return axios.post("Solicitation/SolicitDelete", params).then(res => res.data)
+}

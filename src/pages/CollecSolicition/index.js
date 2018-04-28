@@ -1,25 +1,38 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Table } from 'antd';
+import { Row, Col, Button, Input, Table, Form, DatePicker, Select } from 'antd';
 import './index.less';
 import { SolicallApi } from './api';
 import { Link } from 'react-router-dom';
-import { approveState } from "../../assets/js/commonFun";
+import moment from 'moment';
+import { approveState, subStr } from "../../assets/js/commonFun";
 import { connect } from 'react-redux';
 const Search = Input.Search;
+const Option = Select.Option;
+const { RangePicker } = DatePicker;
 
 class CollecSolicition extends Component {
   state = {
     solicitionRelicsList: [],
+    date: [],        // 时间
+    category: 0,    // 文物类别
     pageIndex: 1,
     pageSize: 10,
     total: 0,
-    relicsName: ""
+    relicsName: "",
+    relicsCateList: []
   };
 
   componentWillMount() {
+    const { dateFormat } = this.props;
+    let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
+    let startDate = moment()
+      .subtract(6, "days").hour(0).minute(0).second(0).format();
+    let endDate = moment().hour(0).minute(0).second(0).format();
     this.setState(
       {
-        pageIndex: this.props.pageIndex
+        date: [startDate, endDate],
+        pageIndex: this.props.pageIndex,
+        relicsCateList: relicsCateGory
       },
       () => {
         this.getSolicitionlist();
@@ -28,11 +41,14 @@ class CollecSolicition extends Component {
   }
   // 获取征集列表
   getSolicitionlist() {
-    const { pageIndex, pageSize, relicsName } = this.state;
+    const { pageIndex, pageSize, relicsName, date, category } = this.state;
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
-      Collection_Name: relicsName
+      Collection_Name: relicsName,
+      beginTime: date[0],
+      endTime: date[1],
+      stat: category
     };
     SolicallApi(params).then(res => {
       console.log(res);
@@ -76,8 +92,27 @@ class CollecSolicition extends Component {
       }
     );
   };
+
+  // 选择时间
+  changDate = (date, dateString) => {
+    console.log(dateString);
+    this.setState({
+      date: [
+        date[0].hour(0).minute(0).second(0).format(), 
+        date[1].hour(23).minute(59).second(0).format()
+      ]
+    });
+  }
+  // 选择文物类别
+
+  handleSelect = (key) => {
+    this.setState({
+      category: key
+    })
+  }
   render() {
-    const { solicitionRelicsList, pageIndex, pageSize, total } = this.state;
+    const { solicitionRelicsList, pageIndex, pageSize, total, date, category, relicsCateList } = this.state;
+    const { dateFormat } = this.props;
     const solicitionColumns = [
       {
         title: "文物名称",
@@ -101,7 +136,10 @@ class CollecSolicition extends Component {
       {
         title: "征集时间",
         dataIndex: "Solicitation_Time",
-        key: "Solicitation_Time"
+        key: "Solicitation_Time",
+        render: text => {
+          return <span>{subStr(text)}</span>;
+        }
       },
       {
         title: "征集人",
@@ -111,8 +149,7 @@ class CollecSolicition extends Component {
       {
         title: "身份证号",
         dataIndex: "IdentityCard",
-        key: "IdentityCard",
-        
+        key: "IdentityCard"
       },
       {
         title: "联系方式",
@@ -122,7 +159,7 @@ class CollecSolicition extends Component {
       {
         title: "联系地址",
         dataIndex: "Site",
-        key: "Site",
+        key: "Site"
       },
       {
         title: "奖金数额",
@@ -144,9 +181,17 @@ class CollecSolicition extends Component {
         dataIndex: "",
         key: "approval",
         render: (text, value, idx) => {
-          for(let item of approveState) {
-            if(Number(text.StepState) === item.key) {
-              return <span style={{color: Number(text.StepState) === 2 ? 'red' : '#666'}} >{item.value}</span>
+          for (let item of approveState) {
+            if (Number(text.StepState) === item.key) {
+              return (
+                <span
+                  style={{
+                    color: Number(text.StepState) === 2 ? "red" : "#666"
+                  }}
+                >
+                  {item.value}
+                </span>
+              );
             }
           }
         }
@@ -157,67 +202,84 @@ class CollecSolicition extends Component {
         key: "operation",
         render: (text, record, idx) => {
           // console.log(text)
-          return <Link onClick={() => {
-                let state = Number(text.DeniedPermission);
-                sessionStorage.setItem("solicitionText", JSON.stringify(text));
-                sessionStorage.setItem("anthoityState", state);
-              }} to={`/App/ShowSolicitionDetail`}>
-              详情
-            </Link>;
+          return <span>
+              <Link onClick={() => {
+                  let state = Number(text.DeniedPermission);
+                  sessionStorage.setItem("solicitionText", JSON.stringify(text));
+                  sessionStorage.setItem("anthoityState", state);
+                }} to={`/App/ShowSolicitionDetail`}>
+                详情
+              </Link>
+              <Button  
+                type='text' 
+                style={{marginLeft: '20px', border: 'none'}} 
+                onClick={() => {
+                  this.props.changeFormData({
+                    state: '编辑征集信息',
+                    formData: record
+                  });
+                  this.props.history.push("/App/AddSolicition");
+                }}
+              >
+                  编辑
+                </Button>
+            </span>;
         }
-      },
+      }
     ];
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           藏品征集列表
         </Col>
         <Col span={24} className="solicition-container">
           <Col span={24}>
-            <Button
-              type="primary"
-              icon="plus"
-              onClick={() => {
-                this.props.history.push("/App/AddSolicition");
-              }}
-            >
-              添加征集
-            </Button>
-            <Search
-              placeholder="请输入文物名称"
-              enterButton
-              onSearch={this.searchQueryData}
-              style={{ width: "260px", float: "right" }}
-            />
+            <Col span={4}>
+              <Button type="primary" icon="plus" onClick={() => {
+                  this.props.history.push("/App/AddSolicition");
+                }}>
+                添加征集
+              </Button>
+            </Col>
+            <Col span={20}>
+              <Form layout="inline" style={{ float: "right" }}>
+                <Form.Item label="文物类别:">
+                  <Select style={{ width: "150px" }} defaultValue={category} onSelect={this.handleSelect}>
+                    <Option value={0}>全部</Option>
+                    {relicsCateList.map(item => (
+                      <Option key={Number(item.CollTypeId)}>
+                        {item.CollTypeName}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item label="征集时间:">
+                  <RangePicker defaultValue={[moment(date[0]), moment(date[1])]} placeholder="请选择起止时间" onChange={this.changDate} />
+                </Form.Item>
+                <Form.Item>
+                  <Search placeholder="请输入文物名称" enterButton onSearch={this.searchQueryData} style={{ width: "200px" }} />
+                </Form.Item>
+              </Form>
+            </Col>
           </Col>
           <Col span={24} style={{ paddingTop: "20px" }}>
-            <Table
-              pagination={{
-                current: pageIndex,
-                pageSize: pageSize,
-                total: total,
-                onChange: this.paginationChange
-              }}
-              columns={solicitionColumns}
-              dataSource={solicitionRelicsList}
-              bordered
-            />
+            <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={solicitionColumns} dataSource={solicitionRelicsList} bordered />
           </Col>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 // SOLICITIONPAGE
 const mapStateToProps = (state, ownProps) => {
   return {
-    pageIndex: state.main.solicitionPage
+    pageIndex: state.main.solicitionPage,
+    dateFormat: state.main.dateFormat,
   }
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    changePageIndex: args => dispatch({ type: 'SOLICITIONPAGE', payload: args })
+    changePageIndex: args => dispatch({ type: 'SOLICITIONPAGE', payload: args }),
+    changeFormData: args => dispatch({ type: "COLLECINFO", payload: args }),
   };
 };
 
