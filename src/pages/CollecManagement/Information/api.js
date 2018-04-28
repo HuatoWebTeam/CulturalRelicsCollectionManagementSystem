@@ -28,3 +28,8 @@ export const UpdateCollection = (params) => {
 export const GetStorehouseAndStorage = () => {
     return axios.post("/WarehouseManage/GetStorehouseAndStorage").then(res => res.data)
 }
+
+// 删除藏品
+export const DeleteCollection = (params) => {
+    return axios.post("/CollectionManage/DeleteCollection", params).then(res => res.data)
+}

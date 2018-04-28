@@ -4,7 +4,7 @@ import { CollectionImgUpload } from './api';
 import moment from "moment";
 import { connect } from 'react-redux';
 import { GetStorehouseAndStorage } from "./api";
-import { relicsYears, putInCategory, levelInfo, relicsState, howComplete } from '../../../assets/js/commonFun';
+import { relicsYears, relicsCategory, putInCategory, levelInfo, relicsState, howComplete } from '../../../assets/js/commonFun';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -15,6 +15,9 @@ class RelicsInfoDialogApp extends Component {
     previewImage: "", // 预览的图片url
     fileList: [], // 图片列表
     tankInfoList: [], //存台箱号
+    relicsCateList: [],
+    relicsYearsList: [],
+    relicsLevelList: [],
     updateStroRfid: null,
     reset: false,
     formData: {
@@ -29,14 +32,31 @@ class RelicsInfoDialogApp extends Component {
       date: moment(),
       relicsYears: 1,
       material: null,
-      category: null,
+      category: 1,
       weight: null,
       howComplete: 0,
       size: null
     }
   };
-  componentWillMount () {
+  componentWillMount() {
     const { state, formData } = this.props.componentState;
+    let relicsYears = JSON.parse(sessionStorage.getItem("relicsYears"));
+    let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
+    let relicsLevel = JSON.parse(sessionStorage.getItem("relicsLevel"));
+    this.setState(
+      {
+        relicsYearsList: relicsYears,
+        relicsCateList: relicsCateGory,
+        relicsLevelList: relicsLevel
+      },
+      () => {
+        const { relicsYearsList, relicsCateList, relicsLevelList } = this.state;
+        this.state.formData.relicsYears = Number(relicsYearsList[0].YearsId);
+        this.state.formData.category = Number(relicsCateList[0].CollTypeId);
+        this.state.formData.levelInfo = Number(relicsLevelList[0].GradeId);
+      }
+    );
+
     console.log(state);
     console.log(formData);
     // let params = {
@@ -44,9 +64,9 @@ class RelicsInfoDialogApp extends Component {
     //   PageIndex: 1,
     //   PageSize: 1000
     // }
-    
+
     GetStorehouseAndStorage().then(res => {
-      console.log("------");
+      // console.log("------");
       console.log(res);
       if (res.Data) {
         let data = [],
@@ -55,53 +75,52 @@ class RelicsInfoDialogApp extends Component {
           let oneData = {};
           oneData.value = item.StorehouseId;
           oneData.label = item.StorehouseName;
-          oneData.children = []
-          for(let childData of item.ListStorage) {
+          oneData.children = [];
+          for (let childData of item.ListStorage) {
             oneData.children.push({
               value: childData.StorageId,
               label: childData.StorageName
             });
           }
-          data.push(oneData)
+          data.push(oneData);
         }
-        console.log(data)
-        // if(this.state.updateStroRfid) {
-        //   this.state.formData.carton = this.state.updateStroRfid;
-        // } else {
-        //   this.state.formData.carton = data[0].key;
-        // }
+        // console.log(data)
         this.setState({ tankInfoList: data });
-        for(let item of data) {
-          if(item.children.length > 0) {
+        for (let item of data) {
+          if (item.children.length > 0) {
             this.state.formData.carton = [item.value, item.children[0].value];
             break;
           }
         }
-        
-        console.log(this.state.formData.carton);
+
+        console.log(this.state);
         if (state === "编辑藏品") {
-          let data = { 
-            category: formData.category, 
-            howComplete: Number(formData.howComplete), 
-            key: formData.key, 
-            levelInfo: Number(formData.levelInfo), 
-            date: moment(formData.libraryTime), 
-            material: formData.material, 
-            number: Number(formData.number), 
-            relicsName: formData.relicsName, 
-            relicsNum: formData.relicsNum, 
-            size: formData.size, 
-            relicsState: Number(formData.state), 
-            weight: formData.weight, 
-            relicsYears: Number(formData.years), 
-            type: Number(formData.type), 
-            carton: formData.carton, 
-            localtion: formData.localtion 
+          let data = {
+            category: Number(formData.category),
+            howComplete: Number(formData.howComplete),
+            key: formData.key,
+            levelInfo: Number(formData.levelInfo),
+            date: moment(formData.libraryTime),
+            material: formData.material,
+            number: Number(formData.number),
+            relicsName: formData.relicsName,
+            relicsNum: formData.relicsNum,
+            size: formData.size,
+            relicsState: Number(formData.state),
+            weight: formData.weight,
+            relicsYears: Number(formData.years),
+            type: Number(formData.type),
+            carton: formData.carton,
+            localtion: formData.localtion
           };
           // this.setState({
           //   updateStroRfid: Number(formData.carton)
           // })
-          let fielList = [{ uid: -1, name: "", status: "done", url: formData.relicsImg1 }, { uid: -2, name: "", status: "done", url: formData.relicsImg2 }, { uid: -3, name: "", status: "done", url: formData.relicsImg3 }];
+          let fielList = [
+            { uid: -1, name: "", status: "done", url: formData.relicsImg1 },
+            { uid: -2, name: "", status: "done", url: formData.relicsImg2 },
+            { uid: -3, name: "", status: "done", url: formData.relicsImg3 }
+          ];
           for (let i = 0; i < fielList.length; i++) {
             if (fielList[i].url === "") {
               fielList.splice(i, 1);
@@ -114,7 +133,13 @@ class RelicsInfoDialogApp extends Component {
         }
       }
     });
-    
+  }
+
+  componentWillUnmount() {
+    this.props.changeFormData({
+      state: null,
+      formDate: null
+    });
   }
   // 点击预览
   handlePreview = file => {
@@ -127,9 +152,9 @@ class RelicsInfoDialogApp extends Component {
   // 上传图片之前的钩子
   beforeUpload = file => {
     // console.log("before");
-    // console.log(file);
+    console.log(file);
     const isLt3M = file.size / 1024 / 1024 < 3;
-
+    console.log(isLt3M);
     if (!isLt3M) {
       message.error("请选择小于3M的图片!!!");
       return false;
@@ -166,7 +191,7 @@ class RelicsInfoDialogApp extends Component {
   handleChange = ({ fileList }) => {
     // console.log("change");
     // this.setState({ fileList });
-    // console.log(fileList);
+    console.log(fileList);
   };
   handleRemove = file => {
     //   console.log(file);
@@ -199,10 +224,12 @@ class RelicsInfoDialogApp extends Component {
       if (!err) {
         console.log(values);
         const { fileList } = this.state;
-        if(fileList.length > 0) {
+        if (fileList.length > 0) {
+          const { formData } = this.props.componentState;
           console.log(fileList[1] === undefined);
           const value = {
             ...values,
+            relicsState: formData.state || 0,
             date: values["date"].format("YYYY-MM-DD"),
             Collectionimg1: fileList[0] === undefined ? null : fileList[0].url,
             Collectionimg2: fileList[1] === undefined ? null : fileList[1].url,
@@ -210,28 +237,27 @@ class RelicsInfoDialogApp extends Component {
           };
           this.props.submit(value);
         } else {
-          message.error('请选择图片');
+          message.error("请选择图片");
         }
-        
       }
     });
   }
   // 验证
   handleNumber = (rule, value, callback) => {
-    if(!value) {
-      callback('请输入正确的数量');
-    } else if(value && Number(value) === 0) {
-      callback('请输入正确的数量');
+    if (!value) {
+      callback("请输入正确的数量");
+    } else if (value && Number(value) === 0) {
+      callback("请输入正确的数量");
     } else {
-      callback()
+      callback();
     }
-  }
+  };
   componentDidUpdate() {
     const { reset } = this.props;
     const { state } = this.props.componentState;
     console.log(this.props);
     if (reset === true) {
-      if(state !== '编辑藏品') {
+      if (state !== "编辑藏品") {
         this.setState(
           {
             fileList: [],
@@ -243,14 +269,22 @@ class RelicsInfoDialogApp extends Component {
           }
         );
       }
-      
     }
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
 
-    const { previewVisible, previewImage, fileList, formData, tankInfoList } = this.state;
+    const {
+      previewVisible,
+      previewImage,
+      fileList,
+      formData,
+      tankInfoList,
+      relicsYearsList,
+      relicsCateList,
+      relicsLevelList
+    } = this.state;
 
     const uploadButton = (
       <div>
@@ -314,11 +348,12 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择入库类型" }]
               })(
                 <Select>
-                  {
-                    putInCategory.map((item, idx) =>
-                      <Option value={item.key} key={item.key} > { item.value } </Option>
-                    )
-                  }
+                  {putInCategory.map((item, idx) => (
+                    <Option value={item.key} key={item.key}>
+                      {" "}
+                      {item.value}{" "}
+                    </Option>
+                  ))}
                 </Select>
               )}
             </FormItem>
@@ -330,10 +365,7 @@ class RelicsInfoDialogApp extends Component {
               {getFieldDecorator("carton", {
                 initialValue: formData.carton,
                 rules: [{ required: true, message: "请选择存储柜" }]
-              })(
-                <Cascader options={tankInfoList} placeholder='请选择' />
-              
-              )}
+              })(<Cascader options={tankInfoList} placeholder="请选择" />)}
             </FormItem>
             <FormItem
               className="form-width50"
@@ -345,7 +377,7 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请输入存储位置" }]
               })(<Input placeholder="请输入存储位置" />)}
             </FormItem>
-            
+
             <FormItem
               className="form-width50"
               label="文物编号:"
@@ -366,11 +398,14 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择分级信息" }]
               })(
                 <Select>
-                  {
-                    levelInfo.map((item, idx) =>
-                      <Option value={item.key} key={item.key} >{ item.value }</Option>
-                    )
-                  }
+                  {relicsLevelList.map((item, idx) => (
+                    <Option
+                      value={Number(item.GradeId)}
+                      key={Number(item.GradeId)}
+                    >
+                      {item.GradeName}
+                    </Option>
+                  ))}
                 </Select>
               )}
             </FormItem>
@@ -425,11 +460,14 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择文物年代" }]
               })(
                 <Select>
-                  {
-                    relicsYears.map((item, idx) =>
-                      <Option value={item.key} key={item.key} >{item.value}</Option>
-                    )
-                  }
+                  {relicsYearsList.map((item, idx) => (
+                    <Option
+                      value={Number(item.YearsId)}
+                      key={Number(item.YearsId)}
+                    >
+                      {item.YearsName}
+                    </Option>
+                  ))}
                 </Select>
               )}
             </FormItem>
@@ -452,7 +490,17 @@ class RelicsInfoDialogApp extends Component {
                 initialValue: formData.category,
                 rules: [{ required: true, message: "请选择文物类别" }]
               })(
-                <Input placeholder='请输入文物类别' />
+                <Select>
+                  {relicsCateList.map(item => (
+                    <Option
+                      value={Number(item.CollTypeId)}
+                      key={Number(item.CollTypeId)}
+                    >
+                      {item.CollTypeName}
+                    </Option>
+                  ))}
+                </Select>
+                // <Input placeholder='请输入文物类别' />
               )}
             </FormItem>
             <FormItem
@@ -461,7 +509,7 @@ class RelicsInfoDialogApp extends Component {
               labelCol={{ span: 8 }}
             >
               {getFieldDecorator("weight", {
-                initialValue:formData.weight,
+                initialValue: formData.weight,
                 rules: [{ required: true, message: "请输入文物重量" }]
               })(<Input placeholder="请输入文物重量" />)}
             </FormItem>
@@ -475,11 +523,11 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择完整程度" }]
               })(
                 <Select>
-                  {
-                    howComplete.map((item) => 
-                      <Option value={item.key} key={item.key} >{item.value}</Option>
-                    )
-                  }
+                  {howComplete.map(item => (
+                    <Option value={item.key} key={item.key}>
+                      {item.value}
+                    </Option>
+                  ))}
                 </Select>
               )}
             </FormItem>
@@ -510,6 +558,11 @@ const mapStateToProps = (state, ownProps) => {
     componentState: state.main.collectionInfoData
   };
 };
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changeFormData: args => dispatch({ type: "COLLECINFO", payload: args })
+  };
+};
 
 const RelicsInfoDialog = Form.create()(RelicsInfoDialogApp);
-export default connect(mapStateToProps)(RelicsInfoDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(RelicsInfoDialog);

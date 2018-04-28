@@ -12,7 +12,7 @@ class AddRelics extends Component {
   };
   componentWillMount() {
     this.setState({
-      pageTitle: this.props.title
+      pageTitle: this.props.title || '新增藏品'
     })
   }
   componentDidMount() {
