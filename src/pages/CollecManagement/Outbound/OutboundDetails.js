@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import { GetOutTheLibraryDetails } from './api';
-import { levelInfo, relicsYears } from "../../../assets/js/commonFun";
+import {
+  levelInfo,
+  relicsYears,
+  subStr,
+  outboundState
+} from "../../../assets/js/commonFun";
 import ApproveComponent from "../../Components/ApproveComponent";
+import CommonInfoTable from "../../Components/CommonInfoTable";
 
 class OutboundDetails extends Component {
   state = {
     paramsId: "",
     detailsList: [],
-    anthorityState: null
+    anthorityState: null,
+    showDeatil: null
   };
 
   componentWillMount() {
@@ -32,12 +39,22 @@ class OutboundDetails extends Component {
     };
     GetOutTheLibraryDetails(params).then(res => {
       console.log(res);
-      let list = res.Data.ListCollection;
+      let data = res.Data;
+      let list = data.ListCollection;
+      let detailInfo = {
+        Operator: data.Operator, // 操作人
+        TheLibraryPurpose: data.TheLibraryPurpose, // 入库详情
+        TheLibraryTime: subStr(data.TheLibraryTime), // 入库时间
+        TheLibraryNumber: data.TheLibraryNumber, // 入库数量
+        TheLibraryState: data.TheLibraryState, // 入库状态
+        TheLibraryOdd: data.TheLibraryOdd // 入库单号
+      };
       for (let item of list) {
         item.key = item.CollectionNumber;
       }
       this.setState({
-        detailsList: list
+        detailsList: list,
+        showDeatil: detailInfo
       });
     });
   }
@@ -47,108 +64,49 @@ class OutboundDetails extends Component {
     this.setState({ anthorityState: 0 });
   };
   render() {
-    const { detailsList, paramsId, anthorityState } = this.state;
-    const detailColumns = [
-      {
-        title: "文物编号",
-        dataIndex: "CollectionNumber",
-        key: "CollectionNumber"
-      },
-      {
-        title: "文物图片",
-        dataIndex: "Collectionimg1",
-        key: "Collectionimg1",
-        render: (text, index) => {
-          return (
-            <img
-              style={{ width: "55px", height: "55px" }}
-              src={text}
-              alt={index}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "CollectionName",
-        key: "CollectionName"
-      },
-      {
-        title: "数量",
-        dataIndex: "Number",
-        key: "Number"
-      },
-      // {
-      //   title: "分级信息",
-      //   dataIndex: "Grade",
-      //   key: "Grade",
-      //   render: text => {
-      //     for (let item of levelInfo) {
-      //       if (Number(text) === item.key) {
-      //         return <span>{item.value}</span>;
-      //         // break;
-      //       }
-      //     }
-      //   }
-      // },
-      {
-        title: "材质",
-        dataIndex: "MaterialQuality",
-        key: "MaterialQuality"
-      },
-      // {
-      //   title: "文物状态",
-      //   dataIndex: "CollectionState",
-      //   key: "CollectionState",
-      //   render: text => {
-      //     return (
-      //       <span
-      //         style={{
-      //           color:
-      //             text === "在库"
-      //               ? "#e15d05"
-      //               : text === "出库"
-      //                 ? "#3065bf"
-      //                 : "#666"
-      //         }}
-      //       >
-      //         {" "}
-      //         {text}{" "}
-      //       </span>
-      //     );
-      //   }
-      // }
-    ];
-    return (
-      <Row className="main-content">
+    const { detailsList, paramsId, anthorityState, showDeatil } = this.state;
+
+    return <Row className="main-content">
         <Col span={24} className="title">
           出库单详情
-          <div
-            className="go-back"
-            onClick={() => {
+          <div className="go-back" onClick={() => {
               this.props.history.goBack();
-            }}
-          />
+            }} />
         </Col>
         <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
-          <Table
-            pagination={false}
-            dataSource={detailsList}
-            columns={detailColumns}
-            bordered
-          />
+          {showDeatil && <Col span={24} className="number-details">
+              <Col span={5} className="text">
+                出库单号：{showDeatil.TheLibraryOdd}
+              </Col>
+              <Col span={17} className="text">
+                出库详情：{showDeatil.TheLibraryPurpose}
+              </Col>
+              <Col span={5} className="text">
+                出库时间：{showDeatil.TheLibraryTime}
+              </Col>
+              <Col span={17} className="text">
+                出库数量：{showDeatil.TheLibraryNumber}
+              </Col>
+              <Col span={5} className="text">
+                操作人：{showDeatil.Operator}
+              </Col>
+              <Col span={17} className="text">
+                出库状态：{outboundState.map((item) => {
+                  if(Number(showDeatil.TheLibraryState) === item.key) {
+                    return <span style={{ color: item.key === 0 ? "#da6214" : item.key === 1 ? "#3065bf" : "red" }}>
+                        {item.value}
+                      </span>;
+                  }
+                })
+                  }
+              </Col>
+            </Col>}
+          <CommonInfoTable data={detailsList} isPK={true} />
         </Col>
-        <Col span={24} >
-          {anthorityState === 1 && (
-            <ApproveComponent
-              paramsId={paramsId}
-              flag={3}
-              changeAnthorityState={this.changeAnthority}
-            />
-          )}
+        <Col span={24}>
+          <ApproveComponent paramsId={paramsId} anthorityState={anthorityState} flag={3} changeAnthorityState={this.changeAnthority} />
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 

@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, DatePicker, Table } from 'antd';
+import { Row, Col, Button, Input, DatePicker, Table, Form } from 'antd';
 import './index.less';
 // import moment from 'moment';
-import { RangePickerDefault, approveState } from '../../../assets/js/commonFun';
+import {
+  RangePickerDefault,
+  approveState,
+  subStr,
+  outboundState
+} from "../../../assets/js/commonFun";
 import { GetOutTheLibraryData } from './api';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -17,12 +23,18 @@ class ComplexGeneric extends Component {
     pageSize: 10,
     total: 0,
     date: [],
-    condition: ""
+    condition: "",
+    format: 'YYYY-MM-DD HH:mm:ss'
   };
 
   componentWillMount() {
+    let date = [
+      RangePickerDefault[0].hour(0).minute(0).second(0).format(),
+      RangePickerDefault[1].hour(23).minute(59).second(59).format(),
+    ]
     this.setState(
       {
+        date:date,
         pageIndex: this.props.pageIndex
       },
       () => {
@@ -32,12 +44,12 @@ class ComplexGeneric extends Component {
   }
 
   getOutboundList() {
-    const { pageIndex, pageSize, date, condition } = this.state;
+    const { pageIndex, pageSize, date, condition, format } = this.state;
     let params = {
       parameters: {
         Condition: condition,
-        StaDate: date[0],
-        EndDate: date[1],
+        StaDate: moment(date[0]).format(format),
+        EndDate: moment(date[1]).format(format),
         PageIndex: pageIndex,
         PageSize: pageSize
       }
@@ -56,7 +68,8 @@ class ComplexGeneric extends Component {
           operationPeople: item.Operator,
           ReceivingPermissions: item.ReceivingPermissions,
           DeniedPermission: item.DeniedPermission,
-          StepState: item.StepState
+          StepState: item.StepState,
+          TheLibraryState: item.TheLibraryState
         });
       }
       this.setState({
@@ -68,8 +81,10 @@ class ComplexGeneric extends Component {
 
   rangePickerChange = value => {
     // console.log(value);
-    let format = "YYYY-MM-DD";
-    let date = [value[0].format(format), value[1].format(format)];
+    let date = [
+      value[0].hour(0).minute(0).second(0).format(), 
+      value[1].hour(23).minute(59).second(59).format()
+      ];
     // console.log(date);
     this.setState({
       date: date
@@ -99,7 +114,7 @@ class ComplexGeneric extends Component {
 
 
   render() {
-    const { outboundData, pageIndex, pageSize, total } = this.state;
+    const { outboundData, pageIndex, pageSize, total, date } = this.state;
     const outboundColumns = [
       {
         title: "出库单号",
@@ -119,17 +134,30 @@ class ComplexGeneric extends Component {
       {
         title: "出库时间",
         dataIndex: "date",
-        key: "date"
+        key: "date",
+        render: (text) => {
+          return <span>{subStr(text)}</span>;
+        }
       },
       {
         title: '操作人',
         dataIndex: 'operationPeople',
         key: 'operationPeople'
       },
-      // {
-      //   title: '出库单状态',
-      //   dataIndex: ''
-      // }
+      {
+        title: '出库单状态',
+        dataIndex: 'TheLibraryState',
+        key: 'TheLibraryState',
+        render: (text) => {
+          for(let item of outboundState) {
+            if(Number(text) === item.key) {
+              return <span style={{ color: Number(text) === 0 ? "#da6214" : Number(text) === 1 ? "#3065bf" : "red" }}>
+                  {item.value}
+                </span>;
+            }
+          }
+        }
+      },
       {
         title: '审批状态',
         dataIndex: '',
@@ -161,56 +189,44 @@ class ComplexGeneric extends Component {
       
     ];
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           藏品出库信息
         </Col>
         <Col span={24} className="outbound-container">
           <Col span={24}>
-            <Col span={24}>
-              <Button
-                type="primary"
-                icon="plus"
-                onClick={() => {
-                  this.props.history.push("/App/NewOutbound");
-                }}
-              >
-                新建出库单
-              </Button>
+            <Col span={24} style={{paddingBottom: '20px'}} >
+              <Col span={3}>
+                {/* <Button type="primary" icon="plus" onClick={() => {
+                    this.props.history.push("/App/NewOutbound");
+                  }}>
+                  新建出库单
+                </Button> */}
+              </Col>
+              <Col span={21}>
+                <Form layout="inline" style={{ float: "right" }}>
+                  <Form.Item label="起止日期">
+                    <RangePicker 
+                    defaultValue={[moment(date[0]), moment(date[1])]} 
+                    format="YYYY-MM-DD" 
+                    onChange={this.rangePickerChange} />
+                  </Form.Item>
+                  <Form.Item>
+                    <Search enterButton 
+                    onSearch={this.handleSearch} 
+                    style={{ width: "240px" }}
+                    placeholder='请输入出库单号'
+                     />
+                  </Form.Item>
+                </Form>
+              </Col>
             </Col>
-            <Col span={24} style={{ padding: "20px 0" }}>
-              <RangePicker
-                defaultValue={RangePickerDefault}
-                format="YYYY-MM-DD"
-                onChange={this.rangePickerChange}
-              />
-              <Button type="primary" style={{ marginLeft: "20px" }}>
-                搜索
-              </Button>
-              <Search
-                enterButton
-                onSearch={this.handleSearch}
-                style={{ float: "right", width: "260px" }}
-              />
-            </Col>
             <Col span={24}>
-              <Table
-                pagination={{
-                  current: pageIndex,
-                  pageSize: pageSize,
-                  total: total,
-                  onChange: this.paginationChange
-                }}
-                columns={outboundColumns}
-                dataSource={outboundData}
-                bordered
-              />
+              <Table pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} columns={outboundColumns} dataSource={outboundData} bordered />
             </Col>
           </Col>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 // OUTBOUNDPAGE 

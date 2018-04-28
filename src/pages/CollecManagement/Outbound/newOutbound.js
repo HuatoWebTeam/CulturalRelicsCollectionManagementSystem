@@ -52,6 +52,7 @@ class NewOutboundApp extends Component {
             if (res.Msg === "操作成功!") {
               message.success("新建出库单成功");
               this.props.form.resetFields();
+              this.props.history.goBack();
               this.setState({
                 newOutboundData: []
               });
@@ -194,7 +195,7 @@ class NewOutboundApp extends Component {
                   initialValue: null,
                   rules: [{ required: true, message: "请输入出库用途" }]
                 })(
-                  <Input  />
+                  <Input placeholder='请输入出库用途' />
                 )}
               </FormItem>
               <FormItem
