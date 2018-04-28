@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, DatePicker } from 'antd';
 import './index.less';
+// 引入主模块
+import echarts from 'echarts';
+// 引入折线图
+import 'echarts/lib/chart/line';
+// 引入饼图
+import 'echarts/lib/chart/pie';
+// 引入提示框和标题组件
+import 'echarts/lib/component/tooltip';
+import 'echarts/lib/component/title';
+
 import ReactEcharts from 'echarts-for-react';
-import { RangePickerDefault } from '../../assets/js/commonFun';
+import { RangePickerDefault, subStr } from '../../assets/js/commonFun';
 import { GetStatisticalAnalysisData } from './api';
 const { RangePicker } = DatePicker;
 
@@ -31,6 +41,14 @@ class Statisical extends Component {
     })
   }
 
+
+  setChartsOption() {
+    let lineChart = echarts.init(document.getElementById("lineCharts"));
+    lineChart.setOption(this.getLineChartOption());
+    let pieChart = echarts.init(document.getElementById("pieCharts"));
+    pieChart.setOption(this.getPieChartOption());
+  }
+
   getChartsData () {
     const { date } =this.state; 
     let params = {
@@ -49,7 +67,7 @@ class Statisical extends Component {
         
         let chartsData = res.Data.ListIntermediateTable;
         for(let item of chartsData) {
-          chartsDate.push(item.DateTime);
+          chartsDate.push(subStr(item.DateTime));
         }
         for(let n = 0; n < 3; n++) {
           lineChart.splice(n, 1, {
@@ -77,6 +95,8 @@ class Statisical extends Component {
             OutNumber: res.Data.OutNumber,
             CallNumber: res.Data.CallNumber
           }
+        }, () =>{
+          this.setChartsOption();
         });
         
 
@@ -84,7 +104,8 @@ class Statisical extends Component {
   }
 
   getLineChartOption = () => {
-    const { chartsDate } = this.state;
+    const { chartsDate, data } = this.state;
+    console.log(chartsDate)
     const option = {
       title: {
         text: ""
@@ -116,7 +137,7 @@ class Statisical extends Component {
             // console.log(value)
             var str_before = value.split(' ')[0];
             var str_after = value.split(' ')[1];
-            return str_after + '\n' + str_before;
+            return  str_before;
             
           }
         }
@@ -185,7 +206,8 @@ class Statisical extends Component {
           </Col>
           <Col span={24}>
             <Col span={16} style={{ textAlign: "center" }}>
-              <ReactEcharts style={{ width: "100%", height: "400px" }} option={this.getLineChartOption()} />
+              <div id='lineCharts' style={{ width: "100%", height: "400px" }}  ></div>
+              {/* <ReactEcharts style={{ width: "100%", height: "400px" }} option={this.getLineChartOption()} /> */}
               <Col span={24} style={{ height: "30px", lineHeight: "30px", background: "#e8eef8" }}>
                 <Col span={8}>入库总数： {allData.StorageNumber}件</Col>
                 <Col span={8}>出库总数： {allData.OutNumber}件</Col>
@@ -194,7 +216,8 @@ class Statisical extends Component {
             </Col>
             <Col span={8} style={{ padding: "40px 20px 0 20px" }}>
               <Col span={24} style={{ height: "390px", background: "#e8eef8" }}>
-                <ReactEcharts style={{ width: "100%", height: "350px" }} option={this.getPieChartOption()} />
+                <div id='pieCharts' style={{ width: '100%', height: '350px' }} />
+                {/* <ReactEcharts style={{ width: "100%", height: "350px" }} option={this.getPieChartOption()} /> */}
               </Col>
             </Col>
           </Col>
