@@ -29,10 +29,11 @@ export let initialState = {
         buttonText: '默认',
         exhibitionPage: 1,
         repairPage: 1,
-        collectionInfoData:{
-            state: '新增藏品',
+        collectionInfoData:{      // 信息登记 编辑
+            state: null,
             formData: []
         },
+        dateFormat: 'YYYY-MM-DD',     // 格式化时间格式
         collecInfoPage: 1,
         billPage: 1,
         putInPage: 1,
