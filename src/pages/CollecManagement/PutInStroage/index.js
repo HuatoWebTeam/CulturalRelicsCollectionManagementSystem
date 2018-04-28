@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Table } from 'antd';
+import { Row, Col, Table, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
 import { GetEntryTheLibraryData } from './api';
 import { connect } from 'react-redux';
-import { approveState } from "../../../assets/js/commonFun";
+import { approveState, subStr, putinState } from "../../../assets/js/commonFun";
 
 class ComplexGeneric extends Component {
   state = {
@@ -35,11 +35,14 @@ class ComplexGeneric extends Component {
       }
     };
     console.log(params);
+    let UserName = JSON.parse(sessionStorage.getItem("UserInfo")).UserName;
     GetEntryTheLibraryData(params).then(res => {
       console.log(res);
       let data = res.Data;
       for (let item of data) {
         item.key = item.TheLibraryOdd;
+        item.showDeleteBtn = UserName === item.Operator;
+        // item.editable = Number(item.StepState) === 4 ? Number(FlowState)
       }
       this.setState({
         putinData: data,
@@ -78,7 +81,10 @@ class ComplexGeneric extends Component {
       {
         title: "入库时间",
         dataIndex: "TheLibraryTime",
-        key: "TheLibraryTime"
+        key: "TheLibraryTime",
+        render:(text) => {
+          return <span>{subStr(text)}</span>;
+        }
       },
       {
         title: "入库数量",
@@ -89,6 +95,35 @@ class ComplexGeneric extends Component {
         title: "操作人",
         dataIndex: "Operator",
         key: "Operator"
+      },
+      {
+        title: '入库单状态',
+        dataIndex: 'TheLibraryState',
+        key: 'TheLibraryState',
+        render: (text) => {
+          for(let item of putinState) {
+            if(Number(text) === item.key) {
+              return <span style={{
+                color:
+                  Number(text) === 0
+                    ? "#da6214"
+                    : (Number(text) === 1
+                      ? "#3065bf"
+                      : "red")
+              }} >{item.value}</span>
+            }
+          }
+          return (
+            <span style={{
+                color:
+                  Number(text) === 0
+                    ? "#da6214"
+                    : (Number(text) === 1
+                      ? "#3065bf"
+                      : "#666")
+              }} >{Number(text) === 0 ? '待入库' : (Number(text) === 1 ? '入库完成' : '入库异常')}</span>
+          )
+        }
       },
       {
         title: "审批状态",
@@ -119,26 +154,30 @@ class ComplexGeneric extends Component {
         }
       },
     ];
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           藏品入库信息
         </Col>
         <Col span={24} className="putin-stroage-content">
-          <Table
-            pagination={{
-              current: pageIndex,
-              pageSize: pageSize,
-              total: total,
-              onChange: this.paginationChange
-            }}
-            columns={putinColumns}
-            dataSource={putinData}
-            bordered
-          />
+          <Col span={24} style={{ paddingBottom: '20px' }} >
+            <Button 
+              type="primary" icon='plus'
+              onClick={() => {
+                this.props.history.push("/App/NewPutInStroage");
+              }} >
+              新增入库
+            </Button>
+          </Col>
+          <Col span={24} >
+            <Table 
+              pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} 
+              columns={putinColumns} 
+              dataSource={putinData} bordered 
+            />
+          </Col>
+          
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 

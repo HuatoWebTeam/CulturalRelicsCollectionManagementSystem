@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Row, Col, Table } from 'antd';
 import { GetOutTheLibraryDetails } from "../Outbound/api";
-import { relicsYears } from "../../../assets/js/commonFun";
+import { relicsYears, subStr, putinState } from "../../../assets/js/commonFun";
 import ApproveComponent from "../../Components/ApproveComponent";
+import CommonInfoTable from "../../Components/CommonInfoTable";
 
 class PutInDetails extends Component {
   state = {
     paramsId: null,
     detailsList: [],
-    anthorityState: null
+    anthorityState: null,
+    showDeatil: null,
   };
 
   componentWillMount() {
@@ -28,11 +30,20 @@ class PutInDetails extends Component {
     let params = { parameters: { Condition: this.state.paramsId } };
     GetOutTheLibraryDetails(params).then(res => {
       console.log(res);
-      let list = res.Data.ListCollection;
+      let data = res.Data;
+      let list = data.ListCollection;
+      let detailInfo = {
+        Operator: data.Operator,         // 操作人
+        TheLibraryPurpose: data.TheLibraryPurpose,    // 入库详情
+        TheLibraryTime: subStr(data.TheLibraryTime),  // 入库时间
+        TheLibraryNumber: data.TheLibraryNumber,      // 入库数量
+        TheLibraryState: data.TheLibraryState,        // 入库状态
+        TheLibraryOdd: data.TheLibraryOdd,            // 入库单号
+      }
       for (let item of list) {
         item.key = item.CollectionNumber;
       }
-      this.setState({ detailsList: list });
+      this.setState({ detailsList: list, showDeatil: detailInfo });
     });
   }
   // 改变审批条件状态
@@ -42,76 +53,56 @@ class PutInDetails extends Component {
   };
 
   render() {
-    const { detailsList, paramsId, anthorityState } = this.state;
-    const columns = [
-      {
-        title: "文物编号",
-        dataIndex: "CollectionNumber",
-        key: "CollectionNumber"
-      },
-      {
-        title: "文物图片",
-        dataIndex: "Collectionimg1",
-        key: "Collectionimg1",
-        render: text => {
-          return (
-            <img
-              src={text}
-              alt={text}
-              style={{ width: "55px", height: "55px" }}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "CollectionName",
-        key: "CollectionName"
-      },
-      {
-        title: "文物年代",
-        dataIndex: "CollectionYears",
-        key: "CollectionYears",
-        render: text => {
-          for (let item of relicsYears) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: '数量',
-        dataIndex: 'Number',
-        key: 'Number'
-      },
-      {
-        title: "文物材质",
-        dataIndex: "MaterialQuality",
-        key: "MaterialQuality"
-      }
-    ];
+    const { detailsList, paramsId, anthorityState, showDeatil } = this.state;
+    console.log(detailsList)
     return <Row className="main-content">
         <Col span={24} className="title">
           藏品入库详情
-          <div
-            className="go-back"
-            onClick={() => {
+          <div className="go-back" onClick={() => {
               this.props.history.goBack();
-            }}
-          />
+            }} />
         </Col>
         <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
-          <Table dataSource={detailsList} columns={columns} pagination={false} bordered />
+          {showDeatil && <Col span={24} className="number-details">
+              <Col span={5} className="text">
+                入库单号：{showDeatil.TheLibraryOdd}
+              </Col>
+              <Col span={17} className="text">
+                入库详情：{showDeatil.TheLibraryPurpose}
+              </Col>
+              <Col span={5} className="text">
+                入库时间：{showDeatil.TheLibraryTime}
+              </Col>
+              <Col span={17} className="text">
+                入库数量：{showDeatil.TheLibraryNumber}
+              </Col>
+              <Col span={5} className="text">
+                操作人：{showDeatil.Operator}
+              </Col>
+              <Col span={17} className="text">
+                入库状态：{putinState.map((item) => {
+                      if(Number(showDeatil.TheLibraryState) === item.key) {
+                        return <span
+                            style={{
+                              color:
+                                item.key === 0
+                                  ? "#da6214"
+                                  : item.key === 1
+                                    ? "#3065bf"
+                                    : "red"
+                            }}
+                          >
+                            {item.value}
+                          </span>;
+                      }
+                    })
+                  }
+              </Col>
+            </Col>}
+          <CommonInfoTable data={detailsList} isPK={true} />
         </Col>
         <Col span={24}>
-          {anthorityState === 1 && (
-            <ApproveComponent
-              paramsId={paramsId}
-              flag={2}
-              changeAnthorityState={this.changeAnthority}
-            />
-          )}
+          <ApproveComponent paramsId={paramsId} anthorityState={anthorityState} flag={2} changeAnthorityState={this.changeAnthority} />
         </Col>
       </Row>;
   }
