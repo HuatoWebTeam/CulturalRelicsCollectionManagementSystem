@@ -1,11 +1,19 @@
-import React, { Component } from 'react';
-import { Row, Col, Table } from 'antd';
+import React, { Component } from "react";
+import { Row, Col, Table } from "antd";
 // import { relicDetails } from './data';
-import './index.less';
-import { ExhibitionDetailsApi } from './api';
-import { levelInfo, relicsYears } from '../../assets/js/commonFun';
-import ApproveComponent from '../Components/ApproveComponent';
-
+import "./index.less";
+import { ExhibitionDetailsApi } from "./api";
+import {
+  levelInfo,
+  relicsYears,
+  exhibiState,
+  relicsState,
+  howComplete,
+  exhibitionType,
+  subStr
+} from "../../assets/js/commonFun";
+import ApproveComponent from "../Components/ApproveComponent";
+import CommonInfoTable from "../Components/CommonInfoTable";
 
 class ExhibitionDetails extends Component {
   state = {
@@ -14,7 +22,8 @@ class ExhibitionDetails extends Component {
     pageSize: 1000,
     total: 0,
     data: [],
-    anthorityState: null
+    anthorityState: null,
+    detailInfo: null
   };
 
   componentWillMount() {
@@ -29,7 +38,7 @@ class ExhibitionDetails extends Component {
     let state = sessionStorage.getItem("anthoityState");
     // console.log(state);
     this.setState({
-        anthorityState: Number(state)
+      anthorityState: Number(state)
     });
   }
 
@@ -44,23 +53,24 @@ class ExhibitionDetails extends Component {
       console.log(res);
       if (res.length > 0) {
         this.setState({ total: res[0].Count });
-        let dataSource = [];
-        for (let item of res) {
-          dataSource.push({
-            key: item.Collection_Number,
-            serialNum: item.Collection_Number,
-            img: item.Collection_img,
-            name: item.Collection_Name,
-            number: item.Number,
-            levelInfo: item.Grade,
-            material: item.MaterialQuality,
-            years: item.Collection_Years,
-            howComplete: item.Integrity,
-            relicState: item.Collection_State,
-            exhibitionState: item.ExhibitionState
-          });
-          this.setState({ data: dataSource });
+        let dataSource = {
+          Exhibition_Theme: res[0].Exhibition_Theme, // 展览主题
+          Exhibition_Type: res[0].Exhibition_Type, // 展览类型
+          Exhibition_Range:
+            subStr(res[0].StartTine) + " ~ " + subStr(res[0].EndTime), // 展览起止时间
+          Exhibition_Contact: res[0].Exhibition_Contact, // 联系方式
+          Person_liable: res[0].Person_liable, // 负责人
+          Exhibition_Place: res[0].Exhibition_Place, // 展览地点
+          Exhibition_Cost: res[0].Exhibition_Cost, // 外展经费
+          CreationTime: subStr(res[0].CreationTime), // 创建时间
+          ReturnTime: subStr(res[0].ReturnTime), // 归还时间
+          Exhibition_State: res[0].Exhibition_State // 展览状态
+        };
+        let listData = res[0].exhibit;
+        for (let item of listData) {
+          item.key = item.Collection_Number;
         }
+        this.setState({ data: listData, detailInfo: dataSource });
       } else {
         this.setState({ total: 0 });
       }
@@ -77,127 +87,11 @@ class ExhibitionDetails extends Component {
   changeAnthority = () => {
     sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
-  }
+  };
 
   render() {
-    const { total, pageSize, pageIndex, data, id, anthorityState } = this.state;
-    const relicDetails = [
-      {
-        title: "文物编号",
-        dataIndex: "serialNum",
-        key: "serialNum"
-      },
-      {
-        title: "文物图片",
-        dataIndex: "img",
-        key: "img",
-        render: (text, record, index) => {
-          // console.log(text,record, index)
-          return (
-            <img
-              style={{ width: "55px", height: "55px" }}
-              src={text}
-              alt={index}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "name",
-        key: "name"
-      },
-      {
-        title: "数量",
-        dataIndex: "number",
-        key: "number"
-      },
-      {
-        title: "分级信息",
-        dataIndex: "levelInfo",
-        key: "lavelInfo",
-        render: text => {
-          // console.log(text);
-          for (let item of levelInfo) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "材质",
-        dataIndex: "material",
-        key: "material"
-      },
-      {
-        title: "年代",
-        dataIndex: "years",
-        key: "years",
-        render: text => {
-          // console.log(text);
-          for (let item of relicsYears) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "完整程度",
-        dataIndex: "howComplete",
-        key: "howComplete",
-        render: text => {
-          if (text === 0) {
-            return <span>完整</span>;
-          } else if (text === 1) {
-            return <span>破损</span>;
-          }
-        }
-      },
-      {
-        title: "文物状态",
-        dataIndex: "relicState",
-        key: "relicState",
-        render: text => {
-          return (
-            <span
-              style={{
-                color:
-                  text === "在库"
-                    ? "#da6214"
-                    : text === "出库"
-                      ? "#3065bf"
-                      : "#666"
-              }}
-            >
-              {text}
-            </span>
-          );
-        }
-      },
-      {
-        title: "展览状态",
-        dataIndex: "exhibitionState",
-        key: "exhibitionState",
-        render: text => {
-          return (
-            <span
-              style={{
-                color:
-                  text === 0
-                    ? "#da6214"
-                    : text === 1
-                      ? "#3065bf"
-                      : "#666"
-              }}
-            >
-              {text === 0 ? '待展览' : (text === 1 ? '展览完成' : '展览异常')}
-            </span>
-          );
-        }
-      }
-    ];
+    const { data, id, anthorityState, howComplete, detailInfo } = this.state;
+
     return (
       <Row className="exhibition-container main-content">
         <Col className="title" span={24}>
@@ -214,20 +108,60 @@ class ExhibitionDetails extends Component {
           className="exhibition-content"
           style={{ marginTop: "20px" }}
         >
-          <Table
-            pagination={false}
-            bordered
-            columns={relicDetails}
-            dataSource={data}
-          />
+          {detailInfo && (
+            <Col span={24} className="number-details">
+              <Col className="text" span={7}>
+                展览主题：{detailInfo.Exhibition_Theme}
+              </Col>
+              <Col className="text" span={7}>
+                展览类型：{exhibitionType.map(item => {
+                  if (Number(detailInfo.Exhibition_Type) === item.key) {
+                    return item.value;
+                  }
+                })}
+              </Col>
+              <Col className="text" span={7}>
+                展览日期：{detailInfo.Exhibition_Range}
+              </Col>
+              <Col className="text" span={7}>
+                负责人：{detailInfo.Person_liable}
+              </Col>
+              <Col className="text" span={7}>
+                创建时间：{detailInfo.CreationTime}
+              </Col>
+              <Col className="text" span={7}>
+                归还时间：{detailInfo.ReturnTime}
+              </Col>
+              {Number(detailInfo.Exhibition_Type) === 1 && (
+                <Col span={24}>
+                  <Col className="text" span={7}>
+                    外展地点： {detailInfo.Exhibition_Place}
+                  </Col>
+                  <Col className="text" span={7}>
+                    联系方式： {detailInfo.Exhibition_Contact}
+                  </Col>
+                  <Col className="text" span={7}>
+                    外展经费： {detailInfo.Exhibition_Cost}
+                  </Col>
+                </Col>
+              )}
+              <Col className="text" span={7}>
+                展览状态：{exhibiState.map(item => {
+                  if (Number(detailInfo.Exhibition_State) === item.key) {
+                    return item.value;
+                  }
+                })}
+              </Col>
+            </Col>
+          )}
+          <CommonInfoTable data={data} />
         </Col>
-        {anthorityState === 1 && (
-          <ApproveComponent
-            paramsId={id}
-            flag={5}
-            changeAnthorityState={this.changeAnthority}
-          />
-        )}
+        <ApproveComponent
+          paramsId={id}
+          anthorityState={anthorityState}
+          flag={5}
+          changeAnthorityState={this.changeAnthority}
+        />
       </Row>
     );
   }

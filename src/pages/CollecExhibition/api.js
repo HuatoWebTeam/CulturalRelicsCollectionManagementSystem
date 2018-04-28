@@ -17,3 +17,9 @@ export const ExDataAddApp = (params) => {
     return axios.post("/Exhibition/ExDetaAddApp", params).then(res => res.data );
 }
 
+
+// 编辑展览单
+export const ExUpdate = (params) => {
+    return axios.post("Exhibition/ExUpdate", params).then(res => res.data)
+}
+
