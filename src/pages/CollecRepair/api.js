@@ -15,3 +15,8 @@ export const RepairAddApi =  (params) => {
 export const RepDatall = (params) => {
     return axios.post("/Repair/RepDatall", params).then(res => res.data)
 }
+
+//  编辑
+export const RepairUpdate = (params) => {
+    axios.post("Repair/RepairUpdate", params).then(res => res.data)
+}
