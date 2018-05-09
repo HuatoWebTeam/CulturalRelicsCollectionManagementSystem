@@ -225,7 +225,7 @@ class AddSilicitionApp extends Component {
   };
   // 禁止选择时间
   disabledDate = current => {
-    return current && current < moment().startOf("day");
+    return current && current > moment().endOf("day");
   };
   // 验证
   handleNumber = (rule, value, callback) => {
