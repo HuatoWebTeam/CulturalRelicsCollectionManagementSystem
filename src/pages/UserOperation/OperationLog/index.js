@@ -1,30 +1,35 @@
 import React, { Component } from 'react';
-import { Row, Col, DatePicker, Button, Table } from 'antd';
+import { Row, Col, DatePicker, Button, Table, Input } from 'antd';
 // import moment from 'moment';
 import { RangePickerDefault } from '../../../assets/js/commonFun';
 import { LoginfoDesc } from './api'; 
+import moment from 'moment';
 import { connect } from 'react-redux';
 const { RangePicker } = DatePicker;
 
 class UserOperation extends Component {
   state = {
     operationLogList: [],
-    formmat: "YYYY-MM-DD",
+    formmat: "YYYY-MM-DD HH:mm:ss",
     defaultValue: [],
     pageIndex: 1,
     pageSize: 10,
-    total: 0
+    total: 0,
+    searchName: ''
   };
 
   componentWillMount() {
     const { formmat } = this.state;
+    let userName = JSON.parse(sessionStorage.getItem("UserInfo")).UserName;
+    console.log(userName)
     let date = [
-      RangePickerDefault[0].format(formmat),
-      RangePickerDefault[1].format(formmat)
+      RangePickerDefault[0].hour(0).minute(0).second(0).format(formmat),
+      RangePickerDefault[1].hour(23).minute(59).second(59).format(formmat)
     ];
     this.setState({
       defaultValue: date,
       pageIndex: this.props.pageIndex,
+      searchName: userName
     }, () => {
       this.getOperationList();
     });
@@ -32,12 +37,13 @@ class UserOperation extends Component {
 
   //获取数据
   getOperationList() {
-    const { defaultValue, pageIndex, pageSize } = this.state;
+    const { defaultValue, pageIndex, pageSize, searchName } = this.state;
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
       beginTime: defaultValue[0],
-      endTime: defaultValue[1]
+      endTime: defaultValue[1],
+      name: searchName
     };
     LoginfoDesc(params).then(res => {
       console.log(res);
@@ -64,13 +70,18 @@ class UserOperation extends Component {
     const { formmat } = this.state;
     this.setState(
       {
-        defaultValue: [date[0].format(formmat), date[1].format(formmat)]
+        defaultValue: [
+          date[0].hour(0).minute(0).second(0).format(formmat), 
+          date[1].hour(23).minute(59).second(59).format(formmat)
+        ]
       },
       () => {
         this.getOperationList();
       }
     );
   };
+
+  // 
 
   // 分页改变
   paginationChange = (page) => {
@@ -81,11 +92,26 @@ class UserOperation extends Component {
       this.props.changePageIndex(page)
     })
   }
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current > moment().endOf("day");
+  };
+
+  // 搜索输入用户名
+  handleInputChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      searchName: e.target.value
+    })
+  }
+
+  searchButton = () => {
+    this.getOperationList();
+  }
 
   render() {
     const {
       operationLogList,
-      formmat,
       pageIndex,
       pageSize,
       total
@@ -130,10 +156,11 @@ class UserOperation extends Component {
           <Col span={24} style={{ paddingBottom: "20px" }}>
             <RangePicker
               defaultValue={RangePickerDefault}
-              format={formmat}
+              format={'YYYY-MM-DD'}
               onChange={this.rangePickerChange}
+              disabledDate={this.disabledDate}
             />
-            <Button type="primary" style={{ marginLeft: "20px" }}>
+            <Button onClick={this.searchButton} type="primary" style={{ marginLeft: "20px" }}>
               搜索
             </Button>
           </Col>
