@@ -13,6 +13,7 @@ class ApproveComponent extends Component {
     currentState: null, // 当前步骤
     approveRemark: [],  // 审批备注
     isShowFlow: false,  // 是否显示流程
+    buttonLoading: false,  // 提交按钮 loading 状态
   };
 
   componentWillMount() {
@@ -65,6 +66,9 @@ class ApproveComponent extends Component {
   };
   // 提交审批
   approveSubmit = () => {
+    this.setState({
+      buttonLoading: true
+    })
     const { radioValue, approveText } = this.state;
     console.log(radioValue, approveText, this.props.flag);
     let params = {
@@ -76,6 +80,9 @@ class ApproveComponent extends Component {
     if(radioValue === 0) {
       // 0是同意  1是拒绝
       ApprovalPassed(params).then(res => {
+        this.setState({
+          buttonLoading: false
+        })
         console.log(res)
         if (res === true) {
           message.success('操作成功！');
@@ -85,10 +92,12 @@ class ApproveComponent extends Component {
         } else {
           message.error("操作失败");
         }
+
       })
     } else {
       ApprovalDenied(params).then(res => {
         console.log(res)
+        this.setState({ buttonLoading: false });
         if (res === true) {
           message.success('操作成功！');
           this.getApproveState();
@@ -119,12 +128,29 @@ class ApproveComponent extends Component {
               </Steps>
               <Col span={24} style={{ paddingTop: "40px" }}>
                 <Col span={24} style={{ paddingBottom: "20px" }}>
-                  审批信息
+                  <Col span={15}>
+                    <Col span={8} >审批信息</Col>
+
+                    <Col span={16} >备注</Col>
+                  </Col>
                 </Col>
                 <Col span={24}>
                   {approveRemark.map(item => <Col span={24} key={item.Id}>
                       <Col span={15}>
-                        {item.UserCode + "  " + item.Description}
+                        <Col span={16}>
+                          <span>
+                            {item.Role +" " +item.UserCode +"  " }  
+                          </span> 
+                          <span style={{ color: 
+                            item.StatusOfApproval === "同意"
+                              ? "#3065bf"
+                              : "red "
+                          } } >
+                            {item.StatusOfApproval + " " }
+                          </span>
+                          <span>{this.props.oddName}</span>
+                        </Col>
+                        <Col span={8}>{item.Description}</Col>
                       </Col>
                       <Col style={{ color: "#666" }} span={9}>
                         {item.AddTime}
@@ -149,7 +175,7 @@ class ApproveComponent extends Component {
                   <TextArea onChange={this.areaTextChange} value={approveText} style={{ width: "620px", minHeight: "100px" }} />
                 </Col>
                 <Col>
-                  <Button type="primary" onClick={this.approveSubmit}>
+                  <Button loading={this.state.buttonLoading} type="primary" onClick={this.approveSubmit}>
                     提交
                   </Button>
                 </Col>
