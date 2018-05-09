@@ -8,7 +8,8 @@ import { connect } from 'react-redux';
 class AddRelics extends Component {
   state = {
     reset: false,
-    pageTitle: ''
+    pageTitle: '',
+    loading: false
   };
   componentWillMount() {
     this.setState({
@@ -20,12 +21,13 @@ class AddRelics extends Component {
   }
   formSubmit = (value) => {
     console.log(value);
+      this.setState({ loading: true });
       let params = {
         collection: {
           CollectionName: value.relicsName,
           ReservoirType: value.type,
           StorageId: value.carton[1],
-          CollectionNumber: value.relicsNum,
+          // CollectionNumber: value.relicsNum,
           Grade: value.levelInfo,
           CollectionYears: Number(value.relicsYears),
           Number: Number(value.number),
@@ -48,6 +50,7 @@ class AddRelics extends Component {
       if(pageTitle === '新增藏品') {
         InsertCollection(params).then(res => {
           console.log(res);
+          this.setState({ loading: false });
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
             _this.setState({ reset: true });
@@ -61,6 +64,7 @@ class AddRelics extends Component {
       } else {
         UpdateCollection(params).then(res => {
           console.log(res);
+          this.setState({ loading: false });
           if (res.Msg === "操作成功!") {
             message.success("操作成功");
             _this.setState({ reset: true });
@@ -76,14 +80,14 @@ class AddRelics extends Component {
   }
 
   render() {
-    const { reset, pageTitle } = this.state;
+    const { reset, pageTitle, loading } = this.state;
     return (
       <Row className="main-content">
         <Col span={24} className="title">
           {pageTitle} <div className='go-back' onClick={() => { this.props.history.goBack() }} ></div>
         </Col>
         <Col span={24} style={{ padding: "40px 100px" }} className="add-relics">
-          <RelicsInfoDialog onReset={() => { this.setState({reset: false}) }} reset={reset} submit={this.formSubmit} ref='relicsInfo' />
+          <RelicsInfoDialog loading={loading} onReset={() => { this.setState({reset: false}) }} reset={reset} submit={this.formSubmit} ref='relicsInfo' />
         </Col>
       </Row>
     );

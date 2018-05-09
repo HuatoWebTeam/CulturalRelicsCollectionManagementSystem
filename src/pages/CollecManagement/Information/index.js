@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Row, Col, Button, Input, Table, Form, DatePicker, Select, message } from "antd";
+import { Row, Col, Button, Input, Table, Form, DatePicker, Select, message, Modal } from "antd";
 import { GetCollectionData, DeleteCollection } from "./api";
 import { levelInfo, relicsYears, howComplete, relicsState, subStr } from "../../../assets/js/commonFun";
 // import RelicsInfoDialog from './component';
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 const Search = Input.Search;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
+const confirm = Modal.confirm;
 
 class ComplexGeneric extends Component {
   state = {
@@ -27,8 +28,17 @@ class ComplexGeneric extends Component {
 
   componentWillMount() {
     const { dateFormat } = this.props;
-    let startDate = moment().subtract(6, "days").hour(0).minute(0).second(0).format();
-    let endDate = moment().hour(23).minute(59).second(59).format();
+    let startDate = moment()
+      .subtract(6, "days")
+      .hour(0)
+      .minute(0)
+      .second(0)
+      .format();
+    let endDate = moment()
+      .hour(23)
+      .minute(59)
+      .second(59)
+      .format();
     let relicsYears = JSON.parse(sessionStorage.getItem("relicsYears"));
     let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
     this.setState(
@@ -82,7 +92,7 @@ class ComplexGeneric extends Component {
             years: item.CollectionYears,
             yearsName: item.YearsName,
             howComplete: item.Integrity,
-            state: item.CollectionState,
+            CollStateName: item.CollStateName,
             category: item.Category,
             categoryName: item.CategoryName,
             size: item.Size,
@@ -131,20 +141,7 @@ class ComplexGeneric extends Component {
     );
   };
 
-  // 删除
-  deleteColl = (text) => {
-    let params = { parameters: { Condition: text.relicsNum } };
-     
-    DeleteCollection(params).then(res => {
-      console.log(res);
-      if(res.Msg === "操作成功!") {
-        message.success('删除成功');
-        this.getColletionList();
-      } else {
-        message.error('删除失败')
-      }
-    })
-  }
+
 
   // 选择shijian
   changDate = date => {
@@ -161,6 +158,32 @@ class ComplexGeneric extends Component {
           .second(59)
           .format()
       ]
+    });
+  };
+
+  // 对话框
+  showConfirm = text => {
+    let _this = this;
+    confirm({
+      title: "确定删除?",
+      content: "",
+      onOk() {
+        // console.log(text);
+        let params = { parameters: { Condition: text.relicsNum } };
+
+        DeleteCollection(params).then(res => {
+          console.log(res);
+          if (res.Msg === "操作成功!") {
+            message.success("删除成功");
+            _this.getColletionList();
+          } else {
+            message.error("删除失败");
+          }
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
     });
   };
   render() {
@@ -217,7 +240,7 @@ class ComplexGeneric extends Component {
       },
       {
         title: "分级信息",
-        dataIndex: "levelName",
+        dataIndex: "levelName"
       },
       {
         title: "材质",
@@ -226,7 +249,7 @@ class ComplexGeneric extends Component {
       },
       {
         title: "年代",
-        dataIndex: "yearsName",
+        dataIndex: "yearsName"
       },
       {
         title: "完整程度",
@@ -242,7 +265,7 @@ class ComplexGeneric extends Component {
       },
       {
         title: "文物类别",
-        dataIndex: "categoryName",
+        dataIndex: "categoryName"
       },
       {
         title: "尺寸",
@@ -257,42 +280,37 @@ class ComplexGeneric extends Component {
       },
       {
         title: "文物状态",
-        dataIndex: "state",
-        key: "state",
-        render: text => {
-          for (let item of relicsState) {
-            if (Number(text) === item.key) {
-              return (
-                <span style={{ color: Number(text) === 5 ? "red" : "#666" }}>
-                  {item.value}
-                </span>
-              );
-            }
-          }
-        }
+        dataIndex: "CollStateName",
+        key: "CollStateName",
       },
       {
         title: "编辑",
         dataIndex: "",
         key: "operation",
         render: (text, record) => {
-          return <span>
-              <Button type="primary" onClick={() => {
+          return (
+            <span>
+              <Button
+                type="button"
+                onClick={() => {
                   this.props.changeFormData({
                     state: "编辑藏品",
                     formData: record
                   });
                   this.props.history.push("/App/AddRelics");
-                }}>
+                }}
+              >
                 编辑
               </Button>
-              <Button type='primary'
-                style={{ marginLeft: '10px' }}
-                onClick={this.deleteColl.bind(this, record)}
-               >
+              <Button
+                type="button"
+                style={{ marginLeft: "10px", border: 'none' }}
+                onClick={this.showConfirm.bind(this, record)}
+              >
                 删除
               </Button>
-            </span>;
+            </span>
+          );
         }
       }
     ];

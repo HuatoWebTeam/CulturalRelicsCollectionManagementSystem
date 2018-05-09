@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Upload, Cascader, Select, Button, message, Modal, Icon, DatePicker } from 'antd';
+import { Row, Col, Form, Input, InputNumber, Upload, Cascader, Select, Button, message, Modal, Icon, DatePicker } from 'antd';
 import { CollectionImgUpload } from './api';
 import moment from "moment";
 import { connect } from 'react-redux';
@@ -104,7 +104,7 @@ class RelicsInfoDialogApp extends Component {
             material: formData.material,
             number: Number(formData.number),
             relicsName: formData.relicsName,
-            relicsNum: formData.relicsNum,
+            // relicsNum: formData.relicsNum,
             size: formData.size,
             relicsState: Number(formData.state),
             weight: formData.weight,
@@ -134,6 +134,11 @@ class RelicsInfoDialogApp extends Component {
       }
     });
   }
+
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current < moment().startOf("day");
+  };
 
   componentWillUnmount() {
     this.props.changeFormData({
@@ -246,7 +251,7 @@ class RelicsInfoDialogApp extends Component {
   handleNumber = (rule, value, callback) => {
     if (!value) {
       callback("请输入正确的数量");
-    } else if (value && Number(value) === 0) {
+    } else if (value && Number(value) <= 0) {
       callback("请输入正确的数量");
     } else {
       callback();
@@ -274,7 +279,7 @@ class RelicsInfoDialogApp extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-
+    const { loading } = this.props;
     const {
       previewVisible,
       previewImage,
@@ -365,9 +370,9 @@ class RelicsInfoDialogApp extends Component {
               {getFieldDecorator("carton", {
                 initialValue: formData.carton,
                 rules: [{ required: true, message: "请选择存储柜" }]
-              })(<Cascader options={tankInfoList} placeholder="请选择" />)}
+              })(<Cascader options={tankInfoList} placeholder="请选择存储柜" />)}
             </FormItem>
-            <FormItem
+            {/* <FormItem
               className="form-width50"
               label="存储位置:"
               labelCol={{ span: 8 }}
@@ -376,9 +381,9 @@ class RelicsInfoDialogApp extends Component {
                 initialValue: formData.localtion,
                 rules: [{ required: true, message: "请输入存储位置" }]
               })(<Input placeholder="请输入存储位置" />)}
-            </FormItem>
+            </FormItem> */}
 
-            <FormItem
+            {/* <FormItem
               className="form-width50"
               label="文物编号:"
               labelCol={{ span: 8 }}
@@ -387,7 +392,7 @@ class RelicsInfoDialogApp extends Component {
                 initialValue: formData.relicsNum,
                 rules: [{ required: true, message: "请输入文物编号" }]
               })(<Input placeholder="请输入文物编号" />)}
-            </FormItem>
+            </FormItem> */}
             <FormItem
               className="form-width50"
               label="分级信息:"
@@ -417,10 +422,9 @@ class RelicsInfoDialogApp extends Component {
               {getFieldDecorator("number", {
                 initialValue: formData.number,
                 rules: [
-                  { required: true, message: "请输入文物数量" },
                   { validator: this.handleNumber }
                 ]
-              })(<Input placeholder="请输入文物数量" />)}
+              })(<InputNumber style={{ width:'165px' }}  placeholder="请输入文物数量" />)}
             </FormItem>
             {/* <FormItem
               className="form-width50"
@@ -448,7 +452,8 @@ class RelicsInfoDialogApp extends Component {
               {getFieldDecorator("date", {
                 initialValue: formData.date,
                 rules: [{ required: true, message: "请选择入馆时间" }]
-              })(<DatePicker format="YYYY-MM-DD " />)}
+              })(<DatePicker format="YYYY-MM-DD "
+                disabledDate={this.disabledDate} />)}
             </FormItem>
             <FormItem
               className="form-width50"
@@ -542,7 +547,7 @@ class RelicsInfoDialogApp extends Component {
               })(<Input placeholder="请输入文物尺寸" />)}
             </FormItem>
             <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
-              <Button type="primary" htmlType="submit">
+              <Button loading={loading} type="primary" htmlType="submit">
                 提交
               </Button>
             </FormItem>
