@@ -17,3 +17,8 @@ export const CollectionCertification = (params) => {
 export const UpdateCollectionRfId = (params) => {
     return axios.post("/CollectionManage/UpdateCollectionRfId", params).then(res => res.data)
 }
+
+// 文物详情
+export const CollectAll = (params) => {
+    return axios.post("Solicitation/CollectAll", params).then(res => res.data)
+}
