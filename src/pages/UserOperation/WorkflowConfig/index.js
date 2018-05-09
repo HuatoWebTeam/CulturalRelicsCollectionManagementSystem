@@ -44,11 +44,15 @@ class WorkflowConfig extends Component {
       if (res.Data.length > 0) {
         this.setState({
           workflowList: res.Data,
-          allWorkList: res.Data
+          allWorkList: res.Data,
+          checkWork: res.Data[0].ProcessID
+        }, () => {
+          this.RadioGroupChange();
         });
       } else {
         this.setState({
-          workflowList: []
+          workflowList: [],
+          checkWork: ''
         });
       }
     });
@@ -56,9 +60,10 @@ class WorkflowConfig extends Component {
   // 单选框 事件
   RadioGroupChange = e => {
     console.log(e);
+    let value = e ? e.target.value : this.state.checkWork;
     let params ={
       parameters: {
-        Condition: e.target.value
+        Condition: value
       }
     }
     GetProcessStepData(params).then(res => {
@@ -66,14 +71,14 @@ class WorkflowConfig extends Component {
       let stepList = res.Data;
       
       if(stepList.length === 0) {  // 还未分配审核人
+        message.error('暂无分配流程')
         this.setState({
           peopleCount: 1,
           peopleArray: [1],
-          peopleList: [],
           selectCheckList: []
         }, () => {
-        this.getRoleDataList()
-      });
+          // this.getRoleDataList()
+        });
       } else { // 已经有的审核人
         let stepArr = []; // 对应peopleArray
         let checkSelect = []; // 对应 selectCheckList
@@ -91,7 +96,7 @@ class WorkflowConfig extends Component {
       }
     })
     this.setState({
-      checkWork: e.target.value
+      checkWork: value
     });
   };
 
@@ -154,8 +159,27 @@ class WorkflowConfig extends Component {
         arr.push(item);
       }
     }
+    console.log(arr);
     this.setState({
-      workflowList: arr
+      workflowList: arr,
+      checkWork: arr.length > 0 ? arr[0].ProcessID : ''
+    }, () => {
+      if(this.state.checkWork !== '') {
+        this.RadioGroupChange();
+      } else {
+        this.setState(
+          {
+            peopleCount: 0,
+            peopleArray: [0],
+            peopleList: [],
+            selectCheckList: []
+          },
+          // () => {
+          //   this.getRoleDataList();
+          // }
+        );
+      }
+      
     });
   };
   // 提交
@@ -214,7 +238,7 @@ class WorkflowConfig extends Component {
       peopleList,
       selectCheckList
     } = this.state;
-    console.log(peopleList);
+    console.log(checkWork);
     return <Row className="main-content workflow-container">
         <Col className="title" span={24}>
           流程配置
