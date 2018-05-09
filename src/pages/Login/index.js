@@ -5,6 +5,7 @@ import { Row, Col, Form, Icon, Input, Button  } from 'antd';
 import VerifyCode from "../Components/VerificationCode";
 import './index.less';
 import { LoginApi, getUserIp } from "./api";
+import moment from 'moment';
 import { getIp } from '../../assets/js/getIp';
 
 const FormItem = Form.Item;
@@ -20,8 +21,10 @@ class LoginForm extends Component {
   componentWillMount() {
     var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection;
     
-    if (RTCPeerConnection) {
+    if (RTCPeerConnection ) {
       getIp(ip => {
+        // console.log('-----')
+        console.log(ip)
         this.setState({ UserIp: ip });
       });
     } else {
@@ -31,7 +34,7 @@ class LoginForm extends Component {
         var result = res.match(reg)
         
         result = JSON.parse(result[0])
-        // console.log(result.ip);
+        console.log(result.ip);
         this.setState({
           UserIp: result.ip
         })
@@ -64,8 +67,9 @@ class LoginForm extends Component {
                 //     UserMenuItem: UserMenuItem, UserName: UserName }, { expires: 0.5 });
                 sessionStorage.setItem("UserInfo", JSON.stringify({
                     UserMenuItem: UserMenuItem,
-                    UserName: UserName
-                  }));
+                    UserName: UserName,
+                    LoginTime: moment().format()
+                }));
                 let pushPath = "";
                 if (UserMenuItem[0].subnode.length === 0) {
                   pushPath = UserMenuItem[0].ProjectModule_URL;
@@ -140,6 +144,7 @@ class LoginForm extends Component {
     }
   }
   handleUserPwdInfo = (rule, value, callback) => {
+    console.log(value)
     if(!value) {
       callback('请输入密码');
     } else {
@@ -165,7 +170,9 @@ class LoginForm extends Component {
             <FormItem>
               {getFieldDecorator("userName", {
                 rules: [{ validator: this.handleUserInfo }]
-              })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
+              })(<Input onChange={(e) => {
+                console.log(e.target.value)
+              }} prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
             </FormItem>
             <FormItem>
               {getFieldDecorator("password", {
@@ -182,6 +189,9 @@ class LoginForm extends Component {
                   this.setState({ verCode: value.toLowerCase() });
                 }} height={40} width={120} />
             </FormItem>
+            {/* <FormItem>
+              <Input  />
+            </FormItem> */}
             <FormItem>
               <Button htmlType="submit" type="primary" loading={this.state.loading} style={{ width: "100%", height: "40px" }}>
                 登录
