@@ -6,7 +6,7 @@ import {
   Route
 } from "react-router-dom";
 // import Cookie from 'js-cookie';
-
+import moment from 'moment';
 import App from './pages/App/App';
 import Login from './pages/Login/index';
 
@@ -14,11 +14,25 @@ import Login from './pages/Login/index';
 const fakeAuth = {
   isAuthenticated: () => {
     let isUserLogin = sessionStorage.getItem('UserInfo');
+    
+    
     if(!isUserLogin) {
       return false;
+    } else {
+      let LoginTime = JSON.parse(isUserLogin).LoginTime;
+      console.log(LoginTime);
+      let timeDiff = moment().diff(moment(LoginTime), "minute"); 
+      console.log(timeDiff);
+      if(timeDiff >= 360) {   // 登录时间大于等于6小时 重新登录
+        sessionStorage.removeItem("UserInfo");
+        return false;
+      } else {
+        return true;
+      }
+      
     }
 
-    return true;
+    
   }
 };
 const PrivateRoute = ({ component: Component, ...rest }) => (
