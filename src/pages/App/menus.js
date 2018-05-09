@@ -10,6 +10,7 @@ export  const menus = [
         { key: '/App/Information', title: '信息登记', icon: 'nullIcon' },
         { key: '/App/AddRelics', title: '藏品管理 > 信息登记 > 新增藏品', isHidden: true, fatherName: '/App/Information' },
         { key: '/App/Credentials', title: '凭证制作', icon: 'nullIcon' },
+        { key: '/App/CredentialDetails', title: '凭证制作 > 文物详情', isHidden: true, fatherName: '/App/Credentials' },
         { key: '/App/ProductionCertificate', title: '藏品管理 > 凭证制作', isHidden: true, fatherName: '/App/Credentials' },
         { key: '/App/PutInStorage', title: '藏品入库', icon: 'nullIcon' },
         { key: '/App/NewPutInStroage', title: '藏品入库 > 新建入库单', isHidden: true, icon: 'nullIcon', fatherName: '/App/PutInStorage' },

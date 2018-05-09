@@ -22,6 +22,7 @@ const RepairDetails = asyncComponent(() =>
 const Information = asyncComponent(() => import('../pages/CollecManagement/Information'));                  // 信息登记
 const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Information/addRelics'));          // 新增藏品
 const Credentials = asyncComponent(() => import('../pages/CollecManagement/Credentials'));                  // 凭证信息列表
+const CredentialDetails = asyncComponent(() => import('../pages/CollecManagement/Credentials/CredentialDetails'));                  // 文物详情
 const ProductionCertificate = asyncComponent(() => import('../pages/CollecManagement/Credentials/ProductionCertificate'));   // 凭证制作
 const PutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage'));                // 入库
 const NewPutInStroage = asyncComponent(() => import('../pages/CollecManagement/PutInStroage/NewPutInStroage'));                // 新增入库
@@ -69,6 +70,7 @@ class Routes extends Component {
             <Route exact path="/App/Information" component={Information} />
             <Route exact path="/App/AddRelics" component={AddRelics} />
             <Route exact path="/App/Credentials" component={Credentials} />
+            <Route exact path="/App/CredentialDetails/:id" component={CredentialDetails} />
             <Route exact path="/App/ProductionCertificate" component={ProductionCertificate} />
             <Route exact path="/App/PutInStorage" component={PutInStroage} />
             <Route exact path="/App/NewPutInStroage" component={NewPutInStroage} />
