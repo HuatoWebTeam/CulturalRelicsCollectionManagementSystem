@@ -31,10 +31,12 @@ class AppContent extends Component {
     UserName: "",
     UserMenu: [],
     windowWidth: '',
-    windowHeight: ''
+    windowHeight: '',
+    isIE: null,
   };
   componentWillMount() {
     this.getRelicsInfo();
+    this.getBorwerType();
     // console.log(this.props);
     let UserInfo = JSON.parse(sessionStorage.getItem("UserInfo"));
     // console.log(UserInfo);
@@ -68,6 +70,7 @@ class AppContent extends Component {
       console.log('resize');
       let width = document.body.clientWidth;
       let height = document.body.clientHeight - 40 - 60;
+      console.log(height)
       _this.setState({
         windowWidth: width,
         windowHeight: height
@@ -138,8 +141,59 @@ class AppContent extends Component {
   componentWillUnmount() {
     console.log("卸载");
   }
+
+  // 获取窗口可视范围高度
+  getClientHeight = () => {
+    let clientHeight = 0;
+    if (document.body.clientHeight && document.documentElement.clientHeight) {
+      clientHeight = (document.body.clientHeight < document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+    } else {
+      clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+    }
+    return clientHeight; 
+  }
+
+  // 获取窗口滚动条高度
+  getSceollTop = () => {
+    let scrollTop = 0;
+    if (document.documentElement && document.documentElement.scrollTop) {
+      scrollTop = document.documentElement.scrollTop;
+    } else if (document.body) {
+      scrollTop = document.body.scrollTop;
+    }
+    return scrollTop; 
+  }
+  // 获取文档内容实际高度
+  getScrollHeight = () => {
+    return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  }
+  // 获取浏览器类型
+  getBorwerType = () => {
+    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+    var isOpera = userAgent.indexOf("Opera") > -1; //判断是否Opera浏览器
+    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera; //判断是否IE浏览器
+
+    console.log(userAgent);
+    if (isIE) {
+      console.log(userAgent);
+      var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
+      reIE.test(userAgent);
+      var fIEVersion = parseFloat(RegExp["$1"]);
+      if (fIEVersion === 9 || fIEVersion === 10) {
+        console.log('ieie');
+        this.setState({
+          isIE: true
+        })
+        return ;
+      }
+    }
+  };
   componentWillReceiveProps() {
+    console.log('propsChange')
     console.log(this.props);
+    console.log(this.getClientHeight());
+    console.log(this.getSceollTop());
+    console.log(this.getScrollHeight())
     this.setMenuOpenKey(this.props.history);
   }
 
@@ -235,7 +289,7 @@ class AppContent extends Component {
       this.setState({
         setPwdVisible: true
       });
-    } else {
+    } else if(key === '退出') {
       this.showConfirm();
     }
   };
@@ -305,7 +359,7 @@ class AppContent extends Component {
 
   render() {
     // console.log(this.props)
-    const { UserName, UserMenu, setPwdVisible, windowWidth, windowHeight } = this.state;
+    const { UserName, UserMenu, setPwdVisible, windowWidth, windowHeight, isIE } = this.state;
     // console.log(UserMenu);
     const dropdownMenu = (
       <Menu className="system-dropdown" onClick={this.dropdownChange}>
@@ -318,7 +372,7 @@ class AppContent extends Component {
       </Menu>
     );
     return (
-      <Layout style={{ minHeight: "100%" }}>
+      <Layout style={{ minHeight: "100%", }}>
         <Header>
           <div className="logoContainer">
             {/* <div className="logo iconBack" /> */}
@@ -362,12 +416,12 @@ class AppContent extends Component {
               onOpenChange={this.onOpenChange}
             />
           </Sider>
-          <Content style={{width: (windowWidth - 200- 17) + 'px'}} >
+          <Content style={{ width: isIE ? (windowWidth - 200 - 17) + 'px' : 'none' }} >
             <Col span={24} className="localtion">
               <i className="iconBack localtion" />当前位置：{" "}
               <span className="localtionName">{this.state.localtionName}</span>
             </Col>
-            <Col span={24} className="main-container" style={{minHeight: windowHeight + 'px'}} >
+            <Col span={24} className="main-container" style={{ minHeight: isIE ? windowHeight + 'px' : 'none'}} >
               <Routes  RouteChange={this.getLocationName} />
             </Col>
           </Content>
