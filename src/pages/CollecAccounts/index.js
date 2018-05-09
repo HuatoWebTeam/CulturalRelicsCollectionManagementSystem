@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
-import { Row, Col, DatePicker, Button, Table } from 'antd';
+import { Row, Col, DatePicker, Button } from 'antd';
 import './index.less';
 import moment from 'moment';
-import 'moment/locale/zh-cn';
+import { subStr } from '../../assets/js/commonFun'
 import { AccountAll } from './api';
+// 引入主模块
+import echarts from 'echarts';
+// 引入折线图
+import 'echarts/lib/chart/line';
+// 引入饼图
+import 'echarts/lib/chart/pie';
+// 引入提示框和标题组件
+import 'echarts/lib/component/tooltip';
+import 'echarts/lib/component/title';
 const { RangePicker } = DatePicker;
 
 class CollecAccounts extends Component {
   state = {
     accountData: [],
-    pageIndex: 1,
-    pageSize: 10,
-    total: null,
     date: []
   };
   //
   componentWillMount() {
     let startDate = moment()
-      .subtract(6, "days")
-      .format("YYYY-MM-DD");
-    let endDate = moment().format("YYYY-MM-DD");
+      .subtract(6, "days").hour(0).minute(0).second(0).format();
+    let endDate = moment().hour(23).minute(59).second(59).format();
     // console.log();
     this.setState(
       {
@@ -32,42 +37,151 @@ class CollecAccounts extends Component {
   }
 
   getAccountsData() {
-    const { pageIndex, pageSize, date } = this.state;
+    const { date } = this.state;
     let params = {
-      pageIndex: pageIndex,
-      pageSize: pageSize,
       beginTime: date[0],
       endTime: date[1]
     };
     console.log(params);
     AccountAll(params).then(res => {
       console.log(res);
-      if (res.length > 0) {
-        let i = 0;
-        for (let item of res) {
-          item.key = i;
-          i++;
-        }
-        this.setState({
-          accountData: res,
-          total: res[0].Count
-        });
-      } else {
-        this.setState({
-          accountData: [],
-          total: 0
-        });
+      let pieData = [
+        { name: '征集费用', value: res.ExCount },
+        { name: '外展费用', value: res.InCount },
+      ];
+
+      let lineChart = [];
+      let chartsDate = [];
+
+      let chartsData = res.account;
+
+      //日期
+      for (let item of chartsData) {
+        chartsDate.push(subStr(item.Time));
       }
+      // 
+      for (let n = 0; n < 2; n++) {
+        lineChart.splice(n, 1, {
+          name: n === 0 ? '征集' : '外展',
+          type: 'line',
+          data: []
+        });
+        console.log(lineChart);
+        for (let i = 0; i < chartsData.length; i++) {
+          if (n === 0) {
+            lineChart[n].data.push(chartsData[i].Expenditures); 
+          } else if (n === 1) {
+            lineChart[n].data.push(chartsData[i].Incomes);
+          } 
+        }
+      }
+      this.setState({
+        pieChartsData: pieData,
+        chartsDate: chartsDate,
+        data: lineChart,
+      }, () => {
+        this.setChartsOption();
+      });
+
     });
   }
-  // 分页
-  handlePagination = (page) => {
-      this.setState({
-          pageIndex: page
-      }, () => {
-          this.getAccountsData()
-      })
+
+  setChartsOption() {
+    let lineChart = echarts.init(document.getElementById("lineCharts"));
+    lineChart.setOption(this.getLineChartOption());
+    let pieChart = echarts.init(document.getElementById("pieCharts"));
+    pieChart.setOption(this.getPieChartOption());
   }
+
+  getLineChartOption = () => {
+    const { chartsDate } = this.state;
+    console.log(chartsDate)
+    const option = {
+      title: {
+        text: ""
+      },
+      tooltip: {
+        trigger: "axis"
+      },
+      legend: {
+        data: [ "征集", '外展']
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true
+      },
+      toolbox: {
+        show: false,
+        feature: {
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: chartsDate,
+        axisLabel: {
+          formatter: function (value) {
+            // console.log(value)
+            var str_before = value.split(' ')[0];
+            // var str_after = value.split(' ')[1];
+            return str_before;
+
+          }
+        }
+      },
+      yAxis: {
+        type: "value",
+        name: "数量(件)"
+      },
+      color: ["#3065bf", "#fabe55", "#ff875c"],
+      series: this.state.data
+    };
+
+    return option;
+  };
+
+  getPieChartOption = () => {
+    const { pieChartsData } = this.state;
+    return {
+      title: {
+        text: '',
+        subtext: '',
+        x: 'center'
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '0',
+        data: [ '征集费用', '外展费用']
+      },
+      color: ["#3065bf", "#fabe55", "#ff875c"],
+      series: [
+        {
+          name: '',
+          type: 'pie',
+          radius: '55%',
+          center: ['50%', '60%'],
+          data: pieChartsData,
+          itemStyle: {
+            emphasis: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
+  }
+
+  
+ 
   // 禁止选择时间
   disabledDate = current => {
     return current && current > moment().endOf("day");
@@ -80,58 +194,14 @@ class CollecAccounts extends Component {
   handleDatepicker = (date, dateString) => {
     console.log(dateString);
     this.setState({
-      date: dateString
+      date: [
+        date[0].hour(0).minute(0).second(0).format(),
+        date[1].hour(23).minute(59).second(59).format()
+      ]
     });
   };
   render() {
-    const { accountData, pageIndex, pageSize, total } = this.state;
-    const accountsColumns = [
-      {
-        title: "时间",
-        dataIndex: "Time",
-        key: "Time"
-      },
-      {
-        title: "藏品数",
-        dataIndex: "CollCount",
-        key: "CollCount"
-      },
-      {
-        title: "资料数",
-        dataIndex: "MateCount",
-        key: "MateCount"
-      },
-      {
-        title: "复制品数",
-        dataIndex: "RepCount",
-        key: "RepCount"
-      },
-      {
-        title: "仿制品数",
-        dataIndex: "ImitCount",
-        key: "ImitCount"
-      },
-      {
-        title: "代管数",
-        dataIndex: "TubeCount",
-        key: "TubeCount"
-      },
-      {
-        title: "外借数",
-        dataIndex: "ExteCount",
-        key: "ExteCount"
-      },
-      {
-        title: "待入库数",
-        dataIndex: "StorCount",
-        key: "StorCount"
-      },
-      {
-        title: "待回库数",
-        dataIndex: "NumbCount",
-        key: "NumbCount"
-      }
-    ];
+    const { pieChartsData } = this.state;
 
     return (
       <Row className="main-content">
@@ -153,21 +223,33 @@ class CollecAccounts extends Component {
             <Button type="primary" onClick={this.searchAccounts} >搜索</Button>
           </Col>
           <Col span={24}>
-            <Table
-              pagination={
-                total <= 10
-                  ? false
-                  : {
-                      current: pageIndex,
-                      pageSize: pageSize,
-                      total: total,
-                      onChange: this.handlePagination
-                    }
-              }
-              columns={ accountsColumns }
-              dataSource={ accountData }
-              bordered
-            />
+            <Col span={24}>
+              <Col span={16} style={{ textAlign: "center", paddingTop: '40px' }}>
+                <div id='lineCharts' style={{ width: "100%", height: "360px" }}  ></div>
+                <Col
+                  span={24}
+                  style={{
+                    height: "30px",
+                    lineHeight: "30px",
+                    background: "#e8eef8"
+                  }}
+                >
+                {
+                    pieChartsData && <Col span={24} >
+                      <Col span={12}>征集账目： {pieChartsData[0].value} 元</Col>
+                      <Col span={12}>外展账目： {pieChartsData[1].value} 元</Col>
+                    </Col>
+                }
+                  
+                </Col>
+              </Col>
+              <Col span={8} style={{ padding: "40px 20px 0 20px" }}>
+                <Col span={24} style={{ height: "390px", background: "#e8eef8" }}>
+                  <div id='pieCharts' style={{ width: '100%', height: '350px' }} />
+                  {/* <ReactEcharts style={{ width: "100%", height: "350px" }} option={this.getPieChartOption()} /> */}
+                </Col>
+              </Col>
+            </Col>
           </Col>
         </Col>
       </Row>
