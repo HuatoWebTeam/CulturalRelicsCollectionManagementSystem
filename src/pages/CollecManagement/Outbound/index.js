@@ -91,7 +91,7 @@ class ComplexGeneric extends Component {
     });
   };
 
-  handleSearch(e) {
+  handleSearch = (e) => {
     console.log(e);
     this.setState(
       {

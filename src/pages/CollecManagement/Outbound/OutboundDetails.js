@@ -19,11 +19,9 @@ class OutboundDetails extends Component {
   };
 
   componentWillMount() {
-    let state = sessionStorage.getItem("anthoityState");
     this.setState(
       {
         paramsId: this.props.match.params.id,
-        anthorityState: Number(state)
       },
       () => {
         this.GetOutTheLibraryList();
@@ -54,13 +52,13 @@ class OutboundDetails extends Component {
       }
       this.setState({
         detailsList: list,
-        showDeatil: detailInfo
+        showDeatil: detailInfo,
+        anthorityState: Number(data.DeniedPermission)
       });
     });
   }
   // 改变审批条件状态
   changeAnthority = () => {
-    sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
   };
   render() {
@@ -91,20 +89,37 @@ class OutboundDetails extends Component {
                 操作人：{showDeatil.Operator}
               </Col>
               <Col span={17} className="text">
-                出库状态：{outboundState.map((item) => {
-                  if(Number(showDeatil.TheLibraryState) === item.key) {
-                    return <span style={{ color: item.key === 0 ? "#da6214" : item.key === 1 ? "#3065bf" : "red" }}>
+                出库状态：{outboundState.map(item => {
+                  if (Number(showDeatil.TheLibraryState) === item.key) {
+                    return <span
+                        style={{
+                          color:
+                            item.key === 0
+                              ? "#da6214"
+                              : item.key === 1
+                                ? "#3065bf"
+                                : "red"
+                        }}
+                      >
                         {item.value}
                       </span>;
                   }
-                })
-                  }
+                })}
               </Col>
             </Col>}
           <CommonInfoTable data={detailsList} isPK={true} />
         </Col>
         <Col span={24}>
-          <ApproveComponent paramsId={paramsId} anthorityState={anthorityState} flag={3} changeAnthorityState={this.changeAnthority} />
+        {
+          showDeatil && <ApproveComponent 
+            oddName={showDeatil.TheLibraryPurpose } 
+            paramsId={paramsId} 
+            anthorityState={anthorityState} 
+            flag={3} 
+            changeAnthorityState={this.changeAnthority} 
+          />
+        }
+          
         </Col>
       </Row>;
   }
