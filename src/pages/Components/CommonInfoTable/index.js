@@ -89,15 +89,8 @@ class CommonInfoTable extends Component {
             },
             {
                 title: '文物状态',
-                dataIndex: isPK ? 'CollectionState' : 'Collection_State',
-                key: 'Collection_State',
-                render: (text) => {
-                    for(let item of relicsState) {
-                        if(Number(text) === item.key) {
-                            return (<span style={{color: Number(text) === 5 ? 'red' : '#666'}} >{item.value}</span>)
-                        }
-                    }
-                }
+                dataIndex: 'CollStateName',
+                key: 'CollStateName',
             },
         ]
         return (
