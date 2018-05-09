@@ -3,7 +3,7 @@ import { Row, Col, Button, DatePicker } from 'antd';
 import { DefaultPlayer as Video } from "react-html5video";
 import "react-html5video/dist/styles.css";
 import './index.less';
-// import moment from "moment";
+import moment from "moment";
 import { VideoApi } from './api';
 import { RangePickerDefault } from "../../assets/js/commonFun";
 const { RangePicker } = DatePicker;
@@ -90,6 +90,11 @@ class ImageManagement extends Component {
     console.log(date);
   }
 
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current > moment().endOf("day");
+  };
+
   render() {
     const { videoDataList, videoThimbnail } = this.state;
     return (
@@ -99,6 +104,7 @@ class ImageManagement extends Component {
             onChange={this.rangePickerChange}
             defaultValue={RangePickerDefault}
             format="YYYY-MM-DD"
+            disabledDate={this.disabledDate}
           />
           <Button type="primary" style={{ marginLeft: "20px" }}>
             搜索
