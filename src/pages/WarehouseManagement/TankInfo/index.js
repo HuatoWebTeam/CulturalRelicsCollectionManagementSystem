@@ -267,7 +267,7 @@ class TankInfoApp extends Component {
         <Col span={24} className="title">
           存储柜信息
         </Col>
-        <Col span={24} className="tankInfo-container">
+        <Col span={24} className="tankInfo-container" style={{padding: '20px 40px 20px 20px'}} >
           <Col span={24} style={{ paddingBottom: "20px" }}>
             <Button type="primary" icon="plus" onClick={this.addTankInfo}>
               新增存储柜
