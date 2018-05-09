@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, DatePicker, Input, Button, Form, Table } from 'antd';
+import { Row, Col, Select, DatePicker, Input, Button, Form, Table, Modal, message } from 'antd';
 import './index.less';
-import { InventallApi } from './api';
+import { InventallApi, DeleteInventory } from "./api";
 import { StoreApi } from '../Components/RelicsDialog/api';
 import { RangePickerDefault, approveState, subStr, inventState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const Search = Input.Search;
 const FormItem = Form.Item;
+const confirm = Modal.confirm;
 
 class CollecInventory extends Component {
   state = {
@@ -60,6 +61,7 @@ class CollecInventory extends Component {
       if (res.length > 0) {
         for (let item of res) {
           item.key = item.Inventory_Odd;
+          item.disabled = Number(item.StepState) === 4 ? (Number(item.FlowState) === 0 ? true : false) : Number(item.StepState) === 1 ? (Number(item.FlowState) === 1 ? true : false) : false;
         }
         this.setState({
           inventoryDataList: res,
@@ -127,7 +129,29 @@ class CollecInventory extends Component {
       ]
     });
   };
-
+  // 对话框   // 删除展览单
+  showConfirm = text => {
+    let _this = this;
+    confirm({
+      title: "确定删除?",
+      content: "",
+      onOk() {
+        // console.log(text);
+        let params = { odd: text };
+        DeleteInventory(params).then(res => {
+          if (res === true) {
+            message.success("删除成功");
+            _this.getInventoryList();
+          } else {
+            message.error("删除失败");
+          }
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
 
   render() {
     const {
@@ -226,14 +250,9 @@ class CollecInventory extends Component {
         render: (text, record, idx) => {
           // console.log(text)
           return <span>
-              <Link onClick={() => {
-                  let state = Number(text.DeniedPermission);
-                  sessionStorage.setItem("anthoityState", state);
-                }} to={`/App/ShowDetails/${text.Inventory_Odd}`}>
-                详情
-              </Link>
-              <Button 
-                style={{ border: 'none', marginLeft: '10px' }} 
+              <Button
+                style={{ border: 'none', marginLeft: '10px' }}
+                disabled={!record.disabled}
                 onClick={() => {
                   this.props.changeFormData({
                     state: "编辑盘点单",
@@ -243,6 +262,17 @@ class CollecInventory extends Component {
                 }}
               >
                 编辑
+              </Button>
+              <Link onClick={() => {
+                  let state = Number(text.DeniedPermission);
+                  sessionStorage.setItem("anthoityState", state);
+                }} to={`/App/ShowDetails/${text.Inventory_Odd}`}>
+                详情
+              </Link>
+              <Button style={{ marginLeft: '10px', border: 'none' }}
+                disabled={!record.disabled}
+                onClick={this.showConfirm.bind(this, record.Inventory_Odd)} >
+                删除
               </Button>
             </span>; 
         }

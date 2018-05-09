@@ -19,6 +19,12 @@ export const InvenDataAll = (params) => {
 }
 
 // 编辑
-export const InventUpdate = (params) =>{
+export const InventUpdate = (params) => {
     return axios.post("/Inventory/InventUpdate", params).then(res => res.data)
+}
+
+
+// 删除盘点单
+export const DeleteInventory = (params) => {
+    return axios.post("/Inventory/DeleteInventory", params).then(res => res.data)
 }

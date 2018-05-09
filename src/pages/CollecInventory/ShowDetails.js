@@ -17,11 +17,10 @@ class ShowDetails extends Component {
   };
   componentWillMount() {
     console.log(this.props);
-    let state = sessionStorage.getItem("anthoityState");
+    // let state = sessionStorage.getItem("anthoityState");
     this.setState(
       {
         inventNum: this.props.match.params.id,
-        anthorityState: Number(state)
       },
       () => {
         this.getInventDetailsList();
@@ -56,7 +55,8 @@ class ShowDetails extends Component {
 
         this.setState({
           inventDetail: detailInfo,
-          inventDetailsList: listData
+          inventDetailsList: listData,
+          anthorityState: Number(res[0].DeniedPermission)
         });
       }
     });
@@ -76,7 +76,6 @@ class ShowDetails extends Component {
 
   // 改变审批条件状态
   changeAnthority = () => {
-    sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
   };
 
@@ -132,12 +131,15 @@ class ShowDetails extends Component {
               } dataSource={inventDetailsList} columns={inventDetailsColumns} bordered /> */}
           </Col>
         </Col>
-        <ApproveComponent 
-          anthorityState={anthorityState} 
-          paramsId={inventNum} 
-          flag={4} 
-          changeAnthorityState={this.changeAnthority} 
-        />
+        {inventDetail && <ApproveComponent
+            anthorityState={anthorityState}
+            paramsId={inventNum}
+            flag={4}
+            oddName={inventDetail.Inventory_Name}
+            changeAnthorityState={this.changeAnthority}
+          />
+        }
+        
       </Row>;
   }
 }

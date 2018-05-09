@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, Table, Input, DatePicker, message } from 'antd';
+import { Row, Col, Button, Form, Input, DatePicker, message } from 'antd';
 import './index.less';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import RelicsDialog from "../Components/RelicsDialog";
 import CheckedRelicsInfo from "../Components/CheckedRelicsInfo";
-import { levelInfo } from "../../assets/js/commonFun";
 import { InventoryAdd, InvenDataAll, InventUpdate } from "./api"; 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -18,11 +17,11 @@ class NewInventoryApp extends Component {
     pageTitle: '新建盘点单',
     number: null,
     dateFormat: "YYYY-MM-DD",
+    loading: false,
     inventInfo: {
       InventoryMan: null,
       Inventory_Name: null,
-      Inventory_Cycle: null,
-      Inventory_Cycle: 0,
+      Inventory_Cycle: 1,
       date: [moment().hour(0).minute(0).second(0), moment().hour(23).minute(59).second(0)]
     }, 
   };
@@ -60,6 +59,7 @@ class NewInventoryApp extends Component {
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
         // const {  }
+        this.setState({ loading: true });
         console.log(fieldsValue);
         const { chooseRelicsNum, number, inventInfo } = this.state;
         if (chooseRelicsNum.length === 0) {
@@ -89,6 +89,7 @@ class NewInventoryApp extends Component {
         if(state) {
           InventUpdate(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res === true) {
               this.setState({ chooseRelicsNum: [] }, () => {
                 this.props.form.resetFields();
@@ -104,6 +105,7 @@ class NewInventoryApp extends Component {
         } else {
           InventoryAdd(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res === true) {
               this.setState({ chooseRelicsNum: [] }, () => {
                 this.props.form.resetFields();
@@ -130,8 +132,9 @@ class NewInventoryApp extends Component {
     let number = 0;
     for (let item of value) {
       keys.push(item.key);
-      number = number + Number(item.number);
+      number = number + Number(item.Number);
     }
+    console.log(number)
     this.setState({
       chooseRelicsNum: keys,
       chooseInventoryRelics: value,
@@ -157,9 +160,13 @@ class NewInventoryApp extends Component {
     
     console.log(Math.ceil(dateDiff/24))
   }
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current < moment().startOf("day");
+  };
 
   render() {
-    const { chooseInventoryRelics, dateFormat, date, inventInfo } = this.state;
+    const { chooseInventoryRelics, inventInfo, loading } = this.state;
     const { getFieldDecorator } = this.props.form;
    
 
@@ -220,6 +227,7 @@ class NewInventoryApp extends Component {
                     onChange={this.handleDateRange}
                     placeholder="请选择盘点起止时间"
                     format='YYYY-MM-DD'
+                    disabledDate={this.disabledDate}
                   />
                 )}
               </FormItem>
@@ -253,6 +261,7 @@ class NewInventoryApp extends Component {
             <Col span={24} style={{ padding: "20px 40px" }}>
               <Button
                 type="primary"
+                loading={loading}
                 htmlType="submit"
                 style={{ float: "right" }}
               >
