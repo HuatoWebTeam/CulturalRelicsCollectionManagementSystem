@@ -19,6 +19,15 @@ class AddRelics extends Component {
   componentDidMount() {
     console.log(this.refs.relicsInfo);
   }
+
+  // 替换图片地址
+  formatSub = (value) => {
+    console.log(value);
+    var s = value ? value.substring(0, value.indexOf("/CollectionFile/")) : null
+    console.log(s)
+    // console.log(value.replace(s, ''));
+    return value ? value.replace(s, "") : null;
+  }
   formSubmit = (value) => {
     console.log(value);
       this.setState({ loading: true });
@@ -27,7 +36,7 @@ class AddRelics extends Component {
           CollectionName: value.relicsName,
           ReservoirType: value.type,
           StorageId: value.carton[1],
-          // CollectionNumber: value.relicsNum,
+          CollectionNumber: value.relicsNum,
           Grade: value.levelInfo,
           CollectionYears: Number(value.relicsYears),
           Number: Number(value.number),
@@ -39,9 +48,9 @@ class AddRelics extends Component {
           Integrity: value.howComplete,
           Size: value.size,
           CollectionPosition: value.localtion,
-          Collectionimg1: value.Collectionimg1,
-          Collectionimg2: value.Collectionimg2,
-          Collectionimg3: value.Collectionimg3
+          Collectionimg1: this.formatSub(value.Collectionimg1),
+          Collectionimg2: this.formatSub(value.Collectionimg2),
+          Collectionimg3: this.formatSub(value.Collectionimg3)
         }
       };
       console.log(params);

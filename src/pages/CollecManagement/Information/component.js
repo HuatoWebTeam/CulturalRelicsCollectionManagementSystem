@@ -20,6 +20,7 @@ class RelicsInfoDialogApp extends Component {
     relicsLevelList: [],
     updateStroRfid: null,
     reset: false,
+    updateNumber: null,
     formData: {
       relicsName: null,
       type: 1,
@@ -47,11 +48,18 @@ class RelicsInfoDialogApp extends Component {
       {
         relicsYearsList: relicsYears,
         relicsCateList: relicsCateGory,
-        relicsLevelList: relicsLevel
+        relicsLevelList: relicsLevel,
+        updateNumber: formData.relicsNum
       },
       () => {
-        const { relicsYearsList, relicsCateList, relicsLevelList } = this.state;
-        this.state.formData.relicsYears = Number(relicsYearsList[0].YearsId);
+        const {
+          relicsYearsList,
+          relicsCateList,
+          relicsLevelList
+        } = this.state;
+        this.state.formData.relicsYears = Number(
+          relicsYearsList[0].YearsId
+        );
         this.state.formData.category = Number(relicsCateList[0].CollTypeId);
         this.state.formData.levelInfo = Number(relicsLevelList[0].GradeId);
       }
@@ -236,6 +244,7 @@ class RelicsInfoDialogApp extends Component {
             ...values,
             relicsState: formData.state || 0,
             date: values["date"].format("YYYY-MM-DD"),
+            relicsNum: this.state.updateNumber,
             Collectionimg1: fileList[0] === undefined ? null : fileList[0].url,
             Collectionimg2: fileList[1] === undefined ? null : fileList[1].url,
             Collectionimg3: fileList[2] === undefined ? null : fileList[2].url
