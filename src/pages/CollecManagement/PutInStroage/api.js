@@ -10,3 +10,9 @@ export const GetEntryTheLibraryData = (params) => {
 export const InsertInTheLibrary = (params) => {
     return axios.post("/CollectionManage/InsertInTheLibrary", params).then(res => res.data)
 }
+
+
+// 删除出入库
+export const DeleteInTheLibrary = (params) => {
+    return axios.post("/CollectionManage/DeleteInTheLibrary", params).then(res => res.data)
+}

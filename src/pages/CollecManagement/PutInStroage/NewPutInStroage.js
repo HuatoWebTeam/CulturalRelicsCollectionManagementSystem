@@ -13,6 +13,7 @@ import {
 import "../Outbound/index.less";
 import moment from "moment";
 import RelicsDialog from "../../Components/RelicsDialog";
+import CheckedRelicsInfo from "../../Components/CheckedRelicsInfo";
 import { levelInfo, relicsYears, putinType } from "../../../assets/js/commonFun";
 import { InsertInTheLibrary } from "./api";
 const FormItem = Form.Item;
@@ -23,7 +24,8 @@ class NewPutinStroageApp extends Component {
   state = {
     newOutboundData: [],
     format: "YYYY-MM-DD",
-    date: []
+    date: [],
+    loading: false
   };
   // .hour(0).minute(0).second(0)
   componentWillMount() {
@@ -38,6 +40,7 @@ class NewPutinStroageApp extends Component {
     this.props.form.validateFields((err, value) => {
       if (!err) {
         console.log(value);
+        this.setState({ loading: true });
         const { newOutboundData, format } = this.state;
         if (newOutboundData.length > 0) {
           let values = {
@@ -72,6 +75,7 @@ class NewPutinStroageApp extends Component {
           console.log(params);
           InsertInTheLibrary(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res.Msg === "操作成功!") {
               message.success("新建入库单成功");
               this.props.form.resetFields();
@@ -104,8 +108,13 @@ class NewPutinStroageApp extends Component {
     })
   };
 
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current < moment().startOf("day");
+  };
+
   render() {
-    const { newOutboundData, date } = this.state;
+    const { newOutboundData, date, loading } = this.state;
     const { getFieldDecorator } = this.props.form;
     
     const newOutboundColumns = [
@@ -188,18 +197,16 @@ class NewPutinStroageApp extends Component {
                   initialValue: [2],
                   rules: [{ required: true, message: "请选择入库类型" }]
                 })(<Select>
-                    {putinType.map(item => (
-                      !item.isHidden && <Option key={item.key} value={item.key}>
-                        {item.value}
-                      </Option>
-                    ))}
+                    {putinType.map(item => !item.isHidden && <Option key={item.key} value={item.key}>
+                            {item.value}
+                          </Option>)}
                   </Select>)}
               </FormItem>
               <FormItem label="入库起止日期:" labelCol={{ span: 7 }} className="form-item50">
                 {getFieldDecorator("outboundDate", {
                   initialValue: date,
                   rules: [{ required: true, message: "请选择入库起止日期" }]
-                })(<RangePicker format="YYYY-MM-DD" onChange={this.handleRangePicker} />)}
+                })(<RangePicker disabledDate={this.disabledDate} format="YYYY-MM-DD" onChange={this.handleRangePicker} />)}
               </FormItem>
               {/* <FormItem
                 label="操作人:"
@@ -220,11 +227,12 @@ class NewPutinStroageApp extends Component {
               </Col>
             </Col>
             <Col span={24}>
-              <Table columns={newOutboundColumns} dataSource={newOutboundData} pagination={false} bordered />
+              <CheckedRelicsInfo data={newOutboundData} />
+              {/* <Table columns={newOutboundColumns} dataSource={newOutboundData} pagination={false} bordered /> */}
             </Col>
             <Col span={24}>
               <FormItem className="submitBtn">
-                <Button type="primary" htmlType="submit">
+                <Button loading={loading} type="primary" htmlType="submit">
                   提交入库单
                 </Button>
               </FormItem>

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Table, Button } from 'antd';
+import { Row, Col, Table, Button, Modal, message } from 'antd';
 import { Link } from 'react-router-dom';
 import './index.less';
-import { GetEntryTheLibraryData } from './api';
+import { GetEntryTheLibraryData, DeleteInTheLibrary } from "./api";
 import { connect } from 'react-redux';
 import { approveState, subStr, putinState } from "../../../assets/js/commonFun";
+const confirm = Modal.confirm;
 
 class ComplexGeneric extends Component {
   state = {
@@ -42,7 +43,12 @@ class ComplexGeneric extends Component {
       for (let item of data) {
         item.key = item.TheLibraryOdd;
         item.showDeleteBtn = UserName === item.Operator;
-        // item.editable = Number(item.StepState) === 4 ? Number(FlowState)
+        
+        if(Number(item.State) === 1 || Number(item.State) === 2) {
+          item.editable = Number(item.StepState) === 4 ? (Number(item.FlowState) === 0 ? true : false) : (Number(item.StepState) === 1 ? (Number(item.FlowState) === 1 ? true : false) : false);
+        } else {
+          item.editable = false;
+        }
       }
       this.setState({
         putinData: data,
@@ -63,6 +69,35 @@ class ComplexGeneric extends Component {
       }
     );
   };
+
+  // 对话框
+  showConfirm = (value) => {
+    let _this = this;
+    confirm({
+      title: '确定删除?',
+      content: '',
+      onOk() {
+        console.log(value);
+        let params = {
+          parameters: {
+            Condition: value
+          }
+        };
+        DeleteInTheLibrary(params).then(res => {
+          console.log(res)
+          if ( res.Msg === "操作成功!" ) {
+            message.success('删除成功');
+            _this.getPutInList();
+          } else {
+            message.error('删除失败')
+          }
+        })
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  }
 
 
   render() {
@@ -113,16 +148,7 @@ class ComplexGeneric extends Component {
               }} >{item.value}</span>
             }
           }
-          return (
-            <span style={{
-                color:
-                  Number(text) === 0
-                    ? "#da6214"
-                    : (Number(text) === 1
-                      ? "#3065bf"
-                      : "#666")
-              }} >{Number(text) === 0 ? '待入库' : (Number(text) === 1 ? '入库完成' : '入库异常')}</span>
-          )
+         
         }
       },
       {
@@ -145,12 +171,21 @@ class ComplexGeneric extends Component {
           // console.log(record);
           
           // return <a href='javascripts:;' name='details'  onClick={_this.checkDetails(index)} >详情+{index}</a>;
-          return <Link onClick={() => {
-                let state = Number(record.DeniedPermission);
-                sessionStorage.setItem("anthoityState", state);
-              }} to={`/App/PutInDetails/${text.TheLibraryOdd}`}>
-              详情
-            </Link>;
+          return <span>
+              <Link onClick={() => {
+                  let state = Number(record.DeniedPermission);
+                  sessionStorage.setItem("anthoityState", state);
+                }} to={`/App/PutInDetails/${text.TheLibraryOdd}`}>
+                详情
+              </Link>
+              <Button 
+                style={{ marginLeft: '10px', border: 'none' }}
+                disabled={!record.editable}
+                onClick={this.showConfirm.bind(this, record.TheLibraryOdd)}
+              >
+                删除
+              </Button>
+            </span>;
         }
       },
     ];

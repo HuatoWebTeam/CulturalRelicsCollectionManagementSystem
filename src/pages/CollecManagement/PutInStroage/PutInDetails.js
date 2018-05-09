@@ -14,11 +14,9 @@ class PutInDetails extends Component {
   };
 
   componentWillMount() {
-    let state = sessionStorage.getItem("anthoityState");
     this.setState(
       {
         paramsId: this.props.match.params.id,
-        anthorityState: Number(state)
       },
       () => {
         this.getPutInDetail();
@@ -43,12 +41,15 @@ class PutInDetails extends Component {
       for (let item of list) {
         item.key = item.CollectionNumber;
       }
-      this.setState({ detailsList: list, showDeatil: detailInfo });
+      this.setState({
+        detailsList: list,
+        showDeatil: detailInfo,
+        anthorityState: Number(data.DeniedPermission)
+      });
     });
   }
   // 改变审批条件状态
   changeAnthority = () => {
-    sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
   };
 
@@ -83,6 +84,7 @@ class PutInDetails extends Component {
                 入库状态：{putinState.map((item) => {
                       if(Number(showDeatil.TheLibraryState) === item.key) {
                         return <span
+                        key={item.key}
                             style={{
                               color:
                                 item.key === 0
@@ -102,7 +104,16 @@ class PutInDetails extends Component {
           <CommonInfoTable data={detailsList} isPK={true} />
         </Col>
         <Col span={24}>
-          <ApproveComponent paramsId={paramsId} anthorityState={anthorityState} flag={2} changeAnthorityState={this.changeAnthority} />
+        {
+          showDeatil && <ApproveComponent 
+            oddName={showDeatil.TheLibraryPurpose ||''} 
+            paramsId={paramsId} 
+            anthorityState={anthorityState} 
+            flag={2} 
+            changeAnthorityState={this.changeAnthority} 
+          />
+        }
+          
         </Col>
       </Row>;
   }
