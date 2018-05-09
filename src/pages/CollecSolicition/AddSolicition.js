@@ -21,7 +21,8 @@ class AddSilicitionApp extends Component {
     relicsCateList: [],
     relicsYearsList: [],
     relicsLevelList: [],
-    formData: null
+    formData: null,
+    loading: false
   };
 
   componentWillMount() {
@@ -86,7 +87,7 @@ class AddSilicitionApp extends Component {
   }
 
   beforeUpload = file => {
-    console.log(file);
+    console.log(JSON.stringify(file));
     const isLt3M = file.size / 1024 / 1024 < 3;
 
     if (!isLt3M) {
@@ -155,6 +156,7 @@ class AddSilicitionApp extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
+        this.setState({ loading: true });
         const { fileList } = this.state;
         console.log(fieldsValue);
         if (fileList.length > 0) {
@@ -165,7 +167,7 @@ class AddSilicitionApp extends Component {
             Phone: fieldsValue.Phone,
             AmountPrize: fieldsValue.AmountPrize,
             Identification: fieldsValue.Identification,
-            Collection_Number: fieldsValue.Collection_Number,
+            // Collection_Number: fieldsValue.Collection_Number,
             Collection_Name: fieldsValue.Collection_Name,
             Grade: fieldsValue.Grade,
             Number: Number(fieldsValue.Number),
@@ -190,6 +192,7 @@ class AddSilicitionApp extends Component {
             value.Solicitation_Id = this.state.id;
             SolicitUpdate(value).then(res => {
               console.log(res);
+              this.setState({ loading: false });
               if (res === true) {
                 message.success("添加成功");
                 this.setState({ fileList: [] });
@@ -202,6 +205,7 @@ class AddSilicitionApp extends Component {
           } else {
             SolicAddApi(value).then(res => {
               console.log(res);
+              this.setState({ loading: false });
               if (res === true) {
                 message.success("添加成功");
                 this.setState({ fileList: [] });
@@ -218,6 +222,20 @@ class AddSilicitionApp extends Component {
         }
       }
     });
+  };
+  // 禁止选择时间
+  disabledDate = current => {
+    return current && current < moment().startOf("day");
+  };
+  // 验证
+  handleNumber = (rule, value, callback) => {
+    if (!value) {
+      callback("请输入正确的数量");
+    } else if (value && Number(value) <= 0) {
+      callback("请输入正确的数量");
+    } else {
+      callback();
+    }
   };
 
   render() {
@@ -239,128 +257,60 @@ class AddSilicitionApp extends Component {
       </div>
     );
 
-    return (
-      <Row className="main-content">
+    return <Row className="main-content">
         <Col span={24} className="title">
           {pageTitle}
-          <div
-            className="go-back"
-            onClick={() => {
+          <div className="go-back" onClick={() => {
               this.props.history.goBack();
-            }}
-          />
+            }} />
         </Col>
         <Col span={24} className="addSolicition-container">
-          <Form
-            layout="inline"
-            onSubmit={this.handleFormSubmit}
-            style={{ width: "100%" }}
-          >
-            <FormItem
-              label="文物图片:"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              style={{ width: "100%" }}
-            >
-              <Upload
-                action="//jsonplaceholder.typicode.com/posts/"
-                listType="picture-card"
-                beforeUpload={this.beforeUpload}
-                fileList={fileList}
-                onRemove={this.handleRemove}
-              >
+          <Form layout="inline" onSubmit={this.handleFormSubmit} style={{ width: "100%" }}>
+            <FormItem label="文物图片:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
+              <Upload action="//jsonplaceholder.typicode.com/posts/" listType="picture-card" beforeUpload={this.beforeUpload} fileList={fileList} onRemove={this.handleRemove}>
                 {fileList.length >= 3 ? null : uploadButton}
               </Upload>
-              <Modal
-                visible={previewVisible}
-                footer={null}
-                onCancel={this.handleCancel}
-              >
-                <img
-                  alt="upload"
-                  src={previewImage}
-                  style={{ width: "100%" }}
-                />
+              <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                <img alt="upload" src={previewImage} style={{ width: "100%" }} />
               </Modal>
             </FormItem>
-            <FormItem
-              label="征集人:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="征集人:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Solicitation_Name", {
                 initialValue: formData.Solicitation_Name,
                 rules: [{ required: true, message: "请输入征集人" }]
               })(<Input placeholder="请输入征集人" />)}
             </FormItem>
-            <FormItem
-              label="身份证号码:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="身份证号码:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("IdentityCard", {
                 initialValue: formData.IdentityCard,
                 rules: [{ required: true, message: "请输入身份证号码" }]
               })(<Input placeholder="请输入身份证号码" />)}
             </FormItem>
-            <FormItem
-              label="联系电话:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="联系电话:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Phone", {
                 initialValue: formData.Phone,
                 rules: [{ required: true, message: "请输入联系电话" }]
               })(<Input placeholder="请输入联系电话" />)}
             </FormItem>
-            <FormItem
-              label="联系地址:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="联系地址:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Site", {
                 initialValue: formData.Site,
                 rules: [{ required: true, message: "请输入联系地址" }]
               })(<Input placeholder="请输入联系地址" />)}
             </FormItem>
-            <FormItem
-              label="鉴定结果:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="鉴定结果:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Identification", {
                 initialValue: formData.Identification,
                 rules: [{ required: true, message: "请输入鉴定结果" }]
               })(<Input placeholder="请输入鉴定结果" />)}
             </FormItem>
-            <FormItem
-              label="奖金数额:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="奖金数额:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("AmountPrize", {
                 initialValue: formData.AmountPrize,
                 rules: [{ required: true, message: "请输入奖金数额" }]
-              })(
-                <InputNumber
-                  style={{ width: "100%" }}
-                  step={100}
-                  placeholder="请输入奖金数额"
-                />
-              )}
+              })(<InputNumber style={{ width: "100%" }} step={100} placeholder="请输入奖金数额" />)}
             </FormItem>
-            <FormItem
-              label="文物名称:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="文物名称:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Collection_Name", {
                 initialValue: formData.Collection_Name,
                 rules: [{ required: true, message: "请输入文物名称" }]
@@ -376,7 +326,7 @@ class AddSilicitionApp extends Component {
                 rules: [{ required: true, message: "请输入征集文物ID" }]
               })(<Input placeholder="请输入征集文物ID" />)}
             </FormItem> */}
-            <FormItem
+            {/* <FormItem
               label="文物编号:"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
@@ -386,155 +336,98 @@ class AddSilicitionApp extends Component {
                 initialValue: formData.Collection_Number,
                 rules: [{ required: true, message: "请输入文物编号" }]
               })(<Input placeholder="请输入文物编号" />)}
-            </FormItem>
-            <FormItem
-              label="分级信息:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            </FormItem> */}
+            <FormItem label="分级信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Grade", {
                 initialValue: formData.Grade,
                 rules: [{ required: true, message: "请选择分级信息" }]
-              })(
-                <Select>
+              })(<Select>
                   {relicsLevelList.map(item => (
-                    <Option value={Number(item.GradeId)} key={Number(item.GradeId)}>
+                    <Option
+                      value={Number(item.GradeId)}
+                      key={Number(item.GradeId)}
+                    >
                       {item.GradeName}
                     </Option>
                   ))}
-                </Select>
-              )}
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="文物年代:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="文物年代:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Collection_Years", {
                 initialValue: formData.Collection_Years,
                 rules: [{ required: true, message: "请输入文物年代" }]
-              })(
-                <Select>
+              })(<Select>
                   {relicsYearsList.map(item => (
                     <Option value={Number(item.YearsId)} key={item.YearsId}>
                       {item.YearsName}
                     </Option>
                   ))}
-                </Select>
-              )}
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="完整程度:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="完整程度:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Integrity", {
                 initialValue: formData.Integrity,
                 rules: [{ required: true, message: "请输入完整程度" }]
-              })(
-                <Select>
+              })(<Select>
                   {howComplete.map(item => (
                     <Option value={item.key} key={item.key}>
                       {item.value}
                     </Option>
                   ))}
-                </Select>
-              )}
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="征集方式:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="征集方式:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Solicitation_mode", {
                 initialValue: formData.Solicitation_mode,
                 rules: [{ required: true, message: "请选择征集方式" }]
               })(<Input placeholder="请输入征集方式" />)}
             </FormItem>
-            <FormItem
-              label="征集时间:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="征集时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Solicitation_Time", {
                 initialValue: moment(formData.Solicitation_Time),
                 rules: [{ required: true, message: "请选择征集时间" }]
-              })(<DatePicker format="YYYY-MM-DD" />)}
+              })(<DatePicker format="YYYY-MM-DD" disabledDate={this.disabledDate} />)}
             </FormItem>
-            <FormItem
-              label="数量:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="数量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Number", {
                 initialValue: formData.Number,
-                rules: [{ required: true, message: "请输入数量" }]
-              })(<Input placeholder="请输入数量" />)}
+                rules: [{ validator: this.handleNumber }]
+              })(<InputNumber style={{ width: "100%" }} placeholder="请输入数量" />)}
             </FormItem>
-            <FormItem
-              label="文物类别:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="文物类别:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Solicitation_State", {
                 initialValue: formData.Solicitation_State,
                 rules: [{ required: true, message: "请选择类别" }]
-              })(
-                <Select>
+              })(<Select>
                   {relicsCateList.map(item => (
-                    <Option key={Number(item.CollTypeId)} value={Number(item.CollTypeId)}>
+                    <Option
+                      key={Number(item.CollTypeId)}
+                      value={Number(item.CollTypeId)}
+                    >
                       {item.CollTypeName}
                     </Option>
                   ))}
-                </Select>
-              )}
+                </Select>)}
             </FormItem>
-            <FormItem
-              label="材质:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="材质:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("MaterialQuality", {
                 initialValue: formData.MaterialQuality,
                 rules: [{ required: true, message: "请输入材质" }]
               })(<Input placeholder="请输入材质" />)}
             </FormItem>
-            <FormItem
-              label="出土信息:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50 unearthed"
-            >
+            <FormItem label="出土信息:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50 unearthed">
               {getFieldDecorator("BeUnearthed", {
                 initialValue: formData.BeUnearthed,
                 rules: [{ required: true, message: "请输入出土信息" }]
               })(<TextArea />)}
             </FormItem>
-            <FormItem
-              label="重量:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="重量:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Weight", {
                 initialValue: formData.Weight,
                 rules: [{ required: true, message: "请输入重量" }]
               })(<Input placeholder="请输入重量" />)}
             </FormItem>
-            <FormItem
-              label="尺寸:"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              className="form-item50"
-            >
+            <FormItem label="尺寸:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} className="form-item50">
               {getFieldDecorator("Size", {
                 initialValue: formData.Size,
                 rules: [{ required: true, message: "请输入尺寸" }]
@@ -547,8 +440,7 @@ class AddSilicitionApp extends Component {
             </FormItem>
           </Form>
         </Col>
-      </Row>
-    );
+      </Row>;
   }
 }
 

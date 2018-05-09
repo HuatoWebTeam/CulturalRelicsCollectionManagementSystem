@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Table, Form, DatePicker, Select } from 'antd';
+import { Row, Col, Button, Input, Table, Form, DatePicker, Select, Modal, message } from 'antd';
 import './index.less';
-import { SolicallApi } from './api';
+import { SolicallApi, SolicitDelete } from "./api";
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { approveState, subStr } from "../../assets/js/commonFun";
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 const Search = Input.Search;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
+const confirm = Modal.confirm;
 
 class CollecSolicition extends Component {
   state = {
@@ -18,21 +19,25 @@ class CollecSolicition extends Component {
     pageIndex: 1,
     pageSize: 10,
     total: 0,
-    relicsName: "",
+    relicsName: "",  // 搜索，文物名称
+    odd: "",        // 搜索，文物编号
     relicsCateList: []
   };
 
   componentWillMount() {
-    const { dateFormat } = this.props;
     let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
+    let soliOdd = sessionStorage.getItem('soliOdd');
+    soliOdd = soliOdd === 'null' ? '' : soliOdd;
+
     let startDate = moment()
       .subtract(6, "days").hour(0).minute(0).second(0).format();
-    let endDate = moment().hour(0).minute(0).second(0).format();
+    let endDate = moment().hour(23).minute(59).second(59).format();
     this.setState(
       {
         date: [startDate, endDate],
         pageIndex: this.props.pageIndex,
-        relicsCateList: relicsCateGory
+        relicsCateList: relicsCateGory,
+        odd: soliOdd
       },
       () => {
         this.getSolicitionlist();
@@ -41,25 +46,33 @@ class CollecSolicition extends Component {
   }
   // 获取征集列表
   getSolicitionlist() {
-    const { pageIndex, pageSize, relicsName, date, category } = this.state;
+    const { pageIndex, pageSize, relicsName, date, category, odd } = this.state;
     let params = {
       pageIndex: pageIndex,
       pageSize: pageSize,
       Collection_Name: relicsName,
       beginTime: date[0],
       endTime: date[1],
-      stat: category
+      stat: category,
+      odd: odd
     };
     SolicallApi(params).then(res => {
       console.log(res);
       let data = res;
       if (data.length === 0) {
-        this.setState({
-          total: 0
-        });
+        this.setState({ total: 0, solicitionRelicsList: [] });
       } else {
         for (let item of data) {
           item.key = item.Solicitation_Id;
+          item.disabled = Number(item.StepState) === 4
+            ? Number(item.FlowState) === 0
+              ? true
+              : false
+            : Number(item.StepState) === 1
+              ? Number(item.FlowState) === 1
+                ? true
+                : false
+              : false;
         }
         this.setState({
           solicitionRelicsList: data,
@@ -99,7 +112,7 @@ class CollecSolicition extends Component {
     this.setState({
       date: [
         date[0].hour(0).minute(0).second(0).format(), 
-        date[1].hour(23).minute(59).second(0).format()
+        date[1].hour(23).minute(59).second(59).format()
       ]
     });
   }
@@ -110,9 +123,33 @@ class CollecSolicition extends Component {
       category: key
     })
   }
+  // 对话框   // 删除展览单
+  showConfirm = text => {
+    let _this = this;
+    confirm({
+      title: "确定删除?",
+      content: "",
+      onOk() {
+        console.log(text);
+        let params = { Id: text };
+        SolicitDelete(params).then(res => {
+          if (res === true) {
+            message.success("删除成功");
+            _this.getSolicitionlist();
+          } else {
+            message.error("删除失败");
+          }
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
+
   render() {
     const { solicitionRelicsList, pageIndex, pageSize, total, date, category, relicsCateList } = this.state;
-    const { dateFormat } = this.props;
+    // const { dateFormat } = this.props;
     const solicitionColumns = [
       {
         title: "文物名称",
@@ -222,7 +259,11 @@ class CollecSolicition extends Component {
                 }}
               >
                   编辑
-                </Button>
+              </Button>
+              <Button disabled={!record.disabled}
+                onClick={this.showConfirm.bind(this, record.Solicitation_Id)}>
+                删除
+              </Button>
             </span>;
         }
       }

@@ -91,7 +91,7 @@ class SolicitionDetail extends Component {
             鉴定结果： {solicition.Identification}
           </Col>
         </Col>
-        <ApproveComponent anthorityState={anthorityState} paramsId={solicition.Collection_Number} flag={1} changeAnthorityState={this.changeAnthority} />
+        <ApproveComponent oddName={'此征集单'} anthorityState={anthorityState} paramsId={solicition.Collection_Number} flag={1} changeAnthorityState={this.changeAnthority} />
       </Row>;
   }
 }
