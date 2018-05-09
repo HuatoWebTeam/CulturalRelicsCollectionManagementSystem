@@ -201,7 +201,7 @@ class AssignPermissions extends Component {
                         </Checkbox>
                       </Col> : <Col span={24} className="child-checkbox" key={item.ProjectModule_Id}>
                         <Col span={24}>
-                          <h3>{item.ProjectModule_Name}</h3>
+                          <h4>{item.ProjectModule_Name}</h4>
                         </Col>
                         {item.menusAll.map((value, idx) => (
                           <Col
