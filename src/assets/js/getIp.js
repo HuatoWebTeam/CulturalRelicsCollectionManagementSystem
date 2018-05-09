@@ -44,16 +44,29 @@ export const getIp = (callback) => {
 
         //skip non-candidate events
         if (ice.candidate) {
-
+            console.log(ice.candidate)
             //match just the IP address
             var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/
-            var ip_addr = ip_regex.exec(ice.candidate.candidate)[1];
-
+            // var ip_addr = ip_regex.exec(ice.candidate.candidate)[1];
+            var ip_addr;
+            if (ice.candidate.candidate.match(ip_regex)) {
+                console.log('----1------')
+                ip_addr = ice.candidate.candidate.match(ip_regex)[1];
+            } 
             //remove duplicates
-            if (ip_dups[ip_addr] === undefined)
-                callback(ip_addr);
+            // console.log(ip_dups)
+            // console.log(ip_dups[ip_addr)
+            // 原来的
+        
+            // if (ip_dups[ip_addr] === undefined)
+            //     callback(ip_addr);
 
-            ip_dups[ip_addr] = true;
+            // ip_dups[ip_addr] = true;
+            // 修改的
+            if(ip_addr !== undefined) {
+                callback(ip_addr);
+                ip_dups[ip_addr] = true;
+            }
         }
     };
 
@@ -64,7 +77,7 @@ export const getIp = (callback) => {
     pc.createOffer(function (result) {
 
         //trigger the stun server request
-        pc.setLocalDescription(result, function () { });
+        pc.setLocalDescription(result).then(() => { })
 
     }, function () { });
 }
