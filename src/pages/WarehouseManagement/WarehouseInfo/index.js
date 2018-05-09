@@ -231,7 +231,7 @@ class WarehouseManageApp extends Component {
         <Col span={24} className="title">
           库房管理列表
         </Col>
-        <Col span={24} className="warehouseInfo-container">
+        <Col span={24} className="warehouseInfo-container" style={{padding: '20px 40px 20px 20px'}} >
           <Col span={24} style={{ paddingBottom: "20px" }}>
             <Button type="primary" icon="plus" onClick={this.addWarehouse}>
               新增库房
