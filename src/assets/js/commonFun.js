@@ -89,7 +89,9 @@ export const relicsState = [
     { value: '修复入库', key: 13 },
     { value: '展览入库', key: 14 },
     { value: '出库展览中', key: 15 },
-    { value: '出库修复中', key: 16 }
+    { value: '出库修复中', key: 16 },
+    { value: '入库异常', key: 17 },
+    { value: '入库中', key: 18 }
 
 ]
 
@@ -114,7 +116,7 @@ export const exhibitionType = [
 export const exhibiState = [
     { key: 0, value: '待展览' },
     { key: 1, value: '出库中' },
-    { key: 2, value: '展览中' },
+    { key: 2, value: '出库展览中' },
     { key: 3, value: '入库中' },
     { key: 4, value: '展览完成' }
 ]
@@ -140,7 +142,7 @@ export const inventState = [
 // 修复状态
 export const repairState = [
     { key: 0, value: '待修复' },
-    { key: 1, value: '修复中' },
+    { key: 1, value: '出库修复中' },
     { key: 2, value: '修复完成' },
     { key: 3, value: '修复异常' },
     { key: 4, value: '入库中' }
