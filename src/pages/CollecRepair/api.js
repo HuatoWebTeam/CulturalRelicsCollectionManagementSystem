@@ -18,5 +18,10 @@ export const RepDatall = (params) => {
 
 //  编辑
 export const RepairUpdate = (params) => {
-    axios.post("Repair/RepairUpdate", params).then(res => res.data)
+    return axios.post("/Repair/RepUpdate", params).then(res => res.data);
+}
+
+// 删除修复单
+export const DeleteRepair = (params) => {
+    return axios.post("/Repair/DeleteRepair", params).then(res => res.data)
 }

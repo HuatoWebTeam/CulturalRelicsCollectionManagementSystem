@@ -18,11 +18,9 @@ class RepairDetails extends Component {
   };
 
   componentWillMount() {
-    let state = sessionStorage.getItem("anthoityState");
     // console.log(state);
     this.setState({
       repairNum: this.props.match.params.id,
-      anthorityState: Number(state)
     }, () => {
       this.getRepairDetailList()
     });
@@ -55,7 +53,8 @@ class RepairDetails extends Component {
         }
         this.setState({
           repairDetailList: listData,
-          detailInfo: listDetail
+          detailInfo: listDetail,
+          anthorityState: Number(res[0].DeniedPermission)
         });
       }
     });
@@ -73,7 +72,6 @@ class RepairDetails extends Component {
   };
   // 改变审批条件状态
   changeAnthority = () => {
-    sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
   };
 
@@ -113,6 +111,7 @@ class RepairDetails extends Component {
                 修复状态：{repairState.map(item => {
                   if (Number(detailInfo.Repair_State) === item.key) {
                     return <span
+                        key={item.key}
                         style={{
                           color:
                             Number(detailInfo.Repair_State) === 3
@@ -128,7 +127,7 @@ class RepairDetails extends Component {
             </Col>}
           <CommonInfoTable data={repairDetailList} />
         </Col>
-        <ApproveComponent paramsId={repairNum} anthorityState={anthorityState} flag={6} changeAnthorityState={this.changeAnthority} />
+        <ApproveComponent oddName={'此修复单'} paramsId={repairNum} anthorityState={anthorityState} flag={6} changeAnthorityState={this.changeAnthority} />
       </Row>;
   }
 }

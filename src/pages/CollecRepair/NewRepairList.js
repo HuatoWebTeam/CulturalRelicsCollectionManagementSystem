@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, DatePicker, Table, Button, message } from 'antd';
+import { Row, Col, Form, Input, DatePicker, Button, message } from 'antd';
 import './index.less';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import RelicsDialog from '../Components/RelicsDialog';
 import CheckedRelicsInfo from "../Components/CheckedRelicsInfo";
 import { RepairAddApi, RepDatall, RepairUpdate } from "./api";
-import { levelInfo } from "../../assets/js/commonFun";
 const { RangePicker } = DatePicker;
 
 const FormItem = Form.Item;
@@ -16,6 +15,8 @@ class NewRepairListApp extends Component {
     repairListData: [],
     pageTitle: '新建修复单',
     chooseRelicsNum: [],
+    loading: false,   
+    checkNum: [],
     inventDays: 1,
     repairInfo: {
       Repair_Applicant: null, // 申请人
@@ -44,8 +45,10 @@ class NewRepairListApp extends Component {
       RepDatall(params).then(res => {
         console.log(res);
         let list = res[0].exhibit;
+        let num = [];
         for(let item of list) {
           item.key = item.Collection_Number;
+          num.push(item.Collection_Number);
         }
         let data = {
           Repair_Applicant: res[0].Repair_Applicant,
@@ -58,7 +61,8 @@ class NewRepairListApp extends Component {
         }
         this.setState({
           repairInfo: data,
-          repairListData: list
+          repairListData: list,
+          checkNum: num
         })
       })
     }
@@ -68,13 +72,14 @@ class NewRepairListApp extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
+        this.setState({ loading: true })
         const values = {
           ...fieldsValue
         };
         console.log(values);
         console.log(this.state.chooseRelicsNum);
         const { state, formData } = this.props.componentState;
-        const { chooseRelicsNum, repairInfo } = this.state;
+        const { chooseRelicsNum, repairInfo, checkNum } = this.state;
         let params = {
           Repair_Id: formData,
           Repair_Time: moment().format(),
@@ -89,8 +94,32 @@ class NewRepairListApp extends Component {
           ReturnTime: values.ReturnTime.format()
         };
         if( state ) {
+          console.log(checkNum)
+          console.log(chooseRelicsNum)
+          params.NowCollection = [];
+          params.HistoryCollection = []; 
+          for(let item of chooseRelicsNum) {
+            params.NowCollection.push({odd: item})
+          } 
+          for(let i = 0; i < checkNum.length; i++) {
+            for(let n = 0; n < chooseRelicsNum.length; n++) {
+              if(checkNum[i] === chooseRelicsNum[n]) {
+                checkNum.splice(i, 1);
+                i--;
+                break;
+              }
+            }
+          };
+          for(let item of checkNum) {
+             params.HistoryCollection.push({
+               Collection_Number: item,
+               Collection_State: 1
+             });
+          }
+          console.log(params);
           RepairUpdate(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res === true) {
               message.success("编辑修复单成功");
               this.props.form.resetFields();
@@ -103,6 +132,7 @@ class NewRepairListApp extends Component {
         } else {
           RepairAddApi(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res === true) {
               message.success("新建修复单成功");
               this.props.form.resetFields();
@@ -120,7 +150,6 @@ class NewRepairListApp extends Component {
 
   chooseData = item => {
     console.log(item);
-    let data = [];
     let chooseRelicsNum = [];
     for (let value of item) {
       chooseRelicsNum.push(value.key);
@@ -158,7 +187,7 @@ class NewRepairListApp extends Component {
   };
 
   render() {
-    const { repairListData, inventDays, date, repairInfo,pageTitle } = this.state;
+    const { repairListData, repairInfo, pageTitle, chooseRelicsNum } = this.state;
     const { getFieldDecorator } = this.props.form;
 
 
@@ -296,6 +325,9 @@ class NewRepairListApp extends Component {
                 type="primary"
                 onClick={() => {
                   this.refs.relicsDialog.openModal();
+                  this.setState({
+                    checkNum: chooseRelicsNum
+                  })
                 }}
               >
                 选择修复文物
@@ -312,6 +344,7 @@ class NewRepairListApp extends Component {
             </Col>
             <Col span={24} style={{ padding: "20px 0" }}>
               <Button
+                loading={this.state.loading}
                 type="primary"
                 htmlType="submit"
                 style={{ float: "right" }}

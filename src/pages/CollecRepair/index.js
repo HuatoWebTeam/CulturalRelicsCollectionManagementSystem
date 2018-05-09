@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Table, Select, DatePicker, Form } from 'antd';
+import { Row, Col, Button, Input, Table, Select, DatePicker, Form, Modal, message } from 'antd';
 import './index.less';
-import { RepairApi } from './api';
-import { RangePickerDefault, levelInfo, approveState, subStr, repairState } from "../../assets/js/commonFun";
+import { RepairApi, DeleteRepair } from "./api";
+import { RangePickerDefault, approveState, subStr, repairState } from "../../assets/js/commonFun";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ReturnAdd } from '../../axios';
@@ -10,6 +10,7 @@ import moment from 'moment';
 const Search = Input.Search;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
+const confirm = Modal.confirm;
 
 
 class CollecRepair extends Component {
@@ -69,11 +70,23 @@ class CollecRepair extends Component {
 
       if (res.length === 0) {
         this.setState({
-          total: 0
+          total: 0,
+          repairData: []
         });
       } else {
         for (let i = 0; i < res.length; i++) {
           res[i].key = res[i].Repair_Id;
+          res[i].disabled = Number(res[i].StepState) === 4
+                ? Number(res[i].FlowState) === 0
+                  ? true
+                  : false
+                : Number(res[i].StepState) === 1
+                  ? Number(res[i].FlowState) === 1
+                    ? true
+                    : false
+                  : false;
+          // console.log(res[i].CkOdd !== '')
+          // console.log(res[i].RkOdd !== '')
         }
 
         this.setState({
@@ -160,6 +173,30 @@ class CollecRepair extends Component {
       console.log(res);
       if (res === true) {
         this.getRepairList();
+      }
+    });
+  };
+
+  // 对话框   // 删除展览单
+  showConfirm = text => {
+    let _this = this;
+    confirm({
+      title: "确定删除?",
+      content: "",
+      onOk() {
+        console.log(text);
+        let params = { odd: text };
+        DeleteRepair(params).then(res => {
+          if (res === true) {
+            message.success("删除成功");
+            _this.getRepairList();
+          } else {
+            message.error("删除失败");
+          }
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
       }
     });
   };
@@ -265,6 +302,7 @@ class CollecRepair extends Component {
           return (
             <span>
               <Button style={{ border: 'none', marginRight: '10px' }}
+                disabled={!record.disabled}
                 onClick={() => {
                   this.props.changeFormData({
                     state: "编辑修复单",
@@ -291,6 +329,18 @@ class CollecRepair extends Component {
                 onClick={this.returnButton.bind(this, record)}
               >
                 归还
+              </Button>
+              {
+                 record.RkOdd !== ''
+                  ? <Link disabled={record.RkOdd === ''} style={{marginLeft: '10px', border: 'none'}} to={`/App/PutInDetails/${record.RkOdd}`} >查看入库单</Link>
+                  : <Link disabled={record.CkOdd === ''} style={{marginLeft: '10px', border: 'none'}} to={`/App/OutboundDetails/${record.CkOdd}`}  >查看出库单</Link> 
+                  
+                    
+              }
+              <Button disabled={!record.disabled}
+                disabled={!record.disabled}
+                onClick={this.showConfirm.bind(this, record.Repair_Id)}>
+                删除
               </Button>
             </span>
           );
