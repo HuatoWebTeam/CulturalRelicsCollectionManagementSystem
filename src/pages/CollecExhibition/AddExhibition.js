@@ -22,7 +22,7 @@ class AddExhibitionForm extends Component {
     chooseRelicsNum: [],
     isAdduction: true, // true 为内展
     exhibiInfo: {
-      ReturnTime: moment(),
+      ReturnTime: moment().add(7, "days"),
       Exhibition_Contact: null,
       Exhibition_Cost: null,
       Exhibition_Place: null,
@@ -30,9 +30,10 @@ class AddExhibitionForm extends Component {
       exhibitionType: exhibitionType[0].key,
       Person_liable: null,
       date: [moment(), moment().add(6, "days")]
-    },             // 展览单信息
+    }, // 展览单信息
     checkInfo: [], // 编辑已有的文物信息
-    checkNum: null // 已有的文物编号
+    checkNum: null, // 已有的文物编号
+    loading: false
   };
 
   componentWillMount() {
@@ -50,10 +51,8 @@ class AddExhibitionForm extends Component {
         let list = res[0].exhibit;
         let checkNum = [];
         for (let item of list) {
-            item.key = item.Collection_Number,
-            
-          
-          checkNum.push(item.Collection_Number);
+          (item.key = item.Collection_Number),
+            checkNum.push(item.Collection_Number);
         }
         let oddInfo = {
           ReturnTime: moment(res[0].ReturnTime),
@@ -70,6 +69,7 @@ class AddExhibitionForm extends Component {
           exhibiInfo: oddInfo,
           addExhibitionData: list,
           oddId: formData,
+          chooseRelicsNum: checkNum,
           checkNum: checkNum
         });
       });
@@ -89,7 +89,11 @@ class AddExhibitionForm extends Component {
     this.props.form.validateFields((err, fieldsValue) => {
       if (!err) {
         // console.log(fieldsValue);
+        this.setState({
+          loading: true
+        });
         const { state } = this.props.componentState;
+        const { checkNum } = this.state;
         const rangeValue = fieldsValue["date"];
         const values = {
           ...fieldsValue,
@@ -112,7 +116,7 @@ class AddExhibitionForm extends Component {
         }
         let thisRelicsNum = chooseRelicsNum.join(",");
         let params = {
-          Exhibition_Odd: state ? this.state.oddId : '',
+          Exhibition_Odd: state ? this.state.oddId : "",
           Exhibition_Theme: values["Exhibition_Theme"],
           Exhibition_Type: values["exhibitionType"],
           StartTine: values["date"][0],
@@ -126,9 +130,36 @@ class AddExhibitionForm extends Component {
           CreationTime: moment().format()
         };
         console.log(params);
-        if(state) {
+        console.log(checkNum);
+        if (state) {
+          // 选择的
+          let chooseReli = params.Collection_Number.split(",");
+          params.NowCollection = [];
+          for (let item of chooseReli) {
+            params.NowCollection.push({ odd: item });
+          }
+          for (let i = 0; i < checkNum.length; i++) {
+            for (let n = 0; n < chooseReli.length; n++) {
+              if (checkNum[i] === chooseReli[n]) {
+                checkNum.splice(i, 1);
+                i--;
+                break;
+              }
+            }
+          }
+          params.HistoryCollection = [];
+          for (let item of checkNum) {
+            params.HistoryCollection.push({
+              Collection_Number: item,
+              Collection_State: 1
+            });
+          }
+          console.log(params);
           ExUpdate(params).then(res => {
             console.log(res);
+            this.setState({
+              loading: false
+            });
             if (res === true) {
               message.success("编辑展览单成功");
               this.props.form.resetFields();
@@ -137,10 +168,11 @@ class AddExhibitionForm extends Component {
             } else {
               message.error("编辑展览单失败");
             }
-          })
+          });
         } else {
           ExDataAddApp(params).then(res => {
             console.log(res);
+            this.setState({ loading: false });
             if (res === true) {
               message.success("添加展览单成功");
               this.props.form.resetFields();
@@ -151,7 +183,6 @@ class AddExhibitionForm extends Component {
             }
           });
         }
-        
       }
     });
   }
@@ -195,76 +226,11 @@ class AddExhibitionForm extends Component {
       isAdduction,
       pageTitle,
       checkInfo,
-      exhibiInfo
+      exhibiInfo,
+      chooseRelicsNum
     } = this.state;
     console.log(addExhibitionData);
     const { getFieldDecorator } = this.props.form;
-    const chooseRelicsData = [
-     
-      {
-        title: "文物编号",
-        dataIndex: "Collection_Number",
-      },
-      {
-        title: "文物图片",
-        dataIndex: "Collection_img",
-        render: (text, record, index) => {
-          // console.log(text,record, index)
-          return (
-            <img
-              style={{ width: "55px", height: "55px" }}
-              src={text}
-              alt={index}
-            />
-          );
-        }
-      },
-      {
-        title: "文物名称",
-        dataIndex: "Collection_Name",
-      },
-      {
-        title: "数量",
-        dataIndex: "Number",
-      },
-      {
-        title: "分级信息",
-        dataIndex: "Grade",
-        render: text => {
-          for (let item of levelInfo) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "材质",
-        dataIndex: "MaterialQuality",
-      },
-      {
-        title: "年代",
-        dataIndex: "Collection_Years",
-        render: text => {
-          for (let item of relicsYears) {
-            if (Number(text) === item.key) {
-              return <span>{item.value}</span>;
-            }
-          }
-        }
-      },
-      {
-        title: "完整程度",
-        dataIndex: "Integrity",
-        render: text => {
-          if (Number(text) === 0) {
-            return <span>完整</span>;
-          } else if (Number(text) === 1) {
-            return <span>破损</span>;
-          }
-        }
-      }
-    ];
 
     return (
       <Row className="exhibition-container main-content">
@@ -403,6 +369,9 @@ class AddExhibitionForm extends Component {
                   type="primary"
                   onClick={() => {
                     this.refs.relicsDialog.openModal();
+                    this.setState({
+                      checkNum: chooseRelicsNum
+                    });
                     // console.log(this.refs.relicsDialog);
                   }}
                 >
@@ -411,19 +380,17 @@ class AddExhibitionForm extends Component {
               </Col>
               <Col span={24}>
                 <CheckedRelicsInfo data={addExhibitionData} />
-                {/* <Table
-                  pagination={false}
-                  bordered
-                  columns={chooseRelicsData}
-                  dataSource={addExhibitionData}
-                /> */}
               </Col>
               <Col span={24} style={{ padding: "30px 50px" }}>
                 <FormItem
                   style={{ float: "right" }}
                   className="right-form-item"
                 >
-                  <Button htmlType="submit" type="primary">
+                  <Button
+                    loading={this.state.loading}
+                    htmlType="submit"
+                    type="primary"
+                  >
                     提交展览清单
                   </Button>
                 </FormItem>
@@ -437,7 +404,6 @@ class AddExhibitionForm extends Component {
             title="选择展览文物"
             ref="relicsDialog"
           />
-          {/* <Table bordered columns={relicDetails} dataSource={this.dataSoure} /> */}
         </Col>
       </Row>
     );

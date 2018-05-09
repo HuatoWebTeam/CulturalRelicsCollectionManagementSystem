@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, DatePicker, Input, Table, Select, Form } from 'antd';
+import { Row, Col, Button, DatePicker, Input, Table, Select, Form, message, Modal } from 'antd';
 import Link from 'react-router-dom/Link';
 import './index.less';
 import { subStr, exhibitionType, approveState, exhibiState } from "../../assets/js/commonFun";
 import moment from 'moment';
-import { ExhibitionAll } from './api';
+import { ExhibitionAll, DeleteExhibit } from "./api";
 // import Cookie from 'js-cookie';
 import { connect } from 'react-redux';
 import { ReturnAdd } from '../../axios';
@@ -12,6 +12,7 @@ import { ReturnAdd } from '../../axios';
 const { RangePicker } = DatePicker;
 const Search  = Input.Search;
 const Option = Select.Option;
+const confirm = Modal.confirm;
 
 
 class CollecExhibition extends Component {
@@ -19,7 +20,7 @@ class CollecExhibition extends Component {
     date: [],
     format: null,
     pageIndex: 1,
-    pageSize: 5,
+    pageSize: 10,
     total: 0,
     data: [],
     searchType: 10,
@@ -71,18 +72,39 @@ class CollecExhibition extends Component {
             id: item.Exhibition_Odd,
             theme: item.Exhibition_Theme,
             type: item.Exhibition_Type,
-            date: subStr(item.StartTine) + " ~ " + subStr(item.EndTime),
+            date:
+              subStr(item.StartTine) + " ~ " + subStr(item.EndTime),
             head: item.Person_liable,
             ReceivingPermissions: Number(item.ReceivingPermissions),
             DeniedPermission: Number(item.DeniedPermission),
             StepState: item.StepState,
             CreationTime: subStr(item.CreationTime),
             ExhibitionState: item.Exhibition_State,
+            ReturnTime: item.ReturnTime,
+            RkOdd: item.RkOdd,
+            CkOdd: item.CkOdd,
+            FlowState: item.FlowState,
+            DisplayState: item.DisplayState,
+            disabled:
+              Number(item.StepState) === 4
+                ? Number(item.FlowState) === 0
+                  ? true
+                  : false
+                : Number(item.StepState) === 1
+                  ? Number(item.FlowState) === 1
+                    ? true
+                    : false
+                  : false
           });
-          this.setState({
-            data: dataSource
-          });
+          console.log('----')
+          console.log(item.RkOdd !== '');
+          console.log('---')
+          console.log(item.CkOdd !== '');
+          
         }
+        this.setState({
+          data: dataSource
+        });
       } else {
         this.setState({ total: 0, data: [] });
       }
@@ -162,6 +184,33 @@ class CollecExhibition extends Component {
       }
     })
   }
+
+    // 对话框   // 删除展览单
+  showConfirm = text => {
+    let _this = this;
+    confirm({
+      title: "确定删除?",
+      content: "",
+      onOk() {
+        // console.log(text);
+        let params = { odd: text };
+        DeleteExhibit(params).then(res => {
+          console.log(res)
+          if (res === true) {
+            message.success("删除成功");
+            _this.getExhibitionList();
+          } else {
+            message.error("删除失败");
+          }
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
+
+
 
   render() {
     // let _this = this;
@@ -253,6 +302,7 @@ class CollecExhibition extends Component {
           return <span>
               <Button type='text' 
                 style={{border: 'none', marginRight: '10px'}}
+                disabled={!record.disabled}
                 onClick={() => {
                   this.props.changeFormData({state: '编辑展览清单', formData: record.id});
                   this.props.history.push("/App/AddExhibition");
@@ -271,7 +321,18 @@ class CollecExhibition extends Component {
                 style={{marginLeft: '10px', border: 'none'}}
                 onClick={this.returnButton.bind(this,record)} >
                   归还
-                </Button>
+              </Button>
+              {
+                record.RkOdd !== ''
+                  ? <Link disabled={record.RkOdd === ''} style={{marginLeft: '10px', border: 'none'}} to={`/App/PutInDetails/${record.RkOdd}`} >查看入库单</Link>
+                  : <Link disabled={record.CkOdd === ''} style={{marginLeft: '10px', border: 'none'}} to={`/App/OutboundDetails/${record.CkOdd}`}  >查看出库单</Link> 
+                  
+              }
+              <Button style={{ marginLeft: '10px', border: 'none' }}
+                disabled={!record.disabled}
+                onClick={this.showConfirm.bind(this, record.id)} >
+                删除
+              </Button>
             </span>;
         }
       }

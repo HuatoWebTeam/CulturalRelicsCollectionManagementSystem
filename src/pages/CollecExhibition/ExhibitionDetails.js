@@ -35,11 +35,11 @@ class ExhibitionDetails extends Component {
   }
   componentDidMount() {
     this.getDetailsList();
-    let state = sessionStorage.getItem("anthoityState");
-    // console.log(state);
-    this.setState({
-      anthorityState: Number(state)
-    });
+    // let state = sessionStorage.getItem("anthoityState");
+    // // console.log(state);
+    // this.setState({
+    //   anthorityState: Number(state)
+    // });
   }
 
   getDetailsList() {
@@ -70,9 +70,16 @@ class ExhibitionDetails extends Component {
         for (let item of listData) {
           item.key = item.Collection_Number;
         }
-        this.setState({ data: listData, detailInfo: dataSource });
+        this.setState({
+          data: listData,
+          detailInfo: dataSource,
+          anthorityState: Number(res[0].DeniedPermission)
+        });
       } else {
-        this.setState({ total: 0 });
+        this.setState({
+          total: 0,
+          anthorityState: 0
+        });
       }
     });
   }
@@ -83,9 +90,8 @@ class ExhibitionDetails extends Component {
     });
     this.getDetailsList();
   }
-  // 改变审批条件状态
+ // 改变审批条件状态
   changeAnthority = () => {
-    sessionStorage.setItem("anthoityState", 0);
     this.setState({ anthorityState: 0 });
   };
 
@@ -156,12 +162,16 @@ class ExhibitionDetails extends Component {
           )}
           <CommonInfoTable data={data} />
         </Col>
-        <ApproveComponent
-          paramsId={id}
-          anthorityState={anthorityState}
-          flag={5}
-          changeAnthorityState={this.changeAnthority}
-        />
+        {
+          detailInfo && <ApproveComponent
+            paramsId={id}
+            anthorityState={anthorityState}
+            flag={5}
+            oddName={detailInfo.Exhibition_Theme || ''}
+            changeAnthorityState={this.changeAnthority}
+          />
+        }
+        
       </Row>
     );
   }

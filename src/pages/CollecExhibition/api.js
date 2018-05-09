@@ -23,3 +23,9 @@ export const ExUpdate = (params) => {
     return axios.post("Exhibition/ExUpdate", params).then(res => res.data)
 }
 
+
+// 删除展览单
+export const DeleteExhibit = (params) => {
+    return axios.post("/Exhibition/DeleteExhibit", params).then(res => res.data)
+}
+
