@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Table, Button, message, Modal, Form, Input } from "antd";
 import { NoticeAll, NoticeAdd, DeleteNotice } from "./api";
 import moment from 'moment';
+import './index.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
@@ -11,11 +12,22 @@ class LatestNoticeApp extends Component {
     pageIndex: 1,
     pageSize: 10,
     total: 0,
-    visible: false
+    visible: false,
+    showButton: true
   };
 
   componentWillMount() {
     this.getNoticeList();
+    let userInfo = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
+    for(let item of userInfo) {
+      if (item.ProjectModule_URL === "/App/LatestNotice") {
+        this.setState({
+          showButton: true,
+        })
+      } else {
+        this.setState({ showButton: false });
+      }
+    }
   }
     // 获取通知列表
   getNoticeList() {
@@ -109,7 +121,7 @@ class LatestNoticeApp extends Component {
   }
 
   render() {
-    const { noticeList, pageIndex, pageSize, total, visible } = this.state;
+    const { noticeList, pageIndex, pageSize, total, visible, showButton } = this.state;
     const { getFieldDecorator } = this.props.form;
     const noticeColumns = [
       {
@@ -135,30 +147,33 @@ class LatestNoticeApp extends Component {
         key: "Notice_Time",
         width: 180
       },
-       {
-           title: '操作',
-           dataIndex: '',
-           key: 'operation',
-           render:(text) => {
-            //    console.log(text);
-               return <Button onClick={this.deleteNoticeFun.bind(this, text.Notice_Id)} type="danger">
-                   删除
-                 </Button>;
-           }
-       }
+      {
+          title: '操作',
+          dataIndex: '',
+          className: showButton ? null : 'hiddenOperation',
+          key: 'operation',
+          render:(text) => {
+          //    console.log(text);
+              return <Button onClick={this.deleteNoticeFun.bind(this, text.Notice_Id)} type="danger">
+                  删除
+                </Button>;
+          }
+      }
     ];
     return <Row className="main-content">
         <Col span={24} className="title">
-          最新通知
+          通知列表
         </Col>
         <Col span={24} style={{ padding: "20px" }}>
-          <Col span={24} style={{ paddingBottom: "20px" }}>
-            <Button onClick={() => {
+          {
+            showButton && <Col span={24} style={{ paddingBottom: "20px" }}>
+              <Button onClick={() => {
                 this.setState({ visible: true });
               }} type="primary" icon="plus">
-              添加通知
-            </Button>
-          </Col>
+                添加通知
+              </Button>
+            </Col>
+          }
           <Col span={24}>
             <Table dataSource={noticeList} columns={noticeColumns} bordered pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.paginationChange }} />
           </Col>
