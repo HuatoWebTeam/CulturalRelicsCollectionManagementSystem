@@ -6,7 +6,7 @@ import FreeScrollBar from 'react-free-scrollbar';
 import './Home.less';
 // import Cookie from 'js-cookie';
 import { Link } from 'react-router-dom'; 
-import { GetToNotice, GetFineDisplayData, GetStatisticsData } from "./api";
+import { GetToNotice, GetFineDisplayData, GetStatisticsData, MatterAll } from "./api";
 // import { relative } from 'path';
 import LanternSlide from "./Scroller";
 const RadioGroup  = Radio.Group;
@@ -26,34 +26,42 @@ const collStatic = [
 ]
 
 // 我的事项
-const myMattersData = {
-  todo: [
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" }
-  ],
-  dealtIn: [
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" }
-  ],
-  transferred: [
-    { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
-    { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" }
-  ]
+// const myMattersData = {
+//   agency: [
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "商品出库", id: "jhiagdf", date: "2717-12-23 15:36" }
+//   ],
+//   handle: [
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办理中", id: "jhiagdf", date: "2717-12-23 15:36" }
+//   ],
+//   handleknot: [
+//     { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" },
+//     { name: "办结", id: "jhiagdf", date: "2717-12-23 15:36" }
+//   ]
+// };
+
+// 我的事项》判断跳转
+const matterJump = {
+  0: "/App/OutboundDetails/", // 出库审核
+  1: "/App/PutInDetails/", // 入库审核
+  2: "/App/ExhibitionDetails/", //展览审核
+  3: "/App/ShowDetails/", // 盘点审核
+  4: "/App/RepairDetails/", // 修复审核
+  5: "/App/Solicition",    // 征集审核
 };
-
-
 
 // 快捷操作
 const shortcuts = [
@@ -70,9 +78,14 @@ const shortcuts = [
 class Home extends Component {
   state = {
     collection: collStatic,
+    myMattersData: {
+      agency: [],
+      handle: [],
+      handleknot: []
+    },
     myMatters: {
-      type: "todo",
-      data: null
+      type: "agency",
+      data: []
     },
     newNotice: [], // 最新通知
     productsList: [], // 精品展示
@@ -80,12 +93,12 @@ class Home extends Component {
     noticeVisible: false,
     noticeDetail: null,
     staticNumber: {
-      NumberBorrowing: 0,                // 外借数
-      NumberInRepair: 0,                 // 在修复数
-      NumberOfCollections: 0,            // 藏品数
-      NumberOfLibraries: 0,              // 在库数
-      NumberOfLibrariesToBeEntered: 0,   // 待入库数
-      NumberToBeRecorded: 0,             // 待入账数
+      NumberBorrowing: 0, // 外借数
+      NumberInRepair: 0, // 在修复数
+      NumberOfCollections: 0, // 藏品数
+      NumberOfLibraries: 0, // 在库数
+      NumberOfLibrariesToBeEntered: 0, // 待入库数
+      NumberToBeRecorded: 0 // 待入账数
     }
   };
   componentWillMount() {
@@ -105,12 +118,7 @@ class Home extends Component {
         }
       }
     }
-    this.setState({
-      myMatters: {
-        type: "todo",
-        data: myMattersData[this.state.myMatters.type]
-      }
-    });
+
     this.getnewNotice();
     let _this = this;
     // console.log(this.props.location.pathname === "/App/Home");
@@ -158,7 +166,20 @@ class Home extends Component {
       console.log(res);
       this.setState({
         staticNumber: res.Data
-      })
+      });
+    });
+
+    // 我的事项
+    MatterAll().then(res => {
+      console.log(res);
+      let myMattersData = res;
+      this.setState({
+        myMattersData: myMattersData,
+        myMatters: {
+          type: "agency",
+          data: myMattersData[this.state.myMatters.type]
+        }
+      });
     });
   }
   componentDidMount() {
@@ -187,6 +208,7 @@ class Home extends Component {
   };
   radioButtonChange(value) {
     console.log(value);
+    const { myMattersData } = this.state;
     this.setState({
       myMatters: {
         type: value.target.value,
@@ -209,7 +231,8 @@ class Home extends Component {
       noticeDetail,
       staticNumber
     } = this.state;
-    return <Row className="home-container">
+    return (
+      <Row className="home-container">
         <Col span={24} className="home-content">
           <Col span={24} className="home-title back-color-white">
             藏品统计
@@ -243,31 +266,59 @@ class Home extends Component {
             </Col>
           </Col>
         </Col>
-        <Col span={12} className="home-content" style={{ paddingRight: "10px" }}>
+        <Col
+          span={12}
+          className="home-content"
+          style={{ paddingRight: "10px" }}
+        >
           <Col span={24} className="home-title back-color-white">
             <div style={{ float: "left" }}>我的事项</div>
             <div style={{ float: "right" }}>
-              <RadioGroup className="myRadioGroup" onChange={this.radioButtonChange.bind(this)} defaultValue={myMatters.type}>
-                <RadioButton value="todo">待办</RadioButton>
-                <RadioButton value="dealtIn">办理中</RadioButton>
-                <RadioButton value="transferred">办结</RadioButton>
+              <RadioGroup
+                className="myRadioGroup"
+                onChange={this.radioButtonChange.bind(this)}
+                defaultValue={myMatters.type}
+              >
+                <RadioButton value="agency">待办</RadioButton>
+                <RadioButton value="handle">办理中</RadioButton>
+                <RadioButton value="handleknot">办结</RadioButton>
               </RadioGroup>
             </div>
           </Col>
           <Col span={24} className="back-color-white my-matters">
-            <FreeScrollBar className="my-vertical-track" style={{ width: "100%", height: "276px" }}>
+            <FreeScrollBar
+              className="my-vertical-track"
+              style={{ width: "100%", height: "276px" }}
+            >
               {myMatters.data.map((item, idx) => (
-                <Col span={24} key={idx} className="lineContent">
-                  <Col span={8} className="matters">
-                    {item.name}
+                <Link
+                  key={item.OrderNumber}
+                  to={
+                    item.Type !== 5
+                      ? `${matterJump[item.Type]}${item.OrderNumber}`
+                      : `${matterJump[item.Type]}`
+                  }
+                  onClick={() => {
+                    if (item.Type === 5) {
+                      let soliOdd = sessionStorage.setItem(
+                        "soliOdd",
+                        item.OrderNumber
+                      );
+                    }
+                  }}
+                >
+                  <Col span={24} className="lineContent">
+                    <Col span={16} className="matters">
+                      {item.OddName}
+                    </Col>
+                    {/* <Col span={8} className="matters">
+                      {item.id}
+                    </Col> */}
+                    <Col span={8} className="matters">
+                      {item.AddTime}
+                    </Col>
                   </Col>
-                  <Col span={8} className="matters">
-                    {item.id}
-                  </Col>
-                  <Col span={8} className="matters">
-                    {item.date}
-                  </Col>
-                </Col>
+                </Link>
               ))}
             </FreeScrollBar>
           </Col>
@@ -276,57 +327,113 @@ class Home extends Component {
           <Col span={24} className="home-title back-color-white">
             <Col span={20}>最新通知</Col>
             <Col span={4} style={{ fontSize: "16px", color: "#666" }}>
-              <span onClick={() => {
+              <span
+                onClick={() => {
                   this.props.history.push("/App/LatestNotice");
-                }} style={{ display: "inline-block", height: "20px", cursor: "pointer" }}>
+                }}
+                style={{
+                  display: "inline-block",
+                  height: "20px",
+                  cursor: "pointer"
+                }}
+              >
                 更多>>
               </span>
             </Col>
           </Col>
-          <Col span={24} className="back-color-white new-notice" style={{ height: "276px" }}>
-            {newNotice.map((item, idx) => idx < 6 && <Col onClick={this.showNoticeDetail.bind(this, item)} span={24} key={idx}>
+          <Col
+            span={24}
+            className="back-color-white new-notice"
+            style={{ height: "276px" }}
+          >
+            {newNotice.map(
+              (item, idx) =>
+                idx < 6 && (
+                  <Col
+                    onClick={this.showNoticeDetail.bind(this, item)}
+                    span={24}
+                    key={idx}
+                  >
                     <Col span={17} className="notice-title">
                       {item.Notice_Title}
                     </Col>
                     <Col span={6} className="notice-date">
                       {item.Notice_Time}
                     </Col>
-                  </Col>)}
-            <Modal visible={noticeVisible} onCancel={this.closeNoticeDetail} footer={<Button onClick={this.closeNoticeDetail} type="primary">
+                  </Col>
+                )
+            )}
+            <Modal
+              visible={noticeVisible}
+              onCancel={this.closeNoticeDetail}
+              footer={
+                <Button onClick={this.closeNoticeDetail} type="primary">
                   关闭
-                </Button>}>
-              {noticeDetail && <Col span={24}>
+                </Button>
+              }
+            >
+              {noticeDetail && (
+                <Col span={24}>
                   <Col span={24} className="notice-detail-title">
                     <h1>{noticeDetail.Notice_Title}</h1>
                     <span>{noticeDetail.Notice_Time}</span>
                   </Col>
-                  <Col span={24} style={{ fontSize: "18px", marginTop: "15px" }}>
+                  <Col
+                    span={24}
+                    style={{ fontSize: "18px", marginTop: "15px" }}
+                  >
                     {noticeDetail.Notice_Desc}
                   </Col>
-                </Col>}
+                </Col>
+              )}
             </Modal>
           </Col>
         </Col>
-        <Col span={12} className="home-content" style={{ paddingRight: "10px" }}>
+        <Col
+          span={12}
+          className="home-content"
+          style={{ paddingRight: "10px" }}
+        >
           <Col span={24} className="home-title back-color-white">
             快捷操作
           </Col>
-          <Col span={24} className="back-color-white shortcuts" style={{ height: "305px" }}>
-            {shortcuts.map((item, idx) => !item.isHidden && <Col style={{ textAlign: "center", marginBottom: "20px" }} span={6} key={idx}>
+          <Col
+            span={24}
+            className="back-color-white shortcuts"
+            style={{ height: "305px" }}
+          >
+            {shortcuts.map(
+              (item, idx) =>
+                !item.isHidden && (
+                  <Col
+                    style={{ textAlign: "center", marginBottom: "20px" }}
+                    span={6}
+                    key={idx}
+                  >
                     <Link to={item.url}>
                       <div className="background">
                         <span className={item.icon} />
                       </div>
                       <div className="short-title">{item.title}</div>
                     </Link>
-                  </Col>)}
+                  </Col>
+                )
+            )}
           </Col>
         </Col>
         <Col span={12} className="home-content" style={{ paddingLeft: "10px" }}>
-          <div span={24} style={{ width: "100%" }} className="home-title back-color-white">
+          <div
+            span={24}
+            style={{ width: "100%" }}
+            className="home-title back-color-white"
+          >
             精品展示
           </div>
-          <div ref="slideWidth" className="back-color-white products-content" style={{ height: "305px", padding: "20px 60px" }}>
+          <div
+            ref="slideWidth"
+            className="back-color-white products-content"
+            style={{ height: "305px", padding: "20px 60px" }}
+          >
             {/* <Carousel autoplay>
               {productsList.map((item, idx) => (
                 <div
@@ -346,7 +453,8 @@ class Home extends Component {
             <LanternSlide width={slideWidth} list={productsList} />
           </div>
         </Col>
-      </Row>;
+      </Row>
+    );
     // <div>
     //   <Button type='primary' onClick={this.buttonCilck.bind(this)} >{ this.props.buttonText }</Button>
     // </div>

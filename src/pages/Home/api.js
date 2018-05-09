@@ -18,3 +18,8 @@ export const GetStatisticsData = () => {
     return axios.post('/HomeManage/GetStatisticsData').then(res => res.data)
 }
 
+// 我的事项
+export const MatterAll = () => {
+    return axios.post("/Notice/MatterAll").then(res => res.data)
+}
+

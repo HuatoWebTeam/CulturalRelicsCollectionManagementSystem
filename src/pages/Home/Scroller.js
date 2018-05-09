@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import './scroller.less'
 class LanternSlide extends Component {
   state = {
@@ -92,13 +93,14 @@ class LanternSlide extends Component {
         >
           {imgList.map(item => (
             <li className="poster-item" ref="posterItem" key={item.key}>
-              <a href="#">
+              <span className='imgName' >{item.relicsName}</span>
+              <Link to={`/App/CredentialDetails/${item.key}`} >
                 <img
                   src={item.relicsImgUrl}
                   alt={item.relicsName}
                   width="100%"
                 />
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -122,7 +124,8 @@ class LanternSlide extends Component {
     const { setting, width } = this.state;
     var posterList = this.refs.posterList;
     // 图片的个数
-    var itemCount = posterList.children.length;
+    console.log(posterList)
+    var itemCount = posterList.children.length || 0;
     // 设置posterMain 的宽度，长度
     //   posterMainStyle = this.refs.posterMain.style;
     //   posterMainStyle.width = setting.width.toString() +'px';
@@ -192,7 +195,8 @@ class LanternSlide extends Component {
           style.height = rightHeight.toString() + "px";
           style.width = rightWidth.toString() + "px";
 
-          style.opacity = 1 / rightOpacityNumber++;
+          // style.opacity = 1 / rightOpacityNumber++;
+          style.opacity = 1;
           style.left = (rightSpace + rightOffsetWidth - rightWidth).toString() + "px";
           style.top = this.state.setting.topValue;
         } else if (number > 0) {
@@ -218,7 +222,8 @@ class LanternSlide extends Component {
           style.zIndex = leftzIndex++;
           style.height = leftHeight.toString() + "px";
           style.width = leftWidth.toString() + "px";
-          style.opacity = number / itemCount;
+          // style.opacity = number / itemCount;
+          style.opacity = 1;
           style.left = (gap - leftSpace).toString() + "px";
           style.top = this.state.setting.topValue;
         }
