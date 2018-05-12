@@ -13,7 +13,7 @@ class LatestNoticeApp extends Component {
     pageSize: 10,
     total: 0,
     visible: false,
-    showButton: true
+    showButton: false
   };
 
   componentWillMount() {
@@ -21,11 +21,11 @@ class LatestNoticeApp extends Component {
     let userInfo = JSON.parse(sessionStorage.getItem("UserInfo")).UserMenuItem;
     for(let item of userInfo) {
       if (item.ProjectModule_URL === "/App/LatestNotice") {
+        console.log('')
         this.setState({
           showButton: true,
-        })
-      } else {
-        this.setState({ showButton: false });
+        });
+        break;
       }
     }
   }
