@@ -38,7 +38,7 @@ class LanternSlide extends Component {
   }
   componentWillReceiveProps(nextProps) {
     // console.log("---prop");
-    console.log(this.state);
+    // console.log(this.state);
     const { timer } = this.state;
     clearInterval(timer);
     this.setState({ timer: null,  });
@@ -61,8 +61,8 @@ class LanternSlide extends Component {
         }
       },
       () => {
-        console.log(this.state);
-        console.log(this.state.imgList);
+        // console.log(this.state);
+        // console.log(this.state.imgList);
         if (this.state.imgList.length !== 0) {
           this.getInit();
         }
@@ -120,11 +120,11 @@ class LanternSlide extends Component {
   }
 
   getInit = () => {
-    console.log("init");
+    // console.log("init");
     const { setting, width } = this.state;
     var posterList = this.refs.posterList;
     // 图片的个数
-    console.log(posterList)
+    // console.log(posterList)
     var itemCount = posterList.children.length || 0;
     // 设置posterMain 的宽度，长度
     //   posterMainStyle = this.refs.posterMain.style;
