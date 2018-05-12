@@ -135,9 +135,9 @@ class ExhibitionDetails extends Component {
               <Col className="text" span={7}>
                 创建时间：{detailInfo.CreationTime}
               </Col>
-              <Col className="text" span={7}>
+              {/* <Col className="text" span={7}>
                 归还时间：{detailInfo.ReturnTime}
-              </Col>
+              </Col> */}
               {Number(detailInfo.Exhibition_Type) === 1 && (
                 <Col span={24}>
                   <Col className="text" span={7}>

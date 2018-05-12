@@ -20,7 +20,7 @@ class ProductionCertificateApp extends Component {
     tankInfoList: [],
     stroageLocaltion: [],
     chooseStroageName: '',
-    showErrorText: true
+    showErrorText: false
   };
 
   componentWillMount() {
@@ -50,44 +50,49 @@ class ProductionCertificateApp extends Component {
   handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
-      if (!err) {
-        const { stroageLocaltion, chooseStroageName } = this.state;
-        if (stroageLocaltion.length > 0 && chooseStroageName !== '') {
-          this.setState({ loading: true });
-          console.log(fieldsValue.relicsNum);
-          const values = {
-            ...fieldsValue
-          };
-          console.log(values);
-          // this.props.history.push("/App/Home");
-          let params = {
-            collection: {
-              CollectionNumber: this.state.relicsNum,
-              CollectionRfid: values.rfid,
-              Number: this.state.number,
-              StorageId: this.state.chooseStroageName
-            }
-          };
-          CollectionCertification(params).then(res => {
-            console.log(res);
-            this.setState({ loading: false });
-            if (res.Msg === "操作成功!") {
-              message.success("绑定成功");
-              this.props.form.resetFields("rfid");
-              this.props.history.goBack();
-              this.setState({
-                RelicsList: {}
-              });
-            } else if (res.Msg === "该RFID已使用!") {
-              message.error("该RFID已使用");
-            } else {
-              message.error("绑定失败");
-            }
-          });
-        } else {
-          message.error('请绑定存储柜信息')
+
+      const { stroageLocaltion, chooseStroageName } = this.state;
+      if (stroageLocaltion.length > 0 || chooseStroageName !== '') {
+        if (!err) {
+            this.setState({ loading: true });
+            console.log(fieldsValue.relicsNum);
+            const values = {
+              ...fieldsValue
+            };
+            console.log(values);
+            // this.props.history.push("/App/Home");
+            let params = {
+              collection: {
+                CollectionNumber: this.state.relicsNum,
+                CollectionRfid: values.rfid,
+                Number: this.state.number,
+                StorageId: this.state.chooseStroageName
+              }
+            };
+            CollectionCertification(params).then(res => {
+              console.log(res);
+              this.setState({ loading: false });
+              if (res.Msg === "操作成功!") {
+                message.success("绑定成功");
+                this.props.form.resetFields("rfid");
+                this.props.history.goBack();
+                this.setState({
+                  RelicsList: {}
+                });
+              } else if (res.Msg === "该RFID已使用!") {
+                message.error("该RFID已使用");
+              } else {
+                message.error("绑定失败");
+              }
+            });
+          
+          
         }
-        
+      } else {
+        // message.error('请绑定存储柜信息');
+        this.setState({
+          showErrorText: true,
+        })
       }
     });
   }

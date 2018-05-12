@@ -187,7 +187,7 @@ class CredentialDetail extends Component {
               </Col>
               <Col span={7} className="relics-box">
                             {/* {relicsInfo.StorageId} */}
-                    存储柜编号：{tankDetails}{" "}
+                    存储柜名称：{tankDetails}{" "}
               </Col>
               <Col span={17} className="relics-box">
                 {" "}
