@@ -22,9 +22,9 @@ class AddRelics extends Component {
 
   // 替换图片地址
   formatSub = (value) => {
-    console.log(value);
+    // console.log(value);
     var s = value ? value.substring(0, value.indexOf("/CollectionFile/")) : null
-    console.log(s)
+    // console.log(s)
     // console.log(value.replace(s, ''));
     return value ? value.replace(s, "") : null;
   }

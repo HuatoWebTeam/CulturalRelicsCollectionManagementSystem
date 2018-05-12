@@ -24,6 +24,14 @@ class AddSilicitionApp extends Component {
     formData: null,
     loading: false
   };
+  // 替换图片地址
+  formatSub = (value) => {
+    // console.log(value);
+    var s = value ? value.substring(0, value.indexOf("/CollectionFile/")) : null
+    // console.log(s)
+    // console.log(value.replace(s, ''));
+    return value ? value.replace(s, "") : null;
+  }
 
   componentWillMount() {
     const { state, formData } = this.props.componentState;
@@ -50,7 +58,7 @@ class AddSilicitionApp extends Component {
       Site: state ? formData.Site : null,
       Size: state ? formData.Size : null,
       Solicitation_Name: state ? formData.Solicitation_Name : null,
-      Solicitation_State: state ? formData.Solicitation_State : Number(relicsCateGory[0].CollTypeId),
+      Solicitation_State: state ? Number(formData.Solicitation_State) : Number(relicsCateGory[0].CollTypeId),
       Solicitation_Time: state ? formData.Solicitation_Time : moment(),
       Weight: state ? formData.Weight : null
     };
@@ -181,11 +189,11 @@ class AddSilicitionApp extends Component {
             Solicitation_State: fieldsValue.Solicitation_State,
             Solicitation_Time: fieldsValue["Solicitation_Time"].format("YYYY-MM-DD"),
             Solicitation_img1:
-              fileList[0] === undefined ? null : fileList[0].url,
+              fileList[0] === undefined ? null : this.formatSub(fileList[0].url),
             Solicitation_img2:
-              fileList[1] === undefined ? null : fileList[1].url,
+              fileList[1] === undefined ? null : this.formatSub(fileList[1].url),
             Solicitation_img3:
-              fileList[2] === undefined ? null : fileList[2].url
+              fileList[2] === undefined ? null : this.formatSub(fileList[2].url)
           };
           const { state, formDate } = this.props.componentState;
           if(state) {
@@ -267,7 +275,12 @@ class AddSilicitionApp extends Component {
         <Col span={24} className="addSolicition-container">
           <Form layout="inline" onSubmit={this.handleFormSubmit} style={{ width: "100%" }}>
             <FormItem label="文物图片:" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} style={{ width: "100%" }}>
-              <Upload action="//jsonplaceholder.typicode.com/posts/" listType="picture-card" beforeUpload={this.beforeUpload} fileList={fileList} onRemove={this.handleRemove}>
+              <Upload action="//jsonplaceholder.typicode.com/posts/" 
+                listType="picture-card" 
+                beforeUpload={this.beforeUpload} 
+                fileList={fileList}
+                onPreview={this.handlePreview}
+                onRemove={this.handleRemove}>
                 {fileList.length >= 3 ? null : uploadButton}
               </Upload>
               <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
