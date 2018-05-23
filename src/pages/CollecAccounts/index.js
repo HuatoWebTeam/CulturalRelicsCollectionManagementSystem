@@ -18,10 +18,12 @@ const { RangePicker } = DatePicker;
 class CollecAccounts extends Component {
   state = {
     accountData: [],
-    date: []
+    date: [],
+    dateFormat: 'YYYY-MM-DD'
   };
   //
   componentWillMount() {
+    const { dateFormat } = this.state;
     let startDate = moment()
       .subtract(6, "days").hour(0).minute(0).second(0).format();
     let endDate = moment().hour(23).minute(59).second(59).format();
@@ -199,6 +201,9 @@ class CollecAccounts extends Component {
         date[1].hour(23).minute(59).second(59).format()
       ]
     });
+    // this.setState({
+    //   date: [dateString[0], dateString[1]]
+    // })
   };
   render() {
     const { pieChartsData } = this.state;

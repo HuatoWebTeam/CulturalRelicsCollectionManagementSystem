@@ -9,7 +9,7 @@ import CommonInfoTable from '../Components/CommonInfoTable';
 class RepairDetails extends Component {
   state = {
     pageIndex: 1,
-    pageSize: 1000,
+    pageSize: 10,
     total: 0,
     repairNum: "",
     repairDetailList: [],
@@ -26,6 +26,7 @@ class RepairDetails extends Component {
     });
   }
 
+  
   getRepairDetailList() {
     const { pageIndex, pageSize, repairNum } = this.state;
     let params = {
@@ -45,7 +46,7 @@ class RepairDetails extends Component {
           Repair_Range: subStr(res[0].Repair_BegTime) + ' ~ ' + subStr(res[0].Repair_EndTime),    // 起止日期
           Repair_Result: res[0].Repair_Result,          // 预期修复结果
           Repair_State: res[0].Repair_State,            // 修复状态
-          ReturnTime: subStr(res[0].ReturnTime),                // 归还时间
+          ReturnTime: res[0].ReturnTime,                // 归还时间
 
         };
         for (let item of listData) {
@@ -54,6 +55,7 @@ class RepairDetails extends Component {
         this.setState({
           repairDetailList: listData,
           detailInfo: listDetail,
+          total: listData[0].Count,
           anthorityState: Number(res[0].DeniedPermission)
         });
       }
@@ -76,7 +78,7 @@ class RepairDetails extends Component {
   };
 
   render() {
-    const { repairDetailList, anthorityState, repairNum, detailInfo } = this.state;
+    const { repairDetailList, anthorityState, repairNum, detailInfo, pageIndex, pageSize, total } = this.state;
     return <Row className="main-content">
         <Col span={24} className="title">
           修复单详情
@@ -101,9 +103,9 @@ class RepairDetails extends Component {
               <Col className="text" span={7}>
                 起止日期：{detailInfo.Repair_Range}
               </Col>
-              <Col className="text" span={7}>
+              {/* <Col className="text" span={7}>
                 归还日期：{detailInfo.ReturnTime}
-              </Col>
+              </Col> */}
               <Col className="text" span={7}>
                 预期修复结果：{detailInfo.Repair_Result}
               </Col>
@@ -125,11 +127,13 @@ class RepairDetails extends Component {
                 })}
               </Col>
             </Col>}
-          <CommonInfoTable data={repairDetailList} />
+          <CommonInfoTable changePageindex={this.paginationChange} total={total} pageSize={pageSize} pageIndex={pageIndex} data={repairDetailList} />
         </Col>
         <ApproveComponent oddName={'此修复单'} paramsId={repairNum} anthorityState={anthorityState} flag={6} changeAnthorityState={this.changeAnthority} />
       </Row>;
   }
 }
+
+
 
 export default RepairDetails;

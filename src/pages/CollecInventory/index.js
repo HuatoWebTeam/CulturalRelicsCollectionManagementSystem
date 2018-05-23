@@ -69,7 +69,8 @@ class CollecInventory extends Component {
         });
       } else {
         this.setState({
-          total: 0
+          total: 0,
+          inventoryDataList: []
         });
       }
     });
@@ -308,7 +309,7 @@ class CollecInventory extends Component {
                   <RangePicker onChange={this.datePickerChange} defaultValue={RangePickerDefault} format="YYYY-MM-DD" />
                 </FormItem>
                 <FormItem>
-                  <Search placeholder="请输入盘点单号" enterButton onSearch={this.searchData} />
+                  <Search placeholder="请输入盘点名称 " enterButton onSearch={this.searchData} />
                 </FormItem>
               </Form>
             </Col>

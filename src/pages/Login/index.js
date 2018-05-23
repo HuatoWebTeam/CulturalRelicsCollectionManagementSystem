@@ -47,8 +47,8 @@ class LoginForm extends Component {
     this.props.form.validateFields((err, value) => {
       // console.log(err)
       if(!err) {
-        console.log(value);
-        if (value.verifyCode.toLowerCase() === this.state.verCode) {
+        // console.log(value);
+        // if (value.verifyCode.toLowerCase() === this.state.verCode) {
           this.setState({ loading: true });
           const { UserIp } = this.state;
           // console.log(UserIp)
@@ -97,14 +97,14 @@ class LoginForm extends Component {
               _this.setState({ loading: false });
               console.log(err);
             });
-        } else {
-          this.props.form.setFields({
-            verifyCode: {
-              value: value.verifyCode,
-              errors: [new Error('请输入正确的验证码')]
-            }
-          });
-        }
+        // } else {
+        //   this.props.form.setFields({
+        //     verifyCode: {
+        //       value: value.verifyCode,
+        //       errors: [new Error('请输入正确的验证码')]
+        //     }
+        //   });
+        // }
         
 
       }
@@ -144,7 +144,7 @@ class LoginForm extends Component {
     }
   }
   handleUserPwdInfo = (rule, value, callback) => {
-    console.log(value)
+    // console.log(value)
     if(!value) {
       callback('请输入密码');
     } else {
@@ -171,7 +171,7 @@ class LoginForm extends Component {
               {getFieldDecorator("userName", {
                 rules: [{ validator: this.handleUserInfo }]
               })(<Input onChange={(e) => {
-                console.log(e.target.value)
+                // console.log(e.target.value)
               }} prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)", fontSize: "18px" }} />} placeholder="请输入用户名" />)}
             </FormItem>
             <FormItem>

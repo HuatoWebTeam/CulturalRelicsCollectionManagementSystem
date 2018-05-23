@@ -22,7 +22,7 @@ class AddExhibitionForm extends Component {
     chooseRelicsNum: [],
     isAdduction: true, // true 为内展
     exhibiInfo: {
-      ReturnTime: moment().add(7, "days"),
+      ReturnTime: moment().add(6, "days").format('YYYY-MM-DD'),
       Exhibition_Contact: null,
       Exhibition_Cost: null,
       Exhibition_Place: null,
@@ -93,7 +93,7 @@ class AddExhibitionForm extends Component {
           loading: true
         });
         const { state } = this.props.componentState;
-        const { checkNum } = this.state;
+        const { checkNum, exhibiInfo } = this.state;
         const rangeValue = fieldsValue["date"];
         const values = {
           ...fieldsValue,
@@ -101,9 +101,7 @@ class AddExhibitionForm extends Component {
             rangeValue[0].format("YYYY-MM-DD"),
             rangeValue[1].format("YYYY-MM-DD")
           ],
-          ReturnTime: fieldsValue["ReturnTime"]
-            ? fieldsValue["ReturnTime"].format()
-            : "",
+          ReturnTime: exhibiInfo["ReturnTime"],
           exhibitionType:
             typeof fieldsValue["exhibitionType"] === "number"
               ? fieldsValue["exhibitionType"]
@@ -113,76 +111,78 @@ class AddExhibitionForm extends Component {
         console.log(chooseRelicsNum);
         if (chooseRelicsNum.length === 0) {
           message.error("请选择展览文物");
-        }
-        let thisRelicsNum = chooseRelicsNum.join(",");
-        let params = {
-          Exhibition_Odd: state ? this.state.oddId : "",
-          Exhibition_Theme: values["Exhibition_Theme"],
-          Exhibition_Type: values["exhibitionType"],
-          StartTine: values["date"][0],
-          EndTime: values["date"][1],
-          Person_liable: values["Person_liable"],
-          Collection_Number: thisRelicsNum,
-          Exhibition_Place: values["Exhibition_Place"] || "",
-          Exhibition_Contact: values["Exhibition_Contact"] || "",
-          ReturnTime: values["ReturnTime"],
-          Exhibition_Cost: Number(values["Exhibition_Cost"]) || 0,
-          CreationTime: moment().format()
-        };
-        console.log(params);
-        console.log(checkNum);
-        if (state) {
-          // 选择的
-          let chooseReli = params.Collection_Number.split(",");
-          params.NowCollection = [];
-          for (let item of chooseReli) {
-            params.NowCollection.push({ odd: item });
-          }
-          for (let i = 0; i < checkNum.length; i++) {
-            for (let n = 0; n < chooseReli.length; n++) {
-              if (checkNum[i] === chooseReli[n]) {
-                checkNum.splice(i, 1);
-                i--;
-                break;
+        } else {
+          let thisRelicsNum = chooseRelicsNum.join(",");
+          let params = {
+            Exhibition_Odd: state ? this.state.oddId : "",
+            Exhibition_Theme: values["Exhibition_Theme"],
+            Exhibition_Type: values["exhibitionType"],
+            StartTine: values["date"][0],
+            EndTime: values["date"][1],
+            Person_liable: values["Person_liable"],
+            Collection_Number: thisRelicsNum,
+            Exhibition_Place: values["Exhibition_Place"] || "",
+            Exhibition_Contact: values["Exhibition_Contact"] || "",
+            ReturnTime: values["ReturnTime"],
+            Exhibition_Cost: Number(values["Exhibition_Cost"]) || 0,
+            CreationTime: moment().format()
+          };
+          console.log(params);
+          console.log(checkNum);
+          if (state) {
+            // 选择的
+            let chooseReli = params.Collection_Number.split(",");
+            params.NowCollection = [];
+            for (let item of chooseReli) {
+              params.NowCollection.push({ odd: item });
+            }
+            for (let i = 0; i < checkNum.length; i++) {
+              for (let n = 0; n < chooseReli.length; n++) {
+                if (checkNum[i] === chooseReli[n]) {
+                  checkNum.splice(i, 1);
+                  i--;
+                  break;
+                }
               }
             }
-          }
-          params.HistoryCollection = [];
-          for (let item of checkNum) {
-            params.HistoryCollection.push({
-              Collection_Number: item,
-              Collection_State: 1
+            params.HistoryCollection = [];
+            for (let item of checkNum) {
+              params.HistoryCollection.push({
+                Collection_Number: item,
+                Collection_State: 1
+              });
+            }
+            console.log(params);
+            ExUpdate(params).then(res => {
+              console.log(res);
+              this.setState({
+                loading: false
+              });
+              if (res === true) {
+                message.success("编辑展览单成功");
+                this.props.form.resetFields();
+                this.props.history.goBack();
+                this.setState({ addExhibitionData: [] });
+              } else {
+                message.error("编辑展览单失败");
+              }
+            });
+          } else {
+            ExDataAddApp(params).then(res => {
+              console.log(res);
+              this.setState({ loading: false });
+              if (res === true) {
+                message.success("添加展览单成功");
+                this.props.form.resetFields();
+                this.props.history.goBack();
+                this.setState({ addExhibitionData: [] });
+              } else {
+                message.error("添加展览单失败");
+              }
             });
           }
-          console.log(params);
-          ExUpdate(params).then(res => {
-            console.log(res);
-            this.setState({
-              loading: false
-            });
-            if (res === true) {
-              message.success("编辑展览单成功");
-              this.props.form.resetFields();
-              this.props.history.goBack();
-              this.setState({ addExhibitionData: [] });
-            } else {
-              message.error("编辑展览单失败");
-            }
-          });
-        } else {
-          ExDataAddApp(params).then(res => {
-            console.log(res);
-            this.setState({ loading: false });
-            if (res === true) {
-              message.success("添加展览单成功");
-              this.props.form.resetFields();
-              this.props.history.goBack();
-              this.setState({ addExhibitionData: [] });
-            } else {
-              message.error("添加展览单失败");
-            }
-          });
         }
+        
       }
     });
   }
@@ -213,11 +213,13 @@ class AddExhibitionForm extends Component {
     }
   };
 
-  // 选择时间
-  // changeDate (dates, dateString) {
-  //   console.log(dates);
-  //   console.log(dateString);
-  // }
+  // 选择起止时间
+  changDate = (dates, dateString) => {
+    console.log(dates);
+    console.log(dateString);
+    this.state.exhibiInfo.ReturnTime = dates[1].format('YYYY-MM-DD');
+    // this.state.exhibiInfo.ReturnTime = moment(this.state.exhibiInfo.ReturnTime).add(1, 'days');
+  }
   render() {
     // console.log(this.props);
     const {
@@ -302,7 +304,12 @@ class AddExhibitionForm extends Component {
                         message: "请选择起止时间"
                       }
                     ]
-                  })(<RangePicker format="YYYY-MM-DD" />)}
+                  })(
+                    <RangePicker
+                      onChange={this.changDate}
+                      format="YYYY-MM-DD"
+                    />
+                  )}
                 </FormItem>
                 <FormItem
                   label="负责人:"
@@ -314,7 +321,7 @@ class AddExhibitionForm extends Component {
                     rules: [{ required: true, message: "请输入负责人" }]
                   })(<Input placeholder="请输入负责人" />)}
                 </FormItem>
-                <FormItem
+                {/* <FormItem
                   label="归还时间:"
                   labelCol={{ span: 6 }}
                   wrapperCol={{ span: 18 }}
@@ -323,7 +330,7 @@ class AddExhibitionForm extends Component {
                     initialValue: exhibiInfo.ReturnTime,
                     rules: [{ required: true, message: "请选择归还时间" }]
                   })(<DatePicker placeholder="请选择归还时间" />)}
-                </FormItem>
+                </FormItem> */}
                 {!isAdduction && (
                   <Col span={24}>
                     <FormItem

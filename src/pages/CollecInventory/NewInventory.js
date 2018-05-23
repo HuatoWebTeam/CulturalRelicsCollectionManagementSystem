@@ -14,6 +14,7 @@ class NewInventoryApp extends Component {
     date: [moment().hour(0).minute(0).second(0), moment().hour(23).minute(59).second(0)],
     chooseInventoryRelics: [],
     chooseRelicsNum: [],
+    checkNum: [],
     pageTitle: '新建盘点单',
     number: null,
     dateFormat: "YYYY-MM-DD",
@@ -37,8 +38,10 @@ class NewInventoryApp extends Component {
       InvenDataAll(params).then(res => {
         console.log(res);
         let list = res[0].exhibit;
+        let checkNum = [];
         for(let item of list) {
           item.key = item.Collection_Number;
+          checkNum.push(item.Collection_Number);
         }
         let inventInfo = {
           InventoryMan: res[0].InventoryMan,
@@ -48,8 +51,10 @@ class NewInventoryApp extends Component {
         }
         this.setState({
           inventInfo: inventInfo,
-          chooseInventoryRelics: list
-        })
+          chooseInventoryRelics: list,
+          checkNum: checkNum,
+          chooseRelicsNum: checkNum,
+        });
       })
     }
   }
@@ -61,64 +66,88 @@ class NewInventoryApp extends Component {
         // const {  }
         this.setState({ loading: true });
         console.log(fieldsValue);
-        const { chooseRelicsNum, number, inventInfo } = this.state;
+        const { chooseRelicsNum, number, inventInfo, checkNum } = this.state;
         if (chooseRelicsNum.length === 0) {
           message.error("请选择盘点文物");
+        } else {
+          const { state, formData } = this.props.componentState;
+          let value = {
+            ...fieldsValue,
+            // date: fieldsValue["date"].format("YYYY-MM-DD"),
+            date: [fieldsValue['inventRangeDate'][0].format(), fieldsValue['inventRangeDate'][1].format()]
+          };
+          let params = {
+            Inventory_Odd: state ? formData : '',   // 编辑盘点单号
+            InventoryMan: value.InventoryMan,   // 盘点人 
+            Inventory_Time: moment().format(),      // 盘点创建时间  当前时间
+            // Inventory_Odd: value.inventNum,     // 盘点单号
+            Inventory_Name: value.Inventory_Name,      // 盘点名称
+            Collection_Number: chooseRelicsNum.join(","),  // 选择文物编号
+            Inventory_Number: number,               // 文物数量
+            Inventory_Cycle: inventInfo.Inventory_Cycle,            // 盘点周期
+            Inventory_BegTime: value.date[0],       // 盘点开始时间
+            Inventory_EndTime: value.date[1],       // 盘点结束时间
+
+          };
+          console.log(params)
+          if (state) {
+            let chooseReli = params.Collection_Number.split(",");
+            params.NowCollection = [];
+            for (let item of chooseReli) {
+              params.NowCollection.push({ odd: item });
+            }
+            for (let i = 0; i < checkNum.length; i++) {
+              for (let n = 0; n < chooseReli.length; n++) {
+                if (checkNum[i] === chooseReli[n]) {
+                  checkNum.splice(i, 1);
+                  i--;
+                  break;
+                }
+              }
+            }
+            params.HistoryCollection = [];
+            for (let item of checkNum) {
+              params.HistoryCollection.push({
+                Collection_Number: item,
+                Collection_State: 1
+              });
+            }
+            console.log(params)
+            InventUpdate(params).then(res => {
+              console.log(res);
+              this.setState({ loading: false });
+              if (res === true) {
+                this.setState({ chooseRelicsNum: [] }, () => {
+                  this.props.form.resetFields();
+                  message.success("编辑盘点单成功");
+                  this.props.history.goBack();
+                  this.setState({ chooseInventoryRelics: [] });
+                  this.refs.relicsDialog.resetTableCheck();
+                });
+              } else {
+                message.error("编辑盘点单失败");
+              }
+            })
+          } else {
+            InventoryAdd(params).then(res => {
+              console.log(res);
+              this.setState({ loading: false });
+              if (res === true) {
+                this.setState({ chooseRelicsNum: [] }, () => {
+                  this.props.form.resetFields();
+                  message.success("新建盘点单成功");
+                  this.props.history.goBack();
+                  this.setState({ chooseInventoryRelics: [] });
+                  this.refs.relicsDialog.resetTableCheck();
+                });
+              } else {
+                message.error("新建盘点单失败");
+              }
+            });
+          }
         }
         
-        const { state, formData } = this.props.componentState;
-        let value = {
-          ...fieldsValue,
-          // date: fieldsValue["date"].format("YYYY-MM-DD"),
-          date: [fieldsValue['inventRangeDate'][0].format(), fieldsValue['inventRangeDate'][1].format()]
-        };
-        let params = {
-          Inventory_Odd: state ? formData : '',   // 编辑盘点单号
-          InventoryMan: value.InventoryMan,   // 盘点人 
-          Inventory_Time: moment().format(),      // 盘点创建时间  当前时间
-          // Inventory_Odd: value.inventNum,     // 盘点单号
-          Inventory_Name: value.Inventory_Name,      // 盘点名称
-          Collection_Number: chooseRelicsNum.join(","),  // 选择文物编号
-          Inventory_Number: number,               // 文物数量
-          Inventory_Cycle: inventInfo.Inventory_Cycle,            // 盘点周期
-          Inventory_BegTime: value.date[0],       // 盘点开始时间
-          Inventory_EndTime: value.date[1],       // 盘点结束时间
-
-        };
-        console.log(params)
-        if(state) {
-          InventUpdate(params).then(res => {
-            console.log(res);
-            this.setState({ loading: false });
-            if (res === true) {
-              this.setState({ chooseRelicsNum: [] }, () => {
-                this.props.form.resetFields();
-                message.success("编辑盘点单成功");
-                this.props.history.goBack();
-                this.setState({ chooseInventoryRelics: [] });
-                this.refs.relicsDialog.resetTableCheck();
-              });
-            } else {
-              message.error("编辑盘点单失败");
-            }
-          })
-        } else {
-          InventoryAdd(params).then(res => {
-            console.log(res);
-            this.setState({ loading: false });
-            if (res === true) {
-              this.setState({ chooseRelicsNum: [] }, () => {
-                this.props.form.resetFields();
-                message.success("新建盘点单成功");
-                this.props.history.goBack();
-                this.setState({ chooseInventoryRelics: [] });
-                this.refs.relicsDialog.resetTableCheck();
-              });
-            } else {
-              message.error("新建盘点单失败");
-            }
-          });
-        }
+        
         
       }
     });
@@ -166,7 +195,7 @@ class NewInventoryApp extends Component {
   };
 
   render() {
-    const { chooseInventoryRelics, inventInfo, loading } = this.state;
+    const { chooseInventoryRelics, inventInfo, loading, chooseRelicsNum } = this.state;
     const { getFieldDecorator } = this.props.form;
    
 
@@ -243,6 +272,9 @@ class NewInventoryApp extends Component {
                   type="primary"
                   onClick={() => {
                     this.refs.relicsDialog.openModal();
+                    this.setState({
+                      checkNum: chooseRelicsNum
+                    });
                   }}
                 >
                   选择盘点文物
@@ -250,7 +282,7 @@ class NewInventoryApp extends Component {
               </Col>
             </Col>
             <Col span={24}>
-            <CheckedRelicsInfo data={chooseInventoryRelics} />
+              <CheckedRelicsInfo data={chooseInventoryRelics} />
               {/* <Table
                 columns={inventoryColumns}
                 dataSource={chooseInventoryRelics}

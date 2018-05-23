@@ -74,7 +74,7 @@ class CheckedRelicsInfo extends Component {
                 dataIndex: 'CollStateName',
                 key: 'CollStateName',
             },
-            ];
+          ];
         return (
             <Col span={24} >
                 <Table dataSource={data} columns={chooseRelicsColumns} pagination={false}  bordered  />

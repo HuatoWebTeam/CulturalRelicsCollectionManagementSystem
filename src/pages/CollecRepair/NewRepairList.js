@@ -23,9 +23,8 @@ class NewRepairListApp extends Component {
       Repair_Method: null, // 修复方法
       Repair_Result: null, // 修复玉器结果
       Repair_Restorer: null, // 修复人
-      Repair_cycle: 1,    // 修复周期
-      ReturnTime: moment(),   // 归还时间
-      repairRangeDate: [moment().hour(0).minute(0).second(0), moment().hour(23).minute(59).second(0)]
+      Repair_cycle: 7,    // 修复周期
+      repairRangeDate: [moment().hour(0).minute(0).second(0), moment().add(6, 'days').hour(23).minute(59).second(0)]
     },
     date: [
       moment().hour(0).minute(0).second(0),
@@ -56,16 +55,22 @@ class NewRepairListApp extends Component {
           Repair_Restorer: res[0].Repair_Restorer,
           Repair_Result: res[0].Repair_Result,
           Repair_cycle: res[0].Repair_cycle,
-          ReturnTime: moment(res[0].ReturnTime),
           repairRangeDate: [moment(res[0].Repair_BegTime), moment(res[0].Repair_EndTime)]
         }
         this.setState({
           repairInfo: data,
           repairListData: list,
-          checkNum: num
-        })
+          checkNum: num,
+          chooseRelicsNum: num
+        });
       })
     }
+  }
+  componentWillUnmount() {
+    this.props.changeFormData({
+      state: null,
+      formDate: null
+    });
   }
 
   formSubmit(e) {
@@ -91,31 +96,37 @@ class NewRepairListApp extends Component {
           Repair_Restorer: values.Repair_Restorer,
           Repair_BegTime: values.repairRangeDate[0].format(),
           Repair_EndTime: values.repairRangeDate[1].format(),
-          ReturnTime: values.ReturnTime.format()
         };
         if( state ) {
           console.log(checkNum)
           console.log(chooseRelicsNum)
           params.NowCollection = [];
           params.HistoryCollection = []; 
-          for(let item of chooseRelicsNum) {
-            params.NowCollection.push({odd: item})
-          } 
-          for(let i = 0; i < checkNum.length; i++) {
-            for(let n = 0; n < chooseRelicsNum.length; n++) {
-              if(checkNum[i] === chooseRelicsNum[n]) {
-                checkNum.splice(i, 1);
-                i--;
-                break;
-              }
+          if(chooseRelicsNum.length === 0) {
+            for(let item of checkNum) {
+              params.NowCollection.push({ odd: item })
             }
-          };
-          for(let item of checkNum) {
-             params.HistoryCollection.push({
-               Collection_Number: item,
-               Collection_State: 1
-             });
+          } else {
+            for (let item of chooseRelicsNum) {
+              params.NowCollection.push({ odd: item })
+            }
+            for (let i = 0; i < checkNum.length; i++) {
+              for (let n = 0; n < chooseRelicsNum.length; n++) {
+                if (checkNum[i] === chooseRelicsNum[n]) {
+                  checkNum.splice(i, 1);
+                  i--;
+                  break;
+                }
+              }
+            };
+            for (let item of checkNum) {
+              params.HistoryCollection.push({
+                Collection_Number: item,
+                Collection_State: 1
+              });
+            }
           }
+          
           console.log(params);
           RepairUpdate(params).then(res => {
             console.log(res);
@@ -182,6 +193,8 @@ class NewRepairListApp extends Component {
     // console.log(moment(stepDate).format());
     let dateDiff = moment(stepDate).diff(startDate, "hours");
     this.state.repairInfo.Repair_cycle = Math.ceil(dateDiff / 24);
+    // let returnDate = date[1];
+    // this.state.repairInfo.ReturnTime = moment(this.state.repairInfo.ReturnTime).add(1, 'days');
 
     console.log(Math.ceil(dateDiff / 24));
   };
@@ -284,7 +297,7 @@ class NewRepairListApp extends Component {
                   ]
                 })(<Input disabled placeholder="请选择修复起止日期" />)}
               </FormItem>
-              <FormItem
+              {/* <FormItem
                 label="归还日期:"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
@@ -299,7 +312,7 @@ class NewRepairListApp extends Component {
                     }
                   ]
                 })(<DatePicker placeholder="请选择归还日期" />)}
-              </FormItem>
+              </FormItem> */}
               <FormItem
                 label="预期修复结果:"
                 labelCol={{ span: 4 }}
@@ -334,7 +347,7 @@ class NewRepairListApp extends Component {
               </Button>
             </Col>
             <Col span={24}>
-            <CheckedRelicsInfo data={repairListData} />
+              <CheckedRelicsInfo data={repairListData} />
               {/* <Table
                 columns={repairListColumns}
                 dataSource={repairListData}

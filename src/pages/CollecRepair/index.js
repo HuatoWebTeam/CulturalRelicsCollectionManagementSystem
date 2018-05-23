@@ -324,7 +324,7 @@ class CollecRepair extends Component {
               </Link>
               <Button
                 type="text"
-                disabled={record.StepState === 3 ? (record.Repair_State === 2 ? true : false) : true }
+                disabled={record.DisplayState === 0 }
                 style={{ marginLeft: "10px", border: "none" }}
                 onClick={this.returnButton.bind(this, record)}
               >

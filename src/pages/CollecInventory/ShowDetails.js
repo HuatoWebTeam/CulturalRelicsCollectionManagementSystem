@@ -11,7 +11,7 @@ class ShowDetails extends Component {
     inventNum: "",
     inventDetail: null,
     pageIndex: 1,
-    pageSize: 1000,
+    pageSize: 10,
     total: 0,
     anthorityState: null
   };
@@ -56,6 +56,7 @@ class ShowDetails extends Component {
         this.setState({
           inventDetail: detailInfo,
           inventDetailsList: listData,
+          total: listData[0].Count,
           anthorityState: Number(res[0].DeniedPermission)
         });
       }
@@ -80,7 +81,7 @@ class ShowDetails extends Component {
   };
 
   render() {
-    const { inventDetail, inventDetailsList, inventNum, anthorityState } = this.state;
+    const { inventDetail, inventDetailsList, inventNum, anthorityState, pageIndex, pageSize, total } = this.state;
 
     return <Row className="main-content">
         <Col className="title" span={24}>
@@ -111,14 +112,7 @@ class ShowDetails extends Component {
               <Col className="text" span={7}>
                 盘点状态：{inventState.map(item => {
                   if (item.key === Number(inventDetail.Inventory_State)) {
-                    return <span
-                        style={{
-                          color:
-                            Number(inventDetail.Inventory_State) === 2
-                              ? "red"
-                              : "#333"
-                        }}
-                      >
+                    return <span style={{ color: Number(inventDetail.Inventory_State) === 2 ? "red" : "#333" }}>
                         {item.value}
                       </span>;
                   }
@@ -126,20 +120,12 @@ class ShowDetails extends Component {
               </Col>
             </Col>}
           <Col span={24}>
-          <CommonInfoTable data={inventDetailsList} />
+            <CommonInfoTable changePageindex={this.paginationChange} pageIndex={pageIndex} pageSize={pageSize} total={total} data={inventDetailsList} />
             {/* <Table pagination={false //
               } dataSource={inventDetailsList} columns={inventDetailsColumns} bordered /> */}
           </Col>
         </Col>
-        {inventDetail && <ApproveComponent
-            anthorityState={anthorityState}
-            paramsId={inventNum}
-            flag={4}
-            oddName={inventDetail.Inventory_Name}
-            changeAnthorityState={this.changeAnthority}
-          />
-        }
-        
+        {inventDetail && <ApproveComponent anthorityState={anthorityState} paramsId={inventNum} flag={4} oddName={inventDetail.Inventory_Name} changeAnthorityState={this.changeAnthority} />}
       </Row>;
   }
 }

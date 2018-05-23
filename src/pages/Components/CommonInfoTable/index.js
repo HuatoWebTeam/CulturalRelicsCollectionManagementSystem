@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { Col, Table } from 'antd';
-
+import './index.less';
 import { levelInfo, relicsYears, howComplete, relicsState, subStr } from "../../../assets/js/commonFun";
 
 class CommonInfoTable extends Component {
     state = {  }
     render() {
-        const { data, isPK } = this.props;
+        const { data, isPK, pageIndex, pageSize, total } = this.props;
         // console.log(isPK);
         const relicInfoColumns = [
             {
                 title: '文物编号',
                 dataIndex: isPK ? 'CollectionNumber' : 'Collection_Number',
+                width: 200
             },
             {
                 title: '文物图片',
                 dataIndex: isPK ? 'Collectionimg1' :  'Collection_img',
+                width: 100,
                 render: (text, record, index) => {
                     // console.log(text,record, index)
                     return (
@@ -30,7 +32,8 @@ class CommonInfoTable extends Component {
             {
                 title: '文物名称',
                 dataIndex: isPK ? 'CollectionName' : 'Collection_Name',
-                key: 'Collection_Name'
+                key: 'Collection_Name',
+                width: 160
             },
             {
                 title: '入馆时间',
@@ -38,32 +41,38 @@ class CommonInfoTable extends Component {
                 render: (text) => {
                     // console.log(text)
                     return <span>{subStr(text)}</span>;
-                }
+                },
+                width: 90
             },
             {
                 title: '数量',
                 dataIndex: 'Number',
-                key: 'Number'
+                key: 'Number',
+                width: 70
             },
             {
                 title: '分级信息',
                 dataIndex: 'GradeName',
                 key: 'GradeName',
+                width: 110
             },
             {
                 title: '材质',
                 dataIndex: 'MaterialQuality',
-                key: 'MaterialQuality'
+                key: 'MaterialQuality',
+                width: 100
             },
             {
                 title: '年代',
                 dataIndex: 'YearsName',
                 key: 'YearsName',
+                width: 100
             },
             {
                 title: '完整程度',
                 dataIndex: 'Integrity',
                 key: 'Integrity',
+                width: 90,
                 render: (text) => {
                     for(let item of howComplete) {
                         if(Number(text) === item.key) {
@@ -76,6 +85,7 @@ class CommonInfoTable extends Component {
                 title: '文物类别',
                 dataIndex: 'CategoryName',
                 key: 'CategoryName',
+                width: 110
             },
             {
                 title: '尺寸',
@@ -85,19 +95,34 @@ class CommonInfoTable extends Component {
             {
                 title: '重量',
                 dataIndex: 'Weight',
-                key: 'Weight'
+                key: 'Weight',
+                width: 80
             },
             {
                 title: '文物状态',
                 dataIndex: 'CollStateName',
                 key: 'CollStateName',
+                width: 100
             },
         ]
-        return (
-            <Col span={24} >
-                <Table dataSource={data} columns={relicInfoColumns} bordered pagination={false}  />
-            </Col>
-        );
+        return <Col span={24} style={{borderBottom: '1px solid #e8e8e8'}} >
+            <Table onScroll={(e) => {
+                console.log(e)
+            }} 
+            scroll={{ y: 440 }} 
+            className='common-table'
+            dataSource={data} 
+            columns={relicInfoColumns} 
+            bordered 
+            pagination={{ 
+                current: pageIndex, 
+                pageSize: pageSize, 
+                total:total, 
+                onChange:this.props.changePageindex,
+                hideOnSinglePage: true,
+                size: 'small'
+            }} />
+          </Col>;
     }
 }
 

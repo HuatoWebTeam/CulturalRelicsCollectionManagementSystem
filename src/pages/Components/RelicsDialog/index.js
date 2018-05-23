@@ -15,15 +15,19 @@ class RelicsDialog extends Component {
     searchStore: 0,
     searchCategory: "全部",
     searchName: "",
+    pageIndex: 1,
+    pageSize: 10,
+    total: null,
+    allRelicsList: [],
     searchRelicsData: [],
     selectedRowKeys: [],
     relicsCateList: [],
     relicsYearsList: [],
-    relicsLevelList: []
+    relicsLevelList: [],
   };
 
   componentWillMount() {
-    console.log('willMount')
+    console.log("willMount");
     console.log(this.props);
     let relicsYears = JSON.parse(sessionStorage.getItem("relicsYears"));
     let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
@@ -43,7 +47,7 @@ class RelicsDialog extends Component {
     this.searchModalData();
   }
   componentWillReceiveProps(nextProps) {
-    console.log('propsChange')
+    console.log("propsChange");
     console.log(nextProps);
     const { searchRelicsData } = this.state;
     // console.log(searchRelicsData)
@@ -54,9 +58,10 @@ class RelicsDialog extends Component {
       keys.push(value.Collection_Number);
     }
     let data = searchRelicsData.concat(item);
-    for(let i = 0; i < data.length; i++) {
-      for(let n = i + 1; n < data.length; n++) {
-        if(data[i].Collection_Number === data[n].Collection_Number) {
+    console.log(data)
+    for (let i = 0; i < data.length; i++) {
+      for (let n = i + 1; n < data.length; n++) {
+        if (data[i].Collection_Number === data[n].Collection_Number) {
           data.splice(i, 1);
           i--;
           break;
@@ -99,26 +104,55 @@ class RelicsDialog extends Component {
   };
 
   searchModalData = () => {
-    const { searchStore, searchCategory, searchName } = this.state;
+    const { searchStore, searchCategory, searchName, pageIndex, pageSize } = this.state;
     let params = {
       StoreId: searchStore,
       Type: searchCategory,
       CollName: searchName,
-      stat: this.props.stat
+      stat: this.props.stat,
+      pageIndex: pageIndex,
+      pageSize: pageSize
     };
     // console.log(params);
     ColleApi(params).then(res => {
       console.log(res);
-      const { searchRelicsData } = this.state;
+      const { searchRelicsData, allRelicsList } = this.state;
       // let data = [];
+      let len = res[0] ? res[0].Count : 0;
       for (let item of res) {
         item.key = item.Collection_Number;
       }
-      this.setState({
-        searchRelicsData: res.concat(searchRelicsData)
-      });
+      res = searchRelicsData.concat(res);
+      console.log(res);
+      if(res.length === 0) {
+        this.setState({
+          total: 0,
+          searchRelicsData: res
+        })
+      }
+      var hash = {};
+      let newList = allRelicsList.concat(res);
+      // newList = Array.from(new Set(newList));
+      newList = newList.reduce(function(item, next) {
+        hash[next.Collection_Number] ? "" : (hash[next.Collection_Number] = true && item.push(next));
+        return item;
+      }, []);
+      console.log(newList);
+      this.setState(
+        {
+          total: len,
+          allRelicsList: newList
+        },
+        () => {
+          this.setState({
+            searchRelicsData: res
+          });
+        }
+      );
+      
     });
   };
+
 
   handleCancel = () => {
     this.openModal();
@@ -130,11 +164,11 @@ class RelicsDialog extends Component {
     this.openModal();
     // console.log(this.state.checkBoxArr);
     // console.log('-------')
-    const { searchRelicsData, selectedRowKeys } = this.state;
+    const { allRelicsList, selectedRowKeys } = this.state;
     let chooseData = [];
     for (let item of selectedRowKeys) {
       // console.log(item);
-      for (let value of searchRelicsData) {
+      for (let value of allRelicsList) {
         // console.log(value);
         if (item === value.key) {
           chooseData.push(value);
@@ -149,10 +183,29 @@ class RelicsDialog extends Component {
   resetTableCheck = () => {
     this.setState({ selectedRowKeys: [] });
   };
-
-  onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys });
+  // 选择
+  onSelectChange = selected => {
+    // const { selectedRowKeys } = this.state;
+    this.setState({ 
+      selectedRowKeys: selected
+    }, () => {
+      console.log('选择之后');
+      console.log(this.state.selectedRowKeys)
+    });
   };
+
+  // 分页
+  pageationChange = (index) => {
+    this.setState(
+      {
+        pageIndex: index,
+        searchRelicsData: []
+      },
+      () => {
+        this.searchModalData();
+      }
+    );
+  }
 
   render() {
     const {
@@ -164,6 +217,9 @@ class RelicsDialog extends Component {
       searchCategory,
       selectedRowKeys,
       relicsCateList,
+      pageIndex,
+      pageSize,
+      total,
     } = this.state;
     // checkbox
     const rowSelection = {
@@ -300,7 +356,10 @@ class RelicsDialog extends Component {
               >
                 <Option value="全部">全部</Option>
                 {relicsCateList.map((item, idx) => (
-                  <Option value={Number(item.CollTypeId)} key={Number(item.CollTypeId)}>
+                  <Option
+                    value={Number(item.CollTypeId)}
+                    key={Number(item.CollTypeId)}
+                  >
                     {item.CollTypeName}
                   </Option>
                 ))}
@@ -319,9 +378,9 @@ class RelicsDialog extends Component {
               rowSelection={rowSelection}
               dataSource={searchRelicsData}
               columns={chooseRelicsColumns}
-              pagination={false}
+              pagination={{ current: pageIndex, pageSize: pageSize, total: total, onChange: this.pageationChange }}
               bordered
-              scroll={{ x: 1150, y: 407 }}
+              scroll={{ x: 1150, y: 360 }}
             />
           </Col>
         </Col>

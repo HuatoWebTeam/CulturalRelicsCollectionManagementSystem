@@ -52,6 +52,9 @@ const LatestNotice = asyncComponent(() => import('../pages/LatestNotice'));     
 const WorkflowConfig = asyncComponent(() => import('../pages/UserOperation/WorkflowConfig'))  // 流程配置
 const PeopleManagement = asyncComponent(() => import('../pages/UserOperation/PeopleManagement'))  // 人员管理
 const PositionMessagement = asyncComponent(() => import('../pages/UserOperation/PositionMessagement'))  // 职位管理
+const CollecLogout = asyncComponent(() => import("../pages/CollecLogout"));  // 藏品注销单列表
+const NewLogout = asyncComponent(() => import("../pages/CollecLogout/NewLogout"));  // 新建注销单
+const LogoutDetail = asyncComponent(() => import("../pages/CollecLogout/LogoutDetail"));  // 注销单详情
 
 
 
@@ -100,6 +103,9 @@ class Routes extends Component {
             <Route exact path="/App/LatestNotice" component={LatestNotice} />
             <Route exact path="/App/WorkflowConfig" component={WorkflowConfig} />
             <Route exact path="/App/PositionMessagement" component={PositionMessagement} />
+            <Route exact path="/App/CollecLogout" component={CollecLogout} />
+            <Route exact path="/App/NewLogout" component={NewLogout} />
+            <Route exact path="/App/LogoutDetail/:id" component={LogoutDetail} />
             <Route render={() => <Redirect to="/App/Home" />} />
           </Switch>;
     }

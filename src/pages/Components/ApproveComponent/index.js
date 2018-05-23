@@ -129,9 +129,9 @@ class ApproveComponent extends Component {
               <Col span={24} style={{ paddingTop: "40px" }}>
                 <Col span={24} style={{ paddingBottom: "20px" }}>
                   <Col span={15}>
-                    <Col span={8} >审批信息</Col>
+                    <Col span={16} >审批信息</Col>
 
-                    <Col span={16} >备注</Col>
+                    <Col span={8} >备注</Col>
                   </Col>
                 </Col>
                 <Col span={24}>
@@ -141,11 +141,7 @@ class ApproveComponent extends Component {
                           <span>
                             {item.Role +" " +item.UserCode +"  " }  
                           </span> 
-                          <span style={{ color: 
-                            item.StatusOfApproval === "同意"
-                              ? "#3065bf"
-                              : "red "
-                          } } >
+                          <span style={{ color: "#3065bf" } } >
                             {item.StatusOfApproval + " " }
                           </span>
                           <span>{this.props.oddName}</span>

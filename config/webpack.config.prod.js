@@ -13,6 +13,7 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const colors = require('./theme-colors');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -72,6 +73,15 @@ module.exports = {
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info =>
       path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, "/")
+  },
+  externals: {
+    // 第三方库 不打包进主体文件，需要在index.html 中引入
+    react: "React",
+    "react-dom": "ReactDOM",
+    "react-router-dom": "ReactRouterDOM",
+    echarts: "echarts",
+    "core-js": "core-js",
+    moment: "moment"
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -166,7 +176,7 @@ module.exports = {
           // use the "style" loader inside the async code so CSS from them won't be
           // in the main CSS file.
           {
-            test: /\.(css|less)$/,
+            test: /\.less$/,
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {
@@ -218,6 +228,53 @@ module.exports = {
             )
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          {
+            test: /\.css$/,
+            loader: ExtractTextPlugin.extract(
+              Object.assign(
+                {
+                  fallback: {
+                    loader: require.resolve("style-loader"),
+                    options: {
+                      hmr: false
+                    }
+                  },
+                  use: [
+                    {
+                      loader: require.resolve("css-loader"),
+                      options: {
+                        importLoaders: 1,
+                        minimize: true,
+                        sourceMap: shouldUseSourceMap
+                      }
+                    },
+                    {
+                      loader: require.resolve("postcss-loader"),
+                      options: {
+                        // Necessary for external CSS imports to work
+                        // https://github.com/facebookincubator/create-react-app/issues/2677
+                        ident: "postcss",
+                        plugins: () => [
+                          require("postcss-flexbugs-fixes"),
+                          autoprefixer({
+                            browsers: [
+                              ">1%",
+                              "last 4 versions",
+                              "Firefox ESR",
+                              "not ie < 9" // React doesn't support IE8 anyway
+                            ],
+                            flexbox: "no-2009"
+                          })
+                        ]
+                      }
+                    }
+                  ]
+                },
+                extractTextPluginOptions
+              )
+            )
+            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+          },
 
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
@@ -248,6 +305,9 @@ module.exports = {
     ]
   },
   plugins: [
+    // 打包文件分析
+
+    new BundleAnalyzerPlugin(),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
@@ -286,7 +346,7 @@ module.exports = {
         // https://github.com/mishoo/UglifyJS2/issues/2011
         comparisons: false,
         drop_console: true,
-        pure_funcs: ['console.log']  // 移除console
+        pure_funcs: ["console.log"] // 移除console
       },
       mangle: {
         safari10: true

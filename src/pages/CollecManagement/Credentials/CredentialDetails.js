@@ -16,7 +16,7 @@ class CredentialDetail extends Component {
   componentWillMount() {
     console.log(this.props);
     const odd = this.props.match.params.id;
-    this.getCasaderData();
+    // this.getCasaderData();
     this.setState(
       {
         odd: odd
@@ -28,24 +28,9 @@ class CredentialDetail extends Component {
         };
         CollectAll(params).then(res => {
           console.log(res);
-          const { tankInfoList } = this.state;
-          let stroage = res[0].StorageId.split('-');
-            let name = '';
-          if (tankInfoList.length > 0) {
-              for(let item of tankInfoList) {
-                  if(stroage[0] === item.value) {
-                      for(let key of item.children) {
-                        if(stroage[1] === key.value) {
-                            name = item.label + '/' + key.label;
-                            break;
-                        }
-                      }
-                  }
-              }
-          }
+          res[0].StorageId = res[0].StorageId.replace('-', '/');
           this.setState({
             relicsInfo: res[0],
-            tankDetails: name
           });
         });
       }
@@ -187,7 +172,7 @@ class CredentialDetail extends Component {
               </Col>
               <Col span={7} className="relics-box">
                             {/* {relicsInfo.StorageId} */}
-                    存储柜名称：{tankDetails}{" "}
+                存储柜名称：{relicsInfo.StorageId}
               </Col>
               <Col span={17} className="relics-box">
                 {" "}

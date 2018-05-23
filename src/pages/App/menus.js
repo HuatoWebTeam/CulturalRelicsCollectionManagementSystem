@@ -19,7 +19,10 @@ export  const menus = [
         { key: '/App/NewOutbound', title: '藏品管理 > 藏品出库 > 新建出库单', isHidden: true, fatherName: '/App/Outbound' },
         { key: "/App/OutboundDetails", title: '藏品管理 > 藏品出库 > 出库详情', isHidden: true, fatherName: '/App/Outbound' }
     ]},
-    { key:'/App/Accounts', title: '藏品账目', icon: 'iconBack accounts', sub: [], isHidden: false },
+    { key: "/App/CollecLogout", title: '藏品注销', icon: 'logout', sub: [], isHidden: false },
+    { key: '/App/NewLogout', title: '藏品注销 > 新建注销单', isHidden: true, sub: [], fatherName: '/App/CollecLogout' },
+    { key: '/App/LogoutDetail', title: '藏品注销 > 注销单详情', isHidden: true, sub: [], fatherName: '/App/CollecLogout' },
+    { key: '/App/Accounts', title: '藏品账目', icon: 'iconBack accounts', sub: [], isHidden: false },
     { key: '/App/Inventory', title: '藏品盘点', icon: 'iconBack inventory', sub: [], isHidden: false },
     { key: '/App/NewInventory', title: '新建盘点单', isHidden: true, fatherName: '/App/Inventory', sub: [] },
     { key: '/App/ShowDetails', title: '盘点单详情', isHidden: true, fatherName: '/App/Inventory', sub: [] },

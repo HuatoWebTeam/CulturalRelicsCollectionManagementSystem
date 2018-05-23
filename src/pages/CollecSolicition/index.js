@@ -261,7 +261,7 @@ class CollecSolicition extends Component {
                   编辑
               </Button>
               <Button disabled={!record.disabled}
-                onClick={this.showConfirm.bind(this, record.Solicitation_Id)}>
+                onClick={this.showConfirm.bind(this, record.Collection_Number)}>
                 删除
               </Button>
             </span>;

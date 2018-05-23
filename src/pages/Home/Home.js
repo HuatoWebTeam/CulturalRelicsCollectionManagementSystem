@@ -371,16 +371,17 @@ class Home extends Component {
                   关闭
                 </Button>
               }
+              bodyStyle={{ paddingTop: '35px' }}
             >
               {noticeDetail && (
                 <Col span={24}>
                   <Col span={24} className="notice-detail-title">
-                    <h1>{noticeDetail.Notice_Title}</h1>
+                    <h1 style={{ fontSize: '20px'}} >{noticeDetail.Notice_Title}</h1>
                     <span>{noticeDetail.Notice_Time}</span>
                   </Col>
                   <Col
                     span={24}
-                    style={{ fontSize: "18px", marginTop: "15px" }}
+                    style={{ fontSize: "16px", marginTop: "15px", lineHeight: '26px' }}
                   >
                     {noticeDetail.Notice_Desc}
                   </Col>

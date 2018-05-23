@@ -19,7 +19,7 @@ class ExhibitionDetails extends Component {
   state = {
     id: null,
     pageIndex: 1,
-    pageSize: 1000,
+    pageSize: 10,
     total: 0,
     data: [],
     anthorityState: null,
@@ -63,7 +63,7 @@ class ExhibitionDetails extends Component {
           Exhibition_Place: res[0].Exhibition_Place, // 展览地点
           Exhibition_Cost: res[0].Exhibition_Cost, // 外展经费
           CreationTime: subStr(res[0].CreationTime), // 创建时间
-          ReturnTime: subStr(res[0].ReturnTime), // 归还时间
+          ReturnTime: res[0].ReturnTime, // 归还时间
           Exhibition_State: res[0].Exhibition_State // 展览状态
         };
         let listData = res[0].exhibit;
@@ -72,6 +72,7 @@ class ExhibitionDetails extends Component {
         }
         this.setState({
           data: listData,
+          total: listData[0].Count,
           detailInfo: dataSource,
           anthorityState: Number(res[0].DeniedPermission)
         });
@@ -84,11 +85,13 @@ class ExhibitionDetails extends Component {
     });
   }
 
-  paginationChange(page) {
+  paginationChange = (page) => {
     this.setState({
       pageIndex: page
+    }, () => {
+      this.getDetailsList();
     });
-    this.getDetailsList();
+    
   }
  // 改变审批条件状态
   changeAnthority = () => {
@@ -96,7 +99,7 @@ class ExhibitionDetails extends Component {
   };
 
   render() {
-    const { data, id, anthorityState, howComplete, detailInfo } = this.state;
+    const { data, id, anthorityState, howComplete, detailInfo, pageIndex, pageSize, total } = this.state;
 
     return (
       <Row className="exhibition-container main-content">
@@ -160,7 +163,7 @@ class ExhibitionDetails extends Component {
               </Col>
             </Col>
           )}
-          <CommonInfoTable data={data} />
+          <CommonInfoTable changePageindex={this.paginationChange} pageIndex={pageIndex} pageSize={pageSize} total={total} data={data} />
         </Col>
         {
           detailInfo && <ApproveComponent

@@ -43,13 +43,24 @@ class AppContent extends Component {
     let menu = UserInfo.UserMenuItem;
     let width = document.body.clientWidth;
     let height = document.body.clientHeight - 40 - 60;
-    for (let item of menu) {
-      for (let value of menus) {
-        if (item.ProjectModule_URL === value.key) {
-          item.icon = value.icon;
-          break;
+    for (let item = 0; item < menu.length; item++) {
+      // console.log(item);
+      // console.log(menu[item]);
+      // console.log(menu[item].ProjectModule_URL);
+      if (menu[item].ProjectModule_URL !== "") {
+        for (let value of menus) {
+          // console.log(value.key)
+          if (menu[item].ProjectModule_URL === value.key) {
+            // console.log('------')
+            menu[item].icon = value.icon;
+            break;
+          }
         }
+      } else {
+        menu.splice(item, 1);
+        item--;
       }
+      
     }
     this.setState({
       UserName: UserInfo.UserName,
@@ -360,7 +371,7 @@ class AppContent extends Component {
   render() {
     // console.log(this.props)
     const { UserName, UserMenu, setPwdVisible, windowWidth, windowHeight, isIE } = this.state;
-    // console.log(UserMenu);
+    console.log(UserMenu);
     const dropdownMenu = (
       <Menu className="system-dropdown" onClick={this.dropdownChange}>
         {menuName.map((item, idx) => (

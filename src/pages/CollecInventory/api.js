@@ -20,7 +20,7 @@ export const InvenDataAll = (params) => {
 
 // 编辑
 export const InventUpdate = (params) => {
-    return axios.post("/Inventory/InventUpdate", params).then(res => res.data)
+    return axios.post("/Inventory/InventoryUpdate", params).then(res => res.data)
 }
 
 

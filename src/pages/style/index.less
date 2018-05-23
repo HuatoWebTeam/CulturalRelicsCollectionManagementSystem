@@ -1,137 +1,161 @@
-@mainContentWidth: 1100px;   // 版心的宽度
+@mainContentWidth: 1100px; // 版心的宽度
 
 .iconBack {
-    display: inline-block;
-    background: url('../../assets/img/icon/icon.png'); // icon 合集
+  display: inline-block;
+  background: url("../../assets/img/icon/icon.png"); // icon 合集
 }
 
 //  滚动条
 .my-vertical-track {
-    .my-vertical-track-vertical-track {
-        width: 4px;
-        // background-color: #333;
-        .my-vertical-track-vertical-handler {
-            width: 100%;
-            background-color: #3065bf;
-        }
+  .my-vertical-track-vertical-track {
+    width: 4px;
+    // background-color: #333;
+    .my-vertical-track-vertical-handler {
+      width: 100%;
+      background-color: #3065bf;
     }
+  }
 }
 //
 .my-btn {
-    background-color: #3065bf;
-    color: #fff;
+  background-color: #3065bf;
+  color: #fff;
 }
 
 //  main内容的样式
 
-
 .main-content {
-    background: #fff;
-    height: 100%;
-    border: 1px solid #b6bdc9;
-    border-radius: 10px;
-    .title {
-        height: 60px;
-        line-height: 60px;
-        font-size: 20px;
-        padding-left: 20px;
-        border-bottom: 2px solid #32adff;
-        .go-back {
-            width: 30px;
-            height: 30px;
-            float: right;
-            margin-top: 20px;
-            margin-right: 40px;
-            cursor: pointer;
-            background: url('../../assets/img/back.png') no-repeat;
-        }
+  background: #fff;
+  height: 100%;
+  border: 1px solid #b6bdc9;
+  border-radius: 10px;
+  .title {
+    height: 60px;
+    line-height: 60px;
+    font-size: 20px;
+    padding-left: 20px;
+    border-bottom: 2px solid #32adff;
+    .go-back {
+      width: 30px;
+      height: 30px;
+      float: right;
+      margin-top: 20px;
+      margin-right: 40px;
+      cursor: pointer;
+      background: url("../../assets/img/back.png") no-repeat;
     }
+  }
 }
 
 // 库房管理
 .warehouse-modal {
-    .ant-form-inline .ant-form-item {
-        width: 100%;
-        margin-bottom: 24px;
-    }
+  .ant-form-inline .ant-form-item {
+    width: 100%;
+    margin-bottom: 24px;
+  }
 }
 
 // 存储柜信息
 .tankInfo-modal {
-    .ant-form {
-        width: 100%;
-        .ant-form-item {
-            width: 50%;
-            margin-right: 0;
-            margin-bottom: 24px;
-        }
+  .ant-form {
+    width: 100%;
+    .ant-form-item {
+      width: 50%;
+      margin-right: 0;
+      margin-bottom: 24px;
     }
+  }
 }
 
-// 下拉菜单 
+// 下拉菜单
 .system-dropdown {
-    .ant-dropdown-menu-item {
-        padding: 10px 20px;
-        .anticon {
-            margin-right: 10px;
-        }
+  .ant-dropdown-menu-item {
+    padding: 10px 20px;
+    .anticon {
+      margin-right: 10px;
     }
+  }
 }
 
 // 选择文物弹窗
 .ant-modal-content {
-    .ant-modal-body {
-        overflow: hidden;
-        .chooseRelics-modal {
-            .ant-form-item {
-                width: 30%;
-                // margin-right: 0;
-                
-            }
-        }
+  .ant-modal-body {
+    overflow: hidden;
+    .chooseRelics-modal {
+      .ant-form-item {
+        width: 30%;
+        // margin-right: 0;
+      }
     }
-    
+  }
 }
-
 
 // 审批 模块， 公共样式
 .approve-container {
-    padding: 0 40px 20px 20px;
-    .approve-detail {
-        border: 1px solid #ccc;
-        .approve-title {
-            height: 58px;
-            line-height: 58px;
-            padding-left: 30px;
-            background: #f0f5fa;
-        }
-        .approve-content {
-            padding: 20px 30px 20px 30px;
-        }
+  padding: 0 40px 20px 20px;
+  .approve-detail {
+    border: 1px solid #ccc;
+    .approve-title {
+      height: 58px;
+      line-height: 58px;
+      padding-left: 30px;
+      background: #f0f5fa;
     }
+    .approve-content {
+      padding: 20px 30px 20px 30px;
+    }
+  }
 }
-
 
 // 详情页面-单号信息
 .number-details {
-    padding-bottom: 15px;
-    .text {
-        height: 35px;
-        line-break: 35px;
-    }
-
+  padding-bottom: 15px;
+  .text {
+    height: 35px;
+    line-break: 35px;
+  }
 }
 
 // 表格里边的button
 .ant-table-tbody {
-    .ant-btn {
-        background: none;
-        border: none;
+  .ant-btn {
+    background: none;
+    border: none;
+  }
+  .ant-btn.disabled,
+  .ant-btn[disabled],
+  .ant-btn.disabled:hover,
+  .ant-btn[disabled]:hover,
+  .ant-btn.disabled:focus,
+  .ant-btn[disabled]:focus,
+  .ant-btn.disabled:active,
+  .ant-btn[disabled]:active,
+  .ant-btn.disabled.active,
+  .ant-btn[disabled].active {
+    background: none;
+  }
+  .ant-btn-primary {
+    color: #333;
+  }
+} 
+// 表格
+.table-container {
+  border-left: 1px solid #d8d8d8;
+  border-top: 1px solid #d8d8d8;
+  .table-height {
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    border-bottom: 1px solid #d8d8d8;
+    border-right: 1px solid #d8d8d8;
+  }
+  .table-title {
+    background-color: #fafafa;
+  }
+  .table-content {
+    .relicsName {
+      cursor: pointer;
+      color: #3056bf;
     }
-    .ant-btn.disabled, .ant-btn[disabled], .ant-btn.disabled:hover, .ant-btn[disabled]:hover, .ant-btn.disabled:focus, .ant-btn[disabled]:focus, .ant-btn.disabled:active, .ant-btn[disabled]:active, .ant-btn.disabled.active, .ant-btn[disabled].active {
-        background: none;
-    }
-    .ant-btn-primary {
-        color: #333;
-    }
+  }
 }

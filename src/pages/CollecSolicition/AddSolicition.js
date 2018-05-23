@@ -202,12 +202,12 @@ class AddSilicitionApp extends Component {
               console.log(res);
               this.setState({ loading: false });
               if (res === true) {
-                message.success("添加成功");
+                message.success("编辑成功");
                 this.setState({ fileList: [] });
                 this.props.form.resetFields();
                 this.props.history.goBack();
               } else {
-                message.error("添加失败");
+                message.error("编辑失败");
               }
             })
           } else {

@@ -317,7 +317,7 @@ class CollecExhibition extends Component {
                 详情
               </Link>
               <Button type='text' 
-                disabled={record.StepState === 3 ? (record.ExhibitionState === 4 ? true : false) : true }
+                disabled={record.DisplayState === 0 }
                 style={{marginLeft: '10px', border: 'none'}}
                 onClick={this.returnButton.bind(this,record)} >
                   归还
