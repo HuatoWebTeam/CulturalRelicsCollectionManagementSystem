@@ -23,7 +23,7 @@ const fakeAuth = {
       console.log(LoginTime);
       let timeDiff = moment().diff(moment(LoginTime), "minute"); 
       console.log(timeDiff);
-      if(timeDiff >= 360) {   // 登录时间大于等于6小时 重新登录
+      if(timeDiff >= 180) {   // 登录时间大于等于3小时 重新登录
         sessionStorage.removeItem("UserInfo");
         return false;
       } else {

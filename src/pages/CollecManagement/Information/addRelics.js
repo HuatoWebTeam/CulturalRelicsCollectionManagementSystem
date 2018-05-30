@@ -48,6 +48,8 @@ class AddRelics extends Component {
           Integrity: value.howComplete,
           Size: value.size,
           CollectionPosition: value.localtion,
+          VideoUrl: value.video,
+          FileUrl: value.file,
           Collectionimg1: this.formatSub(value.Collectionimg1),
           Collectionimg2: this.formatSub(value.Collectionimg2),
           Collectionimg3: this.formatSub(value.Collectionimg3)

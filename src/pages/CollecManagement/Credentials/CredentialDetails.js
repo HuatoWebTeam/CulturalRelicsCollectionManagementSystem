@@ -90,11 +90,23 @@ class CredentialDetail extends Component {
             }}
           />
         </Col>
-        <Col span={24} style={{ padding: "20px 40px 20px 20px" }}>
+        <Col span={24} style={{ padding: "40px 100px" }}>
           {relicsInfo !== {} && (
             <Col span={24} className="relics-detail">
-              <Col span={24} className="relics-img">
-                文物图片：
+              <Col span={3} className="relics-box">
+                {" "}
+                文物名称
+              </Col>
+              <Col span={9} className="relics-content">{relicsInfo.CollectionName}{" "}</Col>
+              <Col span={3} className="relics-box">
+                {" "}
+                文物RFID
+              </Col>
+              <Col span={9} className="relics-content">{relicsInfo.CollectionRfid}{" "}</Col>
+              <Col span={3} className="relics-pic">
+                文物图片
+              </Col>
+              <Col span={21} className="relics-photo">
                 {relicsInfo.Collectionimg1 && (
                   <img
                     src={relicsInfo.Collectionimg1}
@@ -112,72 +124,78 @@ class CredentialDetail extends Component {
                     src={relicsInfo.Collectionimg3}
                     alt={relicsInfo.CollectionName}
                   />
-                )}
-              </Col>
-              <Col span={7} className="relics-box">
+                )}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物名称：{relicsInfo.CollectionName}{" "}
+                文物类别
               </Col>
-              <Col span={17} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.CategoryName}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物编号：{relicsInfo.CollectionNumber}{" "}
+                文物材质
               </Col>
-              <Col span={7} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.MaterialQuality}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物等级：{relicsInfo.GradeName}{" "}
+                文物编号
               </Col>
-              <Col span={17} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.CollectionNumber}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物数量：{relicsInfo.Number}{" "}
+                文物年代
               </Col>
-              <Col span={7} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.YearsName}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物类别：{relicsInfo.CategoryName}{" "}
+                文物等级
               </Col>
-              <Col span={17} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.GradeName}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物材质：{relicsInfo.MaterialQuality}{" "}
+                完整程度
               </Col>
-              <Col span={7} className="relics-box">
-                {" "}
-                文物年代：{relicsInfo.YearsName}{" "}
-              </Col>
-              <Col span={17} className="relics-box">
-                {" "}
-                文物尺寸：{relicsInfo.Size}{" "}
-              </Col>
-              <Col span={7} className="relics-box">
-                {" "}
-                完整程度：{howComplete.map(item => {
+              <Col span={9} className="relics-content">{howComplete.map(item => {
                   if (item.key === Number(relicsInfo.Integrity)) {
                     return item.value;
                   }
-                })}{" "}
+                })}{" "}</Col>
+              <Col span={3} className="relics-box">
+                            {/* {relicsInfo.StorageId} */}
+                存储柜名称
               </Col>
-              <Col span={17} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.StorageId}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                文物重量：{relicsInfo.Weight}{" "}
+                文物尺寸
               </Col>
-              <Col span={7} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.Size}{" "}</Col>
+               
+              <Col span={3} className="relics-box">
                 {" "}
-                文物RFID：{relicsInfo.CollectionRfid}{" "}
+                文物状态
               </Col>
-              <Col span={17} className="relics-box">
+              <Col span={9} className="relics-content">{relicsInfo.CollStateName}{" "}</Col>
+              <Col span={3} className="relics-box">
                 {" "}
-                入库类型：{putInCategory.map(item => {
+                文物重量
+              </Col>
+              <Col span={9} className="relics-content">{relicsInfo.Weight}{" "}</Col>
+              
+              <Col span={3} className="relics-box">
+                {" "}
+                文物数量
+              </Col>
+              <Col span={9} className="relics-content">{relicsInfo.Number}{" "}</Col>
+             
+              <Col span={3} className="relics-box">
+                {" "}
+                入库类型
+              </Col>
+              <Col span={9} className="relics-content">{putInCategory.map(item => {
                   if (item.key === Number(relicsInfo.ReservoirType)) {
                     return item.value;
                   }
-                })}{" "}
-              </Col>
-              <Col span={7} className="relics-box">
-                            {/* {relicsInfo.StorageId} */}
-                存储柜名称：{relicsInfo.StorageId}
-              </Col>
-              <Col span={17} className="relics-box">
-                {" "}
-                文物状态：{relicsInfo.CollStateName}{" "}
-              </Col>
+                })}{" "}</Col>
             </Col>
           )}
         </Col>

@@ -9,3 +9,8 @@ export const CancellationAdd = (params) => {
 export const CancellationAll = (params) => {
     return axios.post("/Cancellation/CancellationAll", params).then(res => res.data)
 }
+
+// 删除注销单
+export const CancellationDelete = (params) => {
+    return axios.post("/Cancellation/CancellationDelete", params).then(res => res.data)
+}

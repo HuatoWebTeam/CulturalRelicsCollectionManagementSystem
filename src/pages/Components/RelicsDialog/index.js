@@ -32,11 +32,14 @@ class RelicsDialog extends Component {
     let relicsYears = JSON.parse(sessionStorage.getItem("relicsYears"));
     let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
     let relicsLevel = JSON.parse(sessionStorage.getItem("relicsLevel"));
+
+    let checkNum = this.props.checkedItem;
     this.setState({
       relicsYearsList: relicsYears,
       relicsCateList: relicsCateGory,
       relicsLevelList: relicsLevel,
-      modalTitle: this.props.title
+      modalTitle: this.props.title,
+      selectedRowKeys: checkNum
     });
     StoreApi().then(res => {
       // console.log(res);
@@ -49,30 +52,13 @@ class RelicsDialog extends Component {
   componentWillReceiveProps(nextProps) {
     console.log("propsChange");
     console.log(nextProps);
-    const { searchRelicsData } = this.state;
+    // const { searchRelicsData } = this.state;
     // console.log(searchRelicsData)
     let item = nextProps.checkedItem;
-    // console.log(item)
-    let keys = [];
-    for (let value of item) {
-      keys.push(value.Collection_Number);
-    }
-    let data = searchRelicsData.concat(item);
-    console.log(data)
-    for (let i = 0; i < data.length; i++) {
-      for (let n = i + 1; n < data.length; n++) {
-        if (data[i].Collection_Number === data[n].Collection_Number) {
-          data.splice(i, 1);
-          i--;
-          break;
-        }
-      }
-    }
-    // console.log(data)
+    
     this.setState(
       {
-        searchRelicsData: data,
-        selectedRowKeys: keys
+        selectedRowKeys: item
       },
       () => {
         console.log(this.state);
@@ -95,7 +81,8 @@ class RelicsDialog extends Component {
     this.setState(
       {
         searchName: value,
-        searchRelicsData: []
+        searchRelicsData: [],
+        pageIndex: 1,
       },
       () => {
         this.searchModalData();
@@ -105,13 +92,18 @@ class RelicsDialog extends Component {
 
   searchModalData = () => {
     const { searchStore, searchCategory, searchName, pageIndex, pageSize } = this.state;
+    console.log(this.props);
+    const { Table, Odd } = this.props;
+    console.log(Table !== null)
     let params = {
       StoreId: searchStore,
       Type: searchCategory,
       CollName: searchName,
       stat: this.props.stat,
       pageIndex: pageIndex,
-      pageSize: pageSize
+      pageSize: pageSize,
+      Table: Table,
+      Odd: Odd ? Odd : ''
     };
     // console.log(params);
     ColleApi(params).then(res => {

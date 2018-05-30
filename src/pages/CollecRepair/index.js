@@ -38,10 +38,10 @@ class CollecRepair extends Component {
         .format()
     ];
     this.setState(
-      {
-        date: defaultDate,
-        pageIndex: this.props.pageIndex
-      },
+      // {
+      //   date: defaultDate,
+      //   pageIndex: this.props.pageIndex
+      // },
       () => {
         this.getRepairList();
       }
@@ -67,7 +67,6 @@ class CollecRepair extends Component {
     };
     RepairApi(params).then(res => {
       console.log(res);
-
       if (res.length === 0) {
         this.setState({
           total: 0,
@@ -210,7 +209,7 @@ class CollecRepair extends Component {
         key: "Repair_Id"
       },
       {
-        title: "申请时间",
+        title: "文物名称",
         dataIndex: "Repair_Time",
         key: "Repair_Time",
         render: text => {
@@ -218,17 +217,17 @@ class CollecRepair extends Component {
         }
       },
       {
-        title: "申请人",
+        title: "文物图片",
         dataIndex: "Repair_Applicant",
         key: "Repair_Applicant"
       },
       {
-        title: "修复方法",
+        title: "类别",
         dataIndex: "Repair_Method",
         key: "Repair_Method"
       },
       {
-        title: "修复日期",
+        title: "申请时间",
         dataIndex: "Repair_BegTime",
         render: (text, record) => {
           return (
@@ -241,6 +240,11 @@ class CollecRepair extends Component {
         }
       },
       {
+        title: "修复方法",
+        dataIndex: "Repair_Restorer",
+        key: "Repair_Restorer"
+      },
+      {
         title: "修复周期",
         dataIndex: "Repair_cycle",
         key: "Repair_cycle",
@@ -249,12 +253,12 @@ class CollecRepair extends Component {
         }
       },
       {
-        title: "修复人",
+        title: "申请人",
         dataIndex: "Repair_Restorer",
         key: "Repair_Restorer"
       },
       {
-        title: "审批状态",
+        title: "审批结果",
         dataIndex: "",
         key: "approval",
         render: (text, value, idx) => {
@@ -273,26 +277,26 @@ class CollecRepair extends Component {
           }
         }
       },
-      {
-        title: "修复状态",
-        dataIndex: "Repair_State",
-        key: "Repair_State",
-        render: text => {
-          for (let item of repairState) {
-            if (Number(text) === item.key) {
-              return (
-                <span
-                  style={{
-                    color: Number(text) === 3 ? "red" : "#333"
-                  }}
-                >
-                  {item.value}
-                </span>
-              );
-            }
-          }
-        }
-      },
+      // {
+      //   title: "修复状态",
+      //   dataIndex: "Repair_State",
+      //   key: "Repair_State",
+      //   render: text => {
+      //     for (let item of repairState) {
+      //       if (Number(text) === item.key) {
+      //         return (
+      //           <span
+      //             style={{
+      //               color: Number(text) === 3 ? "red" : "#333"
+      //             }}
+      //           >
+      //             {item.value}
+      //           </span>
+      //         );
+      //       }
+      //     }
+      //   }
+      // },
       {
         title: "操作",
         dataIndex: "",
@@ -322,14 +326,14 @@ class CollecRepair extends Component {
               >
                 详情
               </Link>
-              <Button
+              {/* <Button
                 type="text"
                 disabled={record.DisplayState === 0 }
                 style={{ marginLeft: "10px", border: "none" }}
                 onClick={this.returnButton.bind(this, record)}
               >
                 归还
-              </Button>
+              </Button> */}
               {
                  record.RkOdd !== ''
                   ? <Link disabled={record.RkOdd === ''} style={{marginLeft: '10px', border: 'none'}} to={`/App/PutInDetails/${record.RkOdd}`} >查看入库单</Link>

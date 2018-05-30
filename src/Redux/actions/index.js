@@ -13,6 +13,7 @@ export const SOLICITIONPAGE = "SOLICITIONPAGE";      // 藏品征集
 export const WAREHOUSEPAGE = "WAREHOUSEPAGE";  //库房信息
 export const TANKINFOPAGE = "TANKINFOPAGE";    // 存储柜信息
 export const OPERATIONPAGE = "OPERATIONPAGE";  // 操作日志
+export const REPAIRMETHODPAGE = "REPAIRMETHODPAGE";  // 修复方法
 export const AUTHORITYSTATE = "AUTHORITYSTATE"; // 可以操作审批的权限 0 不可以， 1 可以
 
 
@@ -100,6 +101,12 @@ export function operationPage (data) {
 export function authorityState ( data ) {
     return {
         type: AUTHORITYSTATE,
+        payload: data
+    }
+}
+export function repairMethod (data) {
+    return {
+        type: REPAIRMETHODPAGE,
         payload: data
     }
 }

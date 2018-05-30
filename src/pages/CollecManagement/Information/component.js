@@ -20,6 +20,7 @@ class RelicsInfoDialogApp extends Component {
     relicsLevelList: [],
     updateStroRfid: null,
     reset: false,
+    isloading: false,
     updateNumber: null,
     formData: {
       relicsName: null,
@@ -36,7 +37,9 @@ class RelicsInfoDialogApp extends Component {
       category: 1,
       weight: null,
       howComplete: 0,
-      size: null
+      size: null,
+      video: null,
+      file: null
     }
   };
   componentWillMount() {
@@ -119,7 +122,9 @@ class RelicsInfoDialogApp extends Component {
             relicsYears: Number(formData.years),
             type: Number(formData.type),
             carton: formData.carton,
-            localtion: formData.localtion
+            localtion: formData.localtion,
+            video: formData.VideoUrl,
+            file: formData.FileUrl
           };
           // this.setState({
           //   updateStroRfid: Number(formData.carton)
@@ -285,6 +290,59 @@ class RelicsInfoDialogApp extends Component {
       }
     }
   }
+  // 上传视频
+  beforeVideoUpload = (file) => {
+    console.log(file);
+    this.setState({
+      isloading: true
+    })
+    let formData = new FormData();
+    formData.append('VideoUrl', file);
+    CollectionImgUpload(formData).then(res => {
+      console.log(res);
+      this.setState({
+        isloading: false
+      });
+      if (res.Msg === "文件上传成功!") {
+        this.props.form.setFields({ video: { value: res.Data } });
+      } else {
+        message.error('视频上传失败')
+      }
+    })
+    return false;
+
+  }
+
+  // 上传文档
+  beforeFileUpload = (file) => {
+    this.setState({
+      isloading: true
+    })
+    console.log(file);
+    let formData = new FormData();
+    formData.append("FileUrl", file);
+    CollectionImgUpload(formData).then(res => {
+      console.log(res);
+      this.setState({
+        isloading: false
+      })
+      if (res.Msg === "文件上传成功!") {
+        let fileName = res.Data;
+        // fileName = fileName.replace("/CollectionFile//", "");
+        // this.state.formData.file = fileName;
+        this.props.form.setFields({
+          file: {
+            value: fileName,
+
+          }
+        });
+        console.log(res.Data)
+      } else {
+        message.error('文件上传失败')
+      }
+    });
+    return false;
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -297,7 +355,8 @@ class RelicsInfoDialogApp extends Component {
       tankInfoList,
       relicsYearsList,
       relicsCateList,
-      relicsLevelList
+      relicsLevelList,
+      isloading
     } = this.state;
 
     const uploadButton = (
@@ -355,7 +414,7 @@ class RelicsInfoDialogApp extends Component {
             <FormItem
               className="form-width50"
               label="入库类型:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("type", {
                 initialValue: formData.type,
@@ -364,8 +423,7 @@ class RelicsInfoDialogApp extends Component {
                 <Select>
                   {putInCategory.map((item, idx) => (
                     <Option value={item.key} key={item.key}>
-                      {" "}
-                      {item.value}{" "}
+                      {item.value}
                     </Option>
                   ))}
                 </Select>
@@ -381,31 +439,10 @@ class RelicsInfoDialogApp extends Component {
                 rules: [{ required: true, message: "请选择存储柜" }]
               })(<Cascader options={tankInfoList} placeholder="请选择存储柜" />)}
             </FormItem>
-            {/* <FormItem
-              className="form-width50"
-              label="存储位置:"
-              labelCol={{ span: 8 }}
-            >
-              {getFieldDecorator("localtion", {
-                initialValue: formData.localtion,
-                rules: [{ required: true, message: "请输入存储位置" }]
-              })(<Input placeholder="请输入存储位置" />)}
-            </FormItem> */}
-
-            {/* <FormItem
-              className="form-width50"
-              label="文物编号:"
-              labelCol={{ span: 8 }}
-            >
-              {getFieldDecorator("relicsNum", {
-                initialValue: formData.relicsNum,
-                rules: [{ required: true, message: "请输入文物编号" }]
-              })(<Input placeholder="请输入文物编号" />)}
-            </FormItem> */}
             <FormItem
               className="form-width50"
               label="分级信息:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("levelInfo", {
                 initialValue: formData.levelInfo,
@@ -435,28 +472,11 @@ class RelicsInfoDialogApp extends Component {
                 ]
               })(<InputNumber style={{ width:'165px' }}  placeholder="请输入文物数量" />)}
             </FormItem>
-            {/* <FormItem
-              className="form-width50"
-              label="文物状态:"
-              labelCol={{ span: 8 }}
-            >
-              {getFieldDecorator("relicsState", {
-                initialValue: formData.relicsState,
-                rules: [{ required: true, message: "请选择文物状态" }]
-              })(
-                <Select>
-                  {
-                    relicsState.map((item, idx) =>
-                      <Option value={item.key} key={item.key} > {item.value} </Option>
-                    )
-                  }
-                </Select>
-              )}
-            </FormItem> */}
+            
             <FormItem
               className="form-width50"
               label="入馆时间:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("date", {
                 initialValue: formData.date,
@@ -488,7 +508,7 @@ class RelicsInfoDialogApp extends Component {
             <FormItem
               className="form-width50"
               label="材质:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("material", {
                 initialValue: formData.material,
@@ -520,7 +540,7 @@ class RelicsInfoDialogApp extends Component {
             <FormItem
               className="form-width50"
               label="重量:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("weight", {
                 initialValue: formData.weight,
@@ -548,15 +568,59 @@ class RelicsInfoDialogApp extends Component {
             <FormItem
               className="form-width50"
               label="尺寸:"
-              labelCol={{ span: 8 }}
+              labelCol={{ span: 5 }}
             >
               {getFieldDecorator("size", {
                 initialValue: formData.size,
                 rules: [{ required: true, message: "请输入文物尺寸" }]
               })(<Input placeholder="请输入文物尺寸" />)}
             </FormItem>
+            <FormItem label="视频资料"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              className='upload-item'
+              style={{ width: "100%", marginBottom:'24px' }} >
+                {
+                  getFieldDecorator('video', {
+                    initialValue: formData.video,
+                    rules: [{ required: true, message: '请选择视频资料'}]
+                  })(
+                    <Input disabled placeholder='请选择视频资料' style={{ width: '475px', marginRight: '20px' }} />
+                  )
+                }
+              
+              <Upload 
+                accept='video/*'
+                beforeUpload={this.beforeVideoUpload}
+               >
+                <Button type='primary' disabled={isloading} >选择视频</Button>
+              </Upload>
+
+              {isloading && <span style={{ position: 'absolute', display: 'inline-block', top: '30px', left: '0' }}>正在上传中，请稍等</span>}
+            </FormItem>
+            <FormItem label="文档资料"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              className='upload-item'
+              style={{ width: "100%", marginBottom: '24px' }} >
+              {
+                getFieldDecorator('file', {
+                  initialValue: formData.file,
+                  rules: [{ required: true, message: '请选择文档资料' }]
+                })(
+                  <Input disabled  placeholder='请选择文档资料' style={{ width: '475px', marginRight: '20px' }} />
+                )
+              }
+
+              <Upload
+                accept='application/*'
+                beforeUpload={this.beforeFileUpload}
+              >
+                <Button type='primary' disabled={isloading} >选择文档</Button>
+              </Upload>
+            </FormItem>
             <FormItem style={{ width: "100%" }} wrapperCol={{ offset: 4 }}>
-              <Button loading={loading} type="primary" htmlType="submit">
+              <Button disabled={isloading} loading={loading} type="primary" htmlType="submit">
                 提交
               </Button>
             </FormItem>

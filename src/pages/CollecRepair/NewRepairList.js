@@ -5,7 +5,9 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import RelicsDialog from '../Components/RelicsDialog';
 import CheckedRelicsInfo from "../Components/CheckedRelicsInfo";
+import {GetMethodAll} from "./Repairmethod/api";
 import { RepairAddApi, RepDatall, RepairUpdate } from "./api";
+
 const { RangePicker } = DatePicker;
 
 const FormItem = Form.Item;
@@ -13,6 +15,9 @@ const { TextArea } = Input;
 class NewRepairListApp extends Component {
   state = {
     repairListData: [],
+    repairListData:{Collection_Name:'请选择文物'},
+    methodListData:[],
+    methodListData:{Method_Name:"请选择修复方法"},
     pageTitle: '新建修复单',
     chooseRelicsNum: [],
     loading: false,   
@@ -33,12 +38,13 @@ class NewRepairListApp extends Component {
   };
   
   componentWillMount() {
+    this.chooseMethod();
     const { state, formData } = this.props.componentState;
     this.state.pageTitle = state ? state : '新建修复单';
     if ( state ) {
       let params = {
         pageIndex: 1,
-        pageSize: 1000,
+        pageSize: 10000,
         Exhibition_Odd: formData
       };
       RepDatall(params).then(res => {
@@ -166,10 +172,24 @@ class NewRepairListApp extends Component {
       chooseRelicsNum.push(value.key);
     }
     this.setState({
-      repairListData: item,
+      repairListData: item[0],
       chooseRelicsNum: chooseRelicsNum
     });
   };
+
+  // 修复方法选择
+  chooseMethod = ()=>{
+    const {pageIndex,pageSize,Name}=this.state;
+    console.log(pageIndex,pageSize,Name)
+    let params={
+      pageIndex:pageIndex, 
+      pageSize:pageSize,
+      Name:Name      
+    };
+    GetMethodAll(params).then(res => {
+      console.log(res)
+    })  
+  }
 
   // 选择起止时间
   handleDateRange = (date, dateString) => {
@@ -200,9 +220,9 @@ class NewRepairListApp extends Component {
   };
 
   render() {
-    const { repairListData, repairInfo, pageTitle, chooseRelicsNum } = this.state;
+    const { repairListData,methodListData, repairInfo, pageTitle, chooseRelicsNum, checkNum } = this.state;
     const { getFieldDecorator } = this.props.form;
-
+    const { state, formData } = this.props.componentState;
 
     return (
       <Row className="main-content">
@@ -215,9 +235,10 @@ class NewRepairListApp extends Component {
             }}
           />
         </Col>
+        
         <Col span={24} className="new-repair-container">
-          <Form onSubmit={this.formSubmit.bind(this)} layout="inline">
-            <Col span={24} style={{ width: "730px" }}>
+        <Col span={24} className="repair-body">
+          <Form onSubmit={this.formSubmit.bind(this)} style={{width:"100%"}} wrapperCol={24}>
               {/* <FormItem label="申请时间:" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ width: "50%" }}>
                     {getFieldDecorator("date", {
                       initialValue: moment(),
@@ -226,18 +247,115 @@ class NewRepairListApp extends Component {
                       ]
                     })(<DatePicker format="YYYY-MM-DD" placeholder="请选择时间" />)}
                   </FormItem> */}
-              <FormItem
-                label="申请人:"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ width: "50%" }}
-              >
-                {getFieldDecorator("Repair_Applicant", {
+              
+              <Col span={2} className="repair-box">文物名称</Col>
+              <Col span={6} className="detail-box">
+              <span onClick={() => {
+                      console.log('---')
+                      this.refs.relicsDialog.openModal();
+                      this.setState({
+                        checkNum: chooseRelicsNum
+                      })
+                    }}>
+                    { repairListData.Collection_Name}
+                    </span>   
+              </Col>
+              <RelicsDialog 
+              chooseData={this.chooseData}
+                    title="请选择文物"
+                    radio={true}
+                    stat={0}
+                    checkedItem={[]}
+                    ref="relicsDialog" />
+              <Col span={2} className="repair-box">申请人</Col>
+              <Col span={6}  className="detail-box">
+              {getFieldDecorator("Repair_Applicant", {
                   initialValue: repairInfo.Repair_Applicant,
                   rules: [{ required: true, message: "请输入申请人" }]
-                })(<Input placeholder="请输入申请人" />)}
-              </FormItem>
-              <FormItem
+                })(<Input placeholder="请输入申请人" />)}</Col>
+              <Col span={2} className="repair-box">修复周期</Col>
+              <Col span={6} className="detail-box"> <FormItem
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                style={{ width: "90%",margin:"15px 80px" }}
+              >
+                {getFieldDecorator("repairRangeDate", {
+                  initialValue: repairInfo.repairRangeDate,
+                  rules: [
+                    {
+                      required: true,
+                      message: "请选择修复起止日期"
+                    }
+                  ]
+                })(
+                  <RangePicker
+                    onChange={this.handleDateRange}
+                    format="YYYY-MM-DD"
+                    placeholder="请选择修复起止日期"
+                  />
+                )}
+              </FormItem></Col>
+              <Col span={2} className="repair-box">破损情况</Col>
+              <Col span={6} className="detail-box">
+              <TextArea style={{height:"100%"}} 
+                    placeholder="请输入破损情况"
+                    onChange={value=>
+                    this.setState({
+                      brokenrate:value.target.value
+                    })
+                              }/></Col>
+              <Col span={2} className="repair-box">文物图片</Col>
+              <Col span={6} className="detail-img">
+              {repairListData.Collection_img&& (
+                        <img
+                          src={ repairListData.Collection_img }
+                          alt={repairListData.Collection_Name }
+                        />
+                      )}</Col>
+              <Col span={2} className="repair-box">尺寸</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.Size}</Col>
+              <Col span={2} className="repair-box">文物编号</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.Collection_Number}</Col>
+              <Col span={2} className="repair-box">年代</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.YearsName}</Col>
+              <Col span={2} className="repair-box">重量</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.Weight}</Col>
+              <Col span={2} className="repair-box">文物等级</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.GradeName}</Col>
+              <Col span={2} className="repair-box">储存位置</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.Storage_Position}</Col>
+              <Col span={2} className="repair-box">材质</Col>
+              <Col span={6} className="detail-box">
+              {repairListData.MaterialQuality}</Col>
+              <Col span={2} className="repair-box">修复方法</Col>
+              <Col span={6} className="detail-box">
+              <span onClick={()=>{
+               
+                 this.setState({
+                   checkNum: chooseRelicsNum
+                 })
+ 
+              }}>{methodListData.Method_Name}</span></Col>
+               <RelicsDialog 
+                    chooseMethod={this.chooseMethod}
+                    title="请选择修复方法"
+                    radio={true}
+                    stat={0}
+                    checkedItem={[]}
+                    ref="relicsDialog" />
+              <Col span={2} className="repair-box">修复材料</Col>
+              <Col span={14} className="detail-box"></Col>
+              <Col span={2} className="repair-box">修复过程</Col>  
+              <Col span={22} className="detail-box"></Col> 
+              <Col span={2} className="repair-box">修复计划</Col>
+              <Col span={22} className="detail-box"></Col> 
+              {/* <FormItem
                 label="修复方案:"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
@@ -296,7 +414,7 @@ class NewRepairListApp extends Component {
                     }
                   ]
                 })(<Input disabled placeholder="请选择修复起止日期" />)}
-              </FormItem>
+              </FormItem> */}
               {/* <FormItem
                 label="归还日期:"
                 labelCol={{ span: 8 }}
@@ -313,7 +431,7 @@ class NewRepairListApp extends Component {
                   ]
                 })(<DatePicker placeholder="请选择归还日期" />)}
               </FormItem> */}
-              <FormItem
+              {/* <FormItem
                 label="预期修复结果:"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 20 }}
@@ -328,9 +446,8 @@ class NewRepairListApp extends Component {
                     }
                   ]
                 })(<TextArea />)}
-              </FormItem>
-            </Col>
-            <Col
+              </FormItem> */}
+            {/* <Col
               span={24}
               style={{ marginBottom: "20px", marginLeft: "121px" }}
             >
@@ -345,9 +462,9 @@ class NewRepairListApp extends Component {
               >
                 选择修复文物
               </Button>
-            </Col>
+            </Col> */}
             <Col span={24}>
-              <CheckedRelicsInfo data={repairListData} />
+              {/* <CheckedRelicsInfo data={repairListData} /> */}
               {/* <Table
                 columns={repairListColumns}
                 dataSource={repairListData}
@@ -368,11 +485,14 @@ class NewRepairListApp extends Component {
           </Form>
           <RelicsDialog
             stat={0}
+            Table={1}
+            Odd={state ? formData : ''}
             chooseData={this.chooseData}
-            checkedItem={repairListData}
+            checkedItem={checkNum}
             title="选择修复文物"
             ref="relicsDialog"
           />
+        </Col>
         </Col>
       </Row>
     );

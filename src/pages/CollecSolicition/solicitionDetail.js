@@ -2,21 +2,24 @@ import React, { Component } from 'react';
 
 import { Row, Col } from 'antd';
 import './index.less';
-import { levelInfo, relicsCategory, approveState } from "../../assets/js/commonFun";
+import { levelInfo, approveState } from "../../assets/js/commonFun";
 import ApproveComponent from "../Components/ApproveComponent";
 
 class SolicitionDetail extends Component {
   state = {
     solicition: null,
-    anthorityState: null
+    anthorityState: null,
+    relicsCategory: []
   };
 
   componentWillMount() {
     let solicitionDetail = JSON.parse(sessionStorage.getItem("solicitionText"));
     let state = sessionStorage.getItem("anthoityState");
+    let relicsCateGory = JSON.parse(sessionStorage.getItem("relicsCateGory"));
     this.setState({
       solicition: solicitionDetail,
-      anthorityState: Number(state)
+      anthorityState: Number(state),
+      relicsCategory: relicsCateGory
     });
   }
   // 改变审批条件状态
@@ -26,7 +29,7 @@ class SolicitionDetail extends Component {
   };
 
   render() {
-    const { solicition, anthorityState } = this.state;
+    const { solicition, anthorityState, relicsCategory } = this.state;
     return <Row className="main-content">
         <Col className="title">
           藏品征集详情
@@ -67,7 +70,11 @@ class SolicitionDetail extends Component {
             奖金数额： {solicition.AmountPrize}
           </Col>
           <Col span={7} className="detail-box">
-            文物类别： {solicition.MaterialQuality}
+            文物类别： {relicsCategory.map((item) => {
+            if (Number(item.CollTypeId) === Number(solicition.Solicitation_State)) {
+              return item.CollTypeName;
+            }
+            })}
           </Col>
           <Col span={17} className="detail-box">
             联系方式： {solicition.Phone}
@@ -91,7 +98,7 @@ class SolicitionDetail extends Component {
             鉴定结果： {solicition.Identification}
           </Col>
         </Col>
-        <ApproveComponent oddName={'此征集单'} anthorityState={anthorityState} paramsId={solicition.Collection_Number} flag={1} changeAnthorityState={this.changeAnthority} />
+        <ApproveComponent oddName={"此征集单"} anthorityState={anthorityState} paramsId={solicition.Collection_Number} flag={1} changeAnthorityState={this.changeAnthority} />
       </Row>;
   }
 }

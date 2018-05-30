@@ -48,7 +48,6 @@ class CommonInfoTable extends Component {
                 title: '数量',
                 dataIndex: 'Number',
                 key: 'Number',
-                width: 70
             },
             {
                 title: '分级信息',
@@ -88,17 +87,6 @@ class CommonInfoTable extends Component {
                 width: 110
             },
             {
-                title: '尺寸',
-                dataIndex: 'Size',
-                key: 'Size'
-            },
-            {
-                title: '重量',
-                dataIndex: 'Weight',
-                key: 'Weight',
-                width: 80
-            },
-            {
                 title: '文物状态',
                 dataIndex: 'CollStateName',
                 key: 'CollStateName',
@@ -113,6 +101,14 @@ class CommonInfoTable extends Component {
             className='common-table'
             dataSource={data} 
             columns={relicInfoColumns} 
+            expandedRowRender={(record => 
+                <Col span={24}>
+                    <Col span={12} >文物尺寸：{record.Size}</Col>
+                    <Col span={12}>
+                        文物重量：{record.Weight}
+                    </Col>
+                </Col>
+            )}
             bordered 
             pagination={{ 
                 current: pageIndex, 

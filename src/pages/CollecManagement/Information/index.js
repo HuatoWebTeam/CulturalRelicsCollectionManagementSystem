@@ -100,7 +100,9 @@ class ComplexGeneric extends Component {
             key: item.CollectionNumber,
             type: item.ReservoirType,
             carton: item.StorageId.split("-"),
-            localtion: item.CollectionPosition
+            localtion: item.CollectionPosition,
+            VideoUrl: item.VideoUrl,
+            FileUrl: item.FileUrl
           });
         }
         this.setState({

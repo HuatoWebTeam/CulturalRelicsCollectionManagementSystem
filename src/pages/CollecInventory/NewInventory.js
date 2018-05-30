@@ -33,7 +33,7 @@ class NewInventoryApp extends Component {
       let params = {
         Exhibition_Odd: formData,
         pageIndex: 1,
-        pageSize: 1000
+        pageSize: 10000
       }
       InvenDataAll(params).then(res => {
         console.log(res);
@@ -195,8 +195,9 @@ class NewInventoryApp extends Component {
   };
 
   render() {
-    const { chooseInventoryRelics, inventInfo, loading, chooseRelicsNum } = this.state;
+    const { chooseInventoryRelics, inventInfo, loading, chooseRelicsNum, checkNum } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const { state, formData } = this.props.componentState;
    
 
     return (
@@ -305,7 +306,9 @@ class NewInventoryApp extends Component {
             chooseData={this.chooseData}
             title="选择盘点文物"
             stat={0}
-            checkedItem={chooseInventoryRelics}
+            Table={2}
+            Odd={state ? formData : ''}
+            checkedItem={checkNum}
             ref="relicsDialog"
           />
         </Col>

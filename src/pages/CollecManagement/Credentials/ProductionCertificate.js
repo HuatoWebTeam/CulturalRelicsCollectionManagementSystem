@@ -14,6 +14,7 @@ const FormItem = Form.Item;
 class ProductionCertificateApp extends Component {
   state = {
     RelicsList: {},
+    RelicsList:{Collection_Name:'请选择文物'},
     relicsNum: null,
     number: null,
     loading: false,
@@ -100,11 +101,12 @@ class ProductionCertificateApp extends Component {
     if (value.length > 0) {
       if (value[0].StorageId !== null) {
         let stroage = value[0].StorageId.split("--");
+        console.log('shezhicunchugui')
         this.setState({
           stroageLocaltion: [stroage[1], stroage[0]]
         });
       }
-
+      console.log('-----')
       this.setState({
         RelicsList: value[0],
         relicsNum: value[0].Collection_Number,
@@ -117,7 +119,7 @@ class ProductionCertificateApp extends Component {
   cascaderChange = value => {
     console.log(value);
     let id = value[1];
-    this.setState({ chooseStroageName: id });
+    this.setState({ chooseStroageName: id, stroageLocaltion: value });
   };
 
   render() {
@@ -147,141 +149,43 @@ class ProductionCertificateApp extends Component {
             onSubmit={this.handleSubmit.bind(this)}
             style={{ width: "100%" }}
           >
-            <FormItem
-              style={{ width: "30%" }}
-              label="RFID:"
-              labelCol={{ span: 3 }}
-            >
-              {getFieldDecorator("rfid", {
-                rules: [{ required: true, message: "请输入RFID号" }]
-              })(<Input />)}
-            </FormItem> 
-            <FormItem style={{ width: "70%" }} label="" labelCol={{ span: 3 }}>
-              <Button
-                type="button"
-                style={{ border: "none", color: "#3065bf" }}
-                onClick={() => {
-                  this.refs.relicsDialog.openModal();
-                  console.log(this.refs.relicsDialog);
-                }}
-              >
-                请选择文物
-              </Button>
-            </FormItem>
             <FormItem style={{ width: "100%" }} wrapperCol={{ span: 24 }}>
-              <Col span={24}>
-                {RelicsList.Collection_Name && (
-                  // <Col span={24} className="table-container">
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物名称
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     <span
-                  //       className="relicsName"
-                  //       onClick={() => {
-                  //         //   console.log('---')
-                  //         this.refs.relicsDialog.openModal();
-                  //       }}
-                  //     >
-                  //       {RelicsList.Collection_Name}
-                  //     </span>
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     RFID
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     <Input onChange={this.} placeholder='请输入RFID' />
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     入馆时间
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Collection_Time
-                  //       ? subStr(RelicsList.Collection_Time)
-                  //       : ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物图片
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Collection_img && (
-                  //       <img
-                  //         style={{ width: "50px", height: "50px" }}
-                  //         src={RelicsList.Collection_img}
-                  //         alt={RelicsList.Collection_Name}
-                  //       />
-                  //     )}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     材质
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.MaterialQuality || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物编号
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Collection_Number || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物年代
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.YearsName || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物等级
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.GradeName || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     完整程度
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Integrity || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     储存位置
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.StorageId || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物尺寸
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Size || ""}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物状态
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.CollStateName || ''}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     文物重量
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {RelicsList.Weight || ''}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     申请人
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {userName}
-                  //   </Col>
-                  //   <Col className="table-title table-height" span={3}>
-                  //     申请时间
-                  //   </Col>
-                  //   <Col className="table-content table-height" span={9}>
-                  //     {date}
-                  //   </Col>
-                  // </Col>
+              <Col span={24}> 
                   <Col span={24} className="relics-detail">
-                    <Col span={24} className="relics-img">
-                      文物图片：
+                    <Col span={3} className="relics-box ">
+                      文物名称
+                    </Col>
+                    <Col span={9} className="relics-content relics-title">
+                     <span className='relicsName' onClick={() => {
+                    //   console.log('---')
+                      this.refs.relicsDialog.openModal();
+                    }}>
+                    {RelicsList.Collection_Name}
+                    </span>
+                    </Col>
+                    <RelicsDialog chooseData={this.chooseData}
+                    title="请选择文物"
+                    radio={true}
+                    stat={0}
+                    checkedItem={[]}
+                    ref="relicsDialog" />
+                    <Col span={3} className="relics-box">
+                      RFID
+                    </Col>
+                    <Col span={9} className="relics-content">
+                    <FormItem
+                       style={{ width: "50%",top:"15px"}}
+                      labelCol={{ span: 3 }}
+                       >
+                    {getFieldDecorator("rfid", {
+                      rules: [{ required: true, message:'请输入RFID编码'}]
+                       })(<Input placeholder="请输入RFID编码" />)} 
+                       </FormItem>
+                    </Col>
+                    <Col span={3} className="relics-box">
+                      文物图片
+                    </Col>
+                    <Col span={9} className="relics-img">
                       {RelicsList.Collection_img && (
                         <img
                           src={ RelicsList.Collection_img }
@@ -301,29 +205,49 @@ class ProductionCertificateApp extends Component {
                         />
                       )}
                     </Col>
-                    <Col span={9} className="relics-box">
-                      文物名称：{RelicsList.Collection_Name}
+                    <Col span={3} className="relics-box">
+                      材质
                     </Col>
-                    <Col span={15} className="relics-box">
-                      文物状态：{RelicsList.CollStateName}
+                    <Col span={9} className="relics-content">
+                      {RelicsList.MaterialQuality}
                     </Col>
-                    <Col span={9} className="relics-box">
-                      文物编号：{RelicsList.Collection_Number}
+                    <Col span={3} className="relics-box">
+                      文物编号
                     </Col>
-                    <Col span={15} className="relics-box">
-                      入库类型：{putInCategory.map(item => {
-                        if (item.key === Number(RelicsList.ReservoirType)) {
+                    <Col span={9} className="relics-content">
+                      {RelicsList.Collection_Number}  
+                    </Col>
+                    <Col span={3} className="relics-box">
+                      年代
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {RelicsList.YearsName}
+                    </Col>
+                    <Col span={3} className="relics-box">
+                     文物等级
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {RelicsList.GradeName}
+                    </Col>
+                    <Col span={3} className="relics-box">
+                      完整程度
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {howComplete.map(item => {
+                        if (item.key === Number(RelicsList.Integrity)) {
                           return item.value;
                         }
                       })}
                     </Col>
-                    <Col span={9} className="relics-box" style={{ position: 'relative' }} >
-                      存储柜信息：
+                    <Col span={3} className="relics-box" style={{ position: 'relative' }} >
+                      储存位置
+                    </Col>
+                    <Col span={9} className="relics-content">
                       {
                         // RelicsList.StorageId == ''
                         <Cascader
                           options={tankInfoList}
-                          defaultValue={stroageLocaltion}
+                          value={stroageLocaltion}
                           disabled={RelicsList.StorageId !== null}
                           style={{ width: '230px' }}
                           onChange={this.cascaderChange}
@@ -331,51 +255,64 @@ class ProductionCertificateApp extends Component {
                         />
                       }
                       {
-                        showErrorText && <span style={{ color: 'red', position: 'absolute', top: '30px', left: '83px' }} >请选择存储柜信息</span>
+                        showErrorText && <span style={{ color: 'red', position: 'absolute', top: '25px', left: '170px' }} >请选择存储柜信息</span>
                       }
-
                     </Col>
-                    <Col span={15} className="relics-box">
-                      分级信息：{RelicsList.GradeName}
+                    <Col span={3} className="relics-box">
+                      文物尺寸
                     </Col>
-                    <Col span={9} className="relics-box">
-                      文物数量：{RelicsList.Number}
+                    <Col span={9} className="relics-content">
+                      {RelicsList.Size}
                     </Col>
-                    <Col span={15} className="relics-box">
-                      文物类别：{RelicsList.CategoryName}
+                    <Col span={3} className="relics-box">
+                      文物状态
                     </Col>
-                    <Col span={9} className="relics-box">
-                      文物材质：{RelicsList.MaterialQuality}
+                    <Col span={9} className="relics-content">
+                      {RelicsList.CollStateName}
                     </Col>
-                    <Col span={15} className="relics-box">
-                      文物年代：{RelicsList.YearsName}
+                    <Col span={3} className="relics-box">
+                      文物重量
                     </Col>
-                    <Col span={9} className="relics-box">
-                      入馆时间：{RelicsList.Collection_Time}
+                    <Col span={9} className="relics-content">
+                      {RelicsList.Weight}
                     </Col>
-                    <Col span={15} className="relics-box">
-                      文物重量：{RelicsList.Weight}
+                    <Col span={3} className="relics-box">
+                      文物数量
                     </Col>
-                    <Col span={9} className="relics-box">
-                      完整程度：{howComplete.map(item => {
-                        if (item.key === Number(RelicsList.Integrity)) {
+                    <Col span={9} className="relics-content">
+                      {RelicsList.Number}
+                    </Col>
+                    <Col span={3} className="relics-box">
+                      入馆时间
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {RelicsList.Collection_Time}
+                    </Col>
+                    <Col span={3} className="relics-box">
+                      入库类型
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {putInCategory.map(item => {
+                        if (item.key === Number(RelicsList.ReservoirType)) {
                           return item.value;
                         }
                       })}
                     </Col>
-                    <Col span={15} className="relics-box">
-                      文物尺寸：{RelicsList.Size}
+                    <Col span={3} className="relics-box">
+                      文物类别
+                    </Col>
+                    <Col span={9} className="relics-content">
+                      {RelicsList.CategoryName}
                     </Col>
                   </Col>
-                )}
               </Col>
             </FormItem>
-
-            <FormItem style={{ width: "30%" }} wrapperCol={{ offset: 3 }}>
+            <FormItem style={{margin:"3px 0 0 0 "}} >
               <Button
                 loading={this.state.loading}
                 type="primary"
                 htmlType="submit"
+                style={{width:"120px",height:"36px",fontSize:"16px"}}
               >
                 绑定制作
               </Button>

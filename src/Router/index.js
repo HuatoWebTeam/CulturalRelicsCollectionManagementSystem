@@ -19,6 +19,12 @@ const NewRepairList = asyncComponent(() => import('../pages/CollecRepair/NewRepa
 const RepairDetails = asyncComponent(() =>
   import("../pages/CollecRepair/RepairDetails")
 );                  // 修复单详情
+const Repairmaterials = asyncComponent(() => import('../pages/CollecRepair/Repairmaterials/Repairmaterials'));  //修复材料
+// const AddRepairmaterials = asyncComponent(() => import('../pages/CollecRepair/Repairmaterials/AddRepairmaterials/AddRepairmaterials'));  //新增修复材料
+const Repairmethod = asyncComponent(() => import('../pages/CollecRepair/Repairmethod'));                    //修复方法
+const NewRepairMethod = asyncComponent(() => import('../pages/CollecRepair/Repairmethod/NewRepairMethod'));  //新增修复方法
+const Repairprocess = asyncComponent(() => import('../pages/CollecRepair/Repairprocess/Repairprocess'));  //修复过程
+const Repairstatistics = asyncComponent(() => import('../pages/CollecRepair/Repairstatistics/Repairstatistics'));  //修复统计
 const Information = asyncComponent(() => import('../pages/CollecManagement/Information'));                  // 信息登记
 const AddRelics = asyncComponent(() => import('../pages/CollecManagement/Information/addRelics'));          // 新增藏品
 const Credentials = asyncComponent(() => import('../pages/CollecManagement/Credentials'));                  // 凭证信息列表
@@ -67,9 +73,14 @@ class Routes extends Component {
             <Route exact path="/App/CollecExhibition" component={CollecExhibition} />
             <Route exact path="/App/ExhibitionDetails/:id" component={ExhibitionDetails} />
             <Route exact path="/App/AddExhibition" component={AddExhibition} />
-            <Route exact path="/App/CollecRepair" component={CollecRepair} />
+            <Route exact path="/App/CollectionRepair" component={CollecRepair} />
             <Route exact path="/App/NewRepairList" component={NewRepairList} />
             <Route exact path="/App/RepairDetails/:id" component={RepairDetails} />
+            <Route exact path="/App/Repairmaterials" component={Repairmaterials} />
+            <Route exact path="/App/Repairmethod" component={Repairmethod} />
+            <Route exact path="/App/NewRepairMethod" component={NewRepairMethod} />
+            <Route exact path="/App/Repairprocess" component={Repairprocess} />
+            <Route exact path="/App/Repairstatistics" component={Repairstatistics} />
             <Route exact path="/App/Information" component={Information} />
             <Route exact path="/App/AddRelics" component={AddRelics} />
             <Route exact path="/App/Credentials" component={Credentials} />

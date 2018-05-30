@@ -176,3 +176,11 @@ export const putinType = [
     { key: 4, value: '修复归还', isHidden: true },
     { key: 5, value: '自定义归还' }
 ]
+
+
+//  注销状态
+export const logoutState = [
+    { key: 0, value: '待注销' },
+    { key: 1, value: '注销出库中' },
+    { key: 2, value: '已注销' }
+]

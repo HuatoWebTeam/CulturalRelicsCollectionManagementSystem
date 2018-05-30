@@ -45,7 +45,7 @@ class AddExhibitionForm extends Component {
     });
     // let detailData = null;
     if (state) {
-      let params = { pageIndex: 1, pageSize: 1000, Exhibition_Odd: formData };
+      let params = { pageIndex: 1, pageSize: 10000, Exhibition_Odd: formData };
       ExhibitionDetailsApi(params).then(res => {
         console.log(res);
         let list = res[0].exhibit;
@@ -229,10 +229,12 @@ class AddExhibitionForm extends Component {
       pageTitle,
       checkInfo,
       exhibiInfo,
+      checkNum,
       chooseRelicsNum
     } = this.state;
     console.log(addExhibitionData);
     const { getFieldDecorator } = this.props.form;
+    const { state, formData } = this.props.componentState;
 
     return (
       <Row className="exhibition-container main-content">
@@ -406,8 +408,10 @@ class AddExhibitionForm extends Component {
           </Col>
           <RelicsDialog
             stat={0}
+            Table={0}
+            Odd={state ? formData : ''}
             chooseData={this.chooseData}
-            checkedItem={addExhibitionData}
+            checkedItem={checkNum}
             title="选择展览文物"
             ref="relicsDialog"
           />

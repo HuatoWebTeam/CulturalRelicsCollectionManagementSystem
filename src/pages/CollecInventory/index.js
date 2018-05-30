@@ -130,7 +130,7 @@ class CollecInventory extends Component {
       ]
     });
   };
-  // 对话框   // 删除展览单
+  // 对话框   // 删除盘点单
   showConfirm = text => {
     let _this = this;
     confirm({
@@ -186,26 +186,11 @@ class CollecInventory extends Component {
           return <span>{text + '天'}</span>
         }
       },
-      // {
-      //   title: "文物名称",
-      //   dataIndex: "Collection_Name",
-      //   key: "Collection_Name"
-      // },
       {
         title: "盘点数量",
         dataIndex: "Number",
         key: "Number"
       },
-      // {
-      //   title: "类型",
-      //   dataIndex: "Category",
-      //   key: "Category"
-      // },
-      // {
-      //   title: "分级信息",
-      //   dataIndex: "Grade",
-      //   key: "Grade"
-      // },
       {
         title: "盘点人",
         dataIndex: "InventoryMan",
